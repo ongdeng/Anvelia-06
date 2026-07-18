@@ -1,0 +1,41 @@
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+
+const activitiesEntryPath = resolve(process.cwd(), "activities/index.html");
+const viteConfigPath = resolve(process.cwd(), "vite.config.ts");
+
+describe("Activities production entry", () => {
+  it("defines a dedicated Activities HTML entry with static metadata", () => {
+    const entryExists = existsSync(activitiesEntryPath);
+
+    expect(entryExists).toBe(true);
+
+    if (!entryExists) {
+      return;
+    }
+
+    const html = readFileSync(activitiesEntryPath, "utf8");
+
+    expect(html).toContain("<title>Activities | Anvelia Sanctuary</title>");
+    expect(html).toContain(
+      'name="description"\n      content="Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."'
+    );
+    expect(html).toContain(
+      '<meta property="og:title" content="Activities | Anvelia Sanctuary" />'
+    );
+    expect(html).toContain(
+      'property="og:description"\n      content="Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."'
+    );
+    expect(html).toContain('<script type="module" src="/src/main.tsx"></script>');
+  });
+
+  it("configures both homepage and Activities inputs for Vite", () => {
+    const config = readFileSync(viteConfigPath, "utf8");
+
+    expect(config).toMatch(/main:\s*htmlEntry\("\.\/index\.html"\)/);
+    expect(config).toMatch(
+      /activities:\s*htmlEntry\("\.\/activities\/index\.html"\)/
+    );
+  });
+});

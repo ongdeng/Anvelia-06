@@ -1,10 +1,14 @@
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { SiteHeader } from "../../src/components/layout/SiteHeader";
 import { siteContent } from "../../src/content/siteContent";
 
 describe("SiteHeader", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("renders the approved text-only wordmark and desktop navigation", () => {
     const { container } = render(<SiteHeader />);
 
@@ -35,6 +39,73 @@ describe("SiteHeader", () => {
       "href",
       "https://wa.me/60136683113"
     );
+  });
+
+  it("home-roots desktop and mobile section anchors on a secondary page", () => {
+    render(<SiteHeader homeRooted />);
+
+    const desktopNav = screen.getByRole("navigation", {
+      name: siteContent.accessibility.siteSectionsLabel
+    });
+
+    expect(
+      within(desktopNav)
+        .getAllByRole("link")
+        .map((link) => link.getAttribute("href"))
+    ).toEqual([
+      "/#place",
+      "/#cabins",
+      "/#open-air-living",
+      "/#gatherings",
+      "/#visit"
+    ]);
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: siteContent.accessibility.mobileMenuOpenLabel
+      })
+    );
+
+    const mobileNav = screen.getByRole("navigation", {
+      name: siteContent.accessibility.mobileMenuLabel
+    });
+
+    expect(
+      within(mobileNav)
+        .getAllByRole("link")
+        .map((link) => link.getAttribute("href"))
+    ).toEqual([
+      "/#place",
+      "/#cabins",
+      "/#open-air-living",
+      "/#gatherings",
+      "/#visit"
+    ]);
+  });
+
+  it("keeps brand and secondary anchors inside the configured Pages base", () => {
+    vi.stubEnv("BASE_URL", "/Anvelia-06/");
+    render(<SiteHeader homeRooted />);
+
+    expect(
+      screen.getByRole("link", { name: siteContent.brand.homeAriaLabel })
+    ).toHaveAttribute("href", "/Anvelia-06/");
+
+    const desktopNav = screen.getByRole("navigation", {
+      name: siteContent.accessibility.siteSectionsLabel
+    });
+
+    expect(
+      within(desktopNav)
+        .getAllByRole("link")
+        .map((link) => link.getAttribute("href"))
+    ).toEqual([
+      "/Anvelia-06/#place",
+      "/Anvelia-06/#cabins",
+      "/Anvelia-06/#open-air-living",
+      "/Anvelia-06/#gatherings",
+      "/Anvelia-06/#visit"
+    ]);
   });
 
   it("opens the full-size mobile menu, closes it with Escape, and returns focus", async () => {

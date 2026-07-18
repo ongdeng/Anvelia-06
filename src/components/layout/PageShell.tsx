@@ -3,8 +3,7 @@ import { imagesByRole } from "../../content/images";
 import { siteContent } from "../../content/siteContent";
 import { SiteHeader } from "./SiteHeader";
 
-type HeroStyle = CSSProperties & {
-  "--hero-background-image": string;
+type ShellStyle = CSSProperties & {
   "--mobile-menu-background-image": string;
 };
 
@@ -13,20 +12,20 @@ type PageShellProps = {
   hero: ReactNode;
 };
 
-const heroStyle: HeroStyle = {
-  "--hero-background-image": `url(${imagesByRole["hero-threshold-arrival"].src})`,
+const shellStyle: ShellStyle = {
   "--mobile-menu-background-image": `url(${imagesByRole["mobile-navigation-atmosphere"].src})`
 };
 
 export function PageShell({ children, hero }: PageShellProps) {
   const { accessibility, hero: heroContent } = siteContent;
+  const heroImage = imagesByRole["hero-threshold-arrival"];
 
   return (
     <>
       <a className="skip-link" href={`#${accessibility.mainContentId}`}>
         {accessibility.skipToContentLabel}
       </a>
-      <div className="site-frame" style={heroStyle}>
+      <div className="site-frame" style={shellStyle}>
         <SiteHeader />
         <main
           className="site-shell"
@@ -38,6 +37,18 @@ export function PageShell({ children, hero }: PageShellProps) {
             className="threshold-hero"
             aria-label={heroContent.ariaLabel}
           >
+            <picture className="threshold-hero__media" aria-hidden="true">
+              <source media="(max-width: 820px)" srcSet={heroImage.smallSrc} />
+              <img
+                {...{ fetchpriority: "high" }}
+                alt=""
+                decoding="async"
+                height={heroImage.height}
+                loading="eager"
+                src={heroImage.src}
+                width={heroImage.width}
+              />
+            </picture>
             {hero}
           </section>
           {children}

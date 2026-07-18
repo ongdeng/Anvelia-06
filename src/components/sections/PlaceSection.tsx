@@ -34,9 +34,12 @@ export function PlaceSection() {
         <img
           alt={image.alt}
           decoding="async"
-          loading="eager"
+          height={image.height}
+          loading="lazy"
           sizes="(max-width: 820px) 100vw, 64vw"
           src={image.src}
+          srcSet={image.srcSet}
+          width={image.width}
         />
       </figure>
     </section>

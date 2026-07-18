@@ -5,9 +5,24 @@ export const DEFAULT_LOCALE = "en";
 
 export type Locale = "en";
 
+export type NavItemId =
+  | "place"
+  | "cabins"
+  | "rhythm"
+  | "gatherings"
+  | "visit";
+
+export type NavItemHref =
+  | "#place"
+  | "#cabins"
+  | "#open-air-living"
+  | "#gatherings"
+  | "#visit";
+
 export type NavItem = {
-  label: "Place" | "Cabins" | "Gatherings" | "Visit";
-  href: `#${string}`;
+  id: NavItemId;
+  label: string;
+  href: NavItemHref;
 };
 
 export type PlannedSectionId =
@@ -20,10 +35,23 @@ export type PlannedSectionId =
 export type PlannedSection = {
   id: PlannedSectionId;
   title: string;
-  navLabel?: NavItem["label"];
+  navLabel?: string;
   imageRole: SiteImageRole;
   copy: string;
 };
+
+const englishGatherings = {
+  id: "gatherings" as PlannedSectionId,
+  eyebrow: "Gatherings",
+  title: "A quieter way to gather",
+  body:
+    "Time together takes on a gentler rhythm here, shaped by timber, greenery and the hillside.",
+  occasions: [
+    "Private dinners",
+    "Small corporate retreats",
+    "Wellness retreats"
+  ]
+} as const;
 
 export const siteContentByLocale = {
   en: {
@@ -31,7 +59,7 @@ export const siteContentByLocale = {
     metadata: {
       title: "Anvelia Sanctuary",
       description:
-        "A hillside resort at the foot of Genting Highlands, with cabin stays, open-air living, and small gatherings shaped by cooler hill air."
+        "A hillside resort at the foot of Genting Highlands, with cabin stays, open-air living, and quiet gatherings shaped by cooler evenings and fresh hillside air."
     },
     brand: {
       name: "Anvelia Sanctuary",
@@ -40,10 +68,11 @@ export const siteContentByLocale = {
       homeAriaLabel: "Anvelia Sanctuary home"
     },
     nav: [
-      { label: "Place", href: "#place" },
-      { label: "Cabins", href: "#cabins" },
-      { label: "Gatherings", href: "#gatherings" },
-      { label: "Visit", href: "#visit" }
+      { id: "place", label: "Place", href: "#place" },
+      { id: "cabins", label: "Cabins", href: "#cabins" },
+      { id: "rhythm", label: "Rhythm", href: "#open-air-living" },
+      { id: "gatherings", label: "Gatherings", href: "#gatherings" },
+      { id: "visit", label: "Visit", href: "#visit" }
     ] satisfies NavItem[],
     accessibility: {
       mainContentId: "main-content",
@@ -54,7 +83,7 @@ export const siteContentByLocale = {
       mobileMenuOpenLabel: "Open menu",
       mobileMenuCloseLabel: "Close menu",
       skipToContentLabel: "Skip to content",
-      plannedSectionsLabel: "Planned phase 1 sections"
+      plannedSectionsLabel: "More about Anvelia"
     },
     hero: {
       ariaLabel: "Anvelia Sanctuary arrival",
@@ -62,7 +91,7 @@ export const siteContentByLocale = {
       subtitle: "A hillside resort at the foot of Genting Highlands",
       lede:
         "Set around 450m above sea level, where cooler evenings and fresh hillside air shape a slower way to stay.",
-      detailLine: "Bentong, Pahang, around 450m above sea level.",
+      detailLine: "Bentong, Pahang, Malaysia.",
       ctaLabel: "WhatsApp Anvelia"
     },
     place: {
@@ -70,9 +99,9 @@ export const siteContentByLocale = {
       eyebrow: "Place",
       title: "A place of quiet elevation",
       intro:
-        "At the foot of Genting Highlands, Anvelia sits near Bentong, Pahang, in a hillside setting shaped by timber, greenery, and open air.",
+        "Here, the hillside is shaped by timber, layered greenery, and open air, with a sense of distance from the city's faster rhythm.",
       body:
-        "Sunny days often settle into cooler evenings here. Around 450m above sea level, the rhythm slows as fresh hillside air moves through shaded paths, cabins, and quiet corners.",
+        "Sunny days often settle into cooler evenings here, while fresh hillside air moves through timber, greenery, and open-air spaces as the rhythm begins to slow.",
       facts: [
         {
           label: "Elevation",
@@ -88,6 +117,64 @@ export const siteContentByLocale = {
         }
       ]
     },
+    cabins: {
+      id: "cabins" as PlannedSectionId,
+      eyebrow: "Cabins",
+      title: "Cabins in nature's embrace",
+      titleLines: ["Cabins in", "nature's embrace"],
+      intro:
+        "Timber cabins settle into the hillside, where warm interiors, natural materials, and thoughtful details create a quieter rhythm for rest.",
+      markerLabel: "Cabin stays",
+      markerHref: "/stays",
+      markerEnabled: false,
+      markerAriaLabel: "Cabin stays details"
+    },
+    openAirLiving: {
+      id: "open-air-living" as PlannedSectionId,
+      eyebrow: "Rhythm",
+      title: "Living with the hillside",
+      body:
+        "Sheltered by timber and greenery, open-air spaces invite slow mornings, afternoon tea and quiet conversation as cooler evening air settles across the hillside.",
+      markerLabel: "See activities",
+      markerHref: "/activities"
+    },
+    activities: {
+      metadata: {
+        title: "Activities | Anvelia Sanctuary",
+        description:
+          "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."
+      },
+      eyebrow: "Activities",
+      title: "Time, left open",
+      intro:
+        "Time here moves quietly between timber, greenery and the cooler evening air.",
+      moments: [
+        {
+          title: "Tea in the open air",
+          body:
+            "Afternoon tea can linger with quiet conversation and the hillside close by."
+        },
+        {
+          title: "A place to read",
+          body: "Reading finds its own pace beside timber and greenery."
+        },
+        {
+          title: "Evening, slowly",
+          body:
+            "Cooler evening air invites the day to settle gently across the hillside."
+        }
+      ]
+    },
+    gatherings: englishGatherings,
+    visit: {
+      id: "visit" as PlannedSectionId,
+      eyebrow: "Visit",
+      title: "Come and see Anvelia",
+      intro:
+        "The doors are open in the quieter hills of Bukit Tinggi, at the foot of Genting Highlands.",
+      ctaLabel: "Plan your visit",
+      ctaAriaLabel: "Plan your visit with Anvelia Sanctuary on WhatsApp"
+    },
     plannedSections: [
       {
         id: "place",
@@ -95,7 +182,7 @@ export const siteContentByLocale = {
         navLabel: "Place",
         imageRole: "place-hillside-setting",
         copy:
-          "A hillside setting near Bentong and Genting Highlands, shaped by mist, greenery, and cooler evenings around 450m above sea level."
+          "A hillside setting near Bentong and Genting Highlands, shaped by greenery, fresh air, and cooler evenings."
       },
       {
         id: "cabins",
@@ -103,7 +190,7 @@ export const siteContentByLocale = {
         navLabel: "Cabins",
         imageRole: "cabins",
         copy:
-          "Quiet cabin stays shaped by timber, shade, and hill air, with space for unhurried mornings and easy evenings close to nature."
+          "Timber cabins nestled into the hillside, shaped by natural materials, thoughtful details, and a quieter rhythm close to nature."
       },
       {
         id: "open-air-living",
@@ -116,22 +203,22 @@ export const siteContentByLocale = {
         id: "gatherings",
         title: "Gatherings",
         navLabel: "Gatherings",
-        imageRole: "private-dinners-small-retreats",
-        copy:
-          "A calm setting for private dinners, small retreats, and hosted moments that feel close to the landscape."
+        imageRole: "gatherings-shared-table",
+        copy: englishGatherings.body
       },
       {
         id: "visit",
         title: "Visit",
         navLabel: "Visit",
-        imageRole: "visit-footer-atmosphere",
+        imageRole: "visit-arrival-path",
         copy:
-          "For directions and stay enquiries, contact Anvelia Sanctuary on WhatsApp."
+          "The doors are open in the quieter hills of Bukit Tinggi, at the foot of Genting Highlands."
       }
     ] satisfies PlannedSection[],
     contact: {
       whatsappUrl: WHATSAPP_URL,
       whatsappLabel: "WhatsApp",
+      whatsappNumber: "+60 13-668 3113",
       whatsappAriaLabel: "Contact Anvelia Sanctuary on WhatsApp",
       addressLabel: "Address",
       addressLines: [
@@ -141,11 +228,8 @@ export const siteContentByLocale = {
       addressText:
         "Lot 8421, Kampung Bukit Tinggi, 28750 Bentong, Pahang, Malaysia"
     },
-    footer: {
-      heading: "Anvelia Sanctuary",
-      copy:
-        "A hillside resort at the foot of Genting Highlands, open for thoughtful stays and small gatherings.",
-      contactPrompt: "Contact Anvelia Sanctuary on WhatsApp."
+    endNote: {
+      copyright: "\u00A9 Anvelia Sanctuary"
     }
   }
 } as const;
