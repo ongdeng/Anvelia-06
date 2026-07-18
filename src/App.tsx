@@ -1,10 +1,34 @@
 import { PageShell } from "./components/layout/PageShell";
+import { ActivitiesPage } from "./components/pages/ActivitiesPage";
+import { CabinsSection } from "./components/sections/CabinsSection";
+import { GatheringsSection } from "./components/sections/GatheringsSection";
 import { HeroSection } from "./components/sections/HeroSection";
+import { OpenAirLivingSection } from "./components/sections/OpenAirLivingSection";
 import { PlaceSection } from "./components/sections/PlaceSection";
+import { VisitSection } from "./components/sections/VisitSection";
 import { PrimitivePreview } from "./components/ui/PrimitivePreview";
-import { siteContent } from "./content/siteContent";
+import { stripBasePath, withBasePath } from "./utils/basePath";
+
+const unavailablePhaseTwoPaths = new Set(["/stays"]);
+
+const getNormalizedPath = () =>
+  typeof window === "undefined"
+    ? "/"
+    : stripBasePath(window.location.pathname);
+
+if (typeof window !== "undefined") {
+  if (unavailablePhaseTwoPaths.has(getNormalizedPath())) {
+    window.history.replaceState(
+      null,
+      "",
+      `${withBasePath("/")}${window.location.search}${window.location.hash}`
+    );
+  }
+}
 
 function App() {
+  const normalizedPath = getNormalizedPath();
+
   if (
     import.meta.env.DEV &&
     typeof window !== "undefined" &&
@@ -13,29 +37,17 @@ function App() {
     return <PrimitivePreview />;
   }
 
-  const { accessibility, plannedSections } = siteContent;
+  if (normalizedPath === "/activities") {
+    return <ActivitiesPage />;
+  }
 
   return (
     <PageShell hero={<HeroSection />}>
       <PlaceSection />
-      <div
-        className="planned-section-anchors"
-        aria-label={accessibility.plannedSectionsLabel}
-      >
-        {plannedSections
-          .filter((section) => section.navLabel && section.id !== "place")
-          .map((section) => (
-            <section
-              className="planned-section-anchor"
-              id={section.id}
-              key={section.id}
-              tabIndex={-1}
-            >
-              <h2>{section.title}</h2>
-              <p>{section.copy}</p>
-            </section>
-          ))}
-      </div>
+      <CabinsSection />
+      <OpenAirLivingSection />
+      <GatheringsSection />
+      <VisitSection />
     </PageShell>
   );
 }

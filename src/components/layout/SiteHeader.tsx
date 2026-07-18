@@ -1,13 +1,18 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { siteContent } from "../../content/siteContent";
+import { withBasePath } from "../../utils/basePath";
 import { WhatsAppLink } from "../ui/WhatsAppLink";
 
 type CloseMenuOptions = {
   restoreFocus?: boolean;
 };
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  homeRooted?: boolean;
+};
+
+export function SiteHeader({ homeRooted = false }: SiteHeaderProps) {
   const { accessibility, brand, contact, nav } = siteContent;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -85,11 +90,26 @@ export function SiteHeader() {
       return undefined;
     }
 
+    const root = document.documentElement;
     const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - root.clientWidth;
+    const supportsStableScrollbarGutter =
+      typeof CSS !== "undefined" &&
+      typeof CSS.supports === "function" &&
+      CSS.supports("scrollbar-gutter: stable");
+
+    root.dataset.scrollLocked = "true";
     document.body.style.overflow = "hidden";
 
+    if (!supportsStableScrollbarGutter && scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
     return () => {
+      delete root.dataset.scrollLocked;
       document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
     };
   }, [isMenuOpen]);
 
@@ -110,13 +130,17 @@ export function SiteHeader() {
   }, [isMenuOpen]);
 
   const navLinks = nav.map((item) => (
-    <a href={item.href} key={item.href}>
+    <a href={homeRooted ? withBasePath(item.href) : item.href} key={item.href}>
       {item.label}
     </a>
   ));
 
   const mobileNavLinks = nav.map((item) => (
-    <a href={item.href} key={item.href} onClick={() => closeMenu()}>
+    <a
+      href={homeRooted ? withBasePath(item.href) : item.href}
+      key={item.href}
+      onClick={() => closeMenu()}
+    >
       {item.label}
     </a>
   ));
@@ -130,7 +154,7 @@ export function SiteHeader() {
     >
       <a
         className="brand-link"
-        href={brand.homeHref}
+        href={withBasePath(brand.homeHref)}
         aria-label={brand.homeAriaLabel}
         onClick={() => closeMenu()}
         tabIndex={isMenuOpen ? -1 : undefined}

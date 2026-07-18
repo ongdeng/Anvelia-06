@@ -2,27 +2,25 @@
 
 ## Project Structure & Module Organization
 
-This repository is a pre-build website workspace for Anvelia Sanctuary.
+This repository contains the active Phase 1 Anvelia Sanctuary website.
 
 - `assets/` contains brand, concept, social, responsive derivative, and moodboard imagery.
 - `assets/anvelia/ASSET_MANIFEST.csv` records image provenance and publication status.
-- `md files/` contains planning/reference documents. Treat older plans as comparison material unless confirmed.
-- Source code and tests have not been scaffolded yet. When added, prefer `src/` for app code, `src/content/` for copy/data, `src/assets/` for runtime assets, and `tests/` for checks.
+- `docs/anvelia-design-language.md` is the canonical aesthetic and brand standard.
+- `docs/anvelia-current-build-state.md` records approved implementation state.
+- `md files/` contains planning/reference documents. Treat older plans as historical comparison unless explicitly reactivated.
+- `src/` contains React code, content registries, styles, and runtime assets; `tests/` contains component and Playwright checks.
 
 ## Build, Test, and Development Commands
 
 Use `rtk` before shell commands.
 
-There is no `package.json` yet, so no build/test commands are available. After scaffolding, document the real commands here, for example:
-
 ```powershell
-rtk npm run dev      # start local development server
-rtk npm run build    # create production build
-rtk npm run test     # run automated tests
-rtk npm run lint     # run lint checks
+rtk npm.cmd run dev       # start Vite locally
+rtk npm.cmd run build     # type-check and create production output
+rtk npm.cmd run test      # run Vitest component/content tests
+rtk npm.cmd run test:e2e  # run Playwright behavior checks
 ```
-
-Do not add placeholder scripts unless they work.
 
 ## Coding Style & Naming Conventions
 
@@ -38,7 +36,7 @@ For visual changes, show a preview whenever a major layout, color, imagery, sect
 
 ## Commit & Pull Request Guidelines
 
-This folder is not currently a Git repository, so no local commit history is available. When Git is initialized, use concise Conventional Commit-style messages:
+Use concise Conventional Commit-style messages:
 
 ```text
 feat: build anvelia landing page
@@ -50,7 +48,11 @@ Pull requests should include a short summary, screenshots or preview links for v
 
 ## Agent-Specific Instructions
 
-Use the actual original visual concept option 2, "Japanese Threshold Resort," as the visual source of truth. Do not use the later hybrid concept as the base. Keep phase 1 resort-first, English-only, WhatsApp-only, with no pricing, forms, social links, or gallery.
+Read `docs/anvelia-design-language.md` before visual or content work. Use the actual original Option 2, "Japanese Threshold Resort," as the visual source of truth. Do not use the later hybrid concept or superseded June 23 plan as implementation authority.
+
+Keep Phase 1 resort-first, English-only, and WhatsApp-only, with no pricing, forms, social links, or gallery. `/stays` is a Phase 2 destination and must remain disabled until that page exists. Gatherings and Visit remain planned Phase 1 sections.
+
+Use `src/components/layout/ViewportChapter.tsx` for new full-screen narrative sections. The shared outer contract is one `100svh` chapter in portrait and landscape; preserve content fit through section-specific grid tracks and short-landscape tuning, never clipping or hiding copy.
 
 Current concept imagery is not documentary proof. Use it carefully and avoid copy that implies exact real-world facilities unless confirmed.
 

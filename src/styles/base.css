@@ -12,6 +12,7 @@
 html {
   min-width: 320px;
   background: var(--color-surface-dark);
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -59,25 +60,47 @@ a {
   display: grid;
   align-items: start;
   overflow: hidden;
+  background: var(--color-night);
+}
+
+.threshold-hero__media {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+}
+
+.threshold-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.threshold-hero::before,
+.threshold-hero::after {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  content: "";
+}
+
+.threshold-hero::before {
+  inset: 0;
   background:
     radial-gradient(circle at 78% 46%, rgb(var(--rgb-timber) / 0) 0 32%, rgb(var(--rgb-night) / 0.14) 61%, rgb(var(--rgb-night) / 0.44) 100%),
     linear-gradient(90deg, rgb(var(--rgb-night) / 0.82) 0%, rgb(var(--rgb-night) / 0.58) 29%, rgb(var(--rgb-night) / 0.1) 58%, rgb(var(--rgb-night) / 0.06) 100%),
-    linear-gradient(0deg, rgb(var(--rgb-night) / 0.14), rgb(var(--rgb-night) / 0.05)),
-    var(--hero-background-image) center / cover;
+    linear-gradient(0deg, rgb(var(--rgb-night) / 0.14), rgb(var(--rgb-night) / 0.05));
 }
 
 .threshold-hero::after {
-  position: absolute;
   inset: auto 0 0;
   height: 20vh;
-  pointer-events: none;
-  content: "";
   background: linear-gradient(0deg, rgb(var(--rgb-night) / 0.26), rgb(var(--rgb-night) / 0));
 }
 
 .hero-copy {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: min(100%, 530px);
   margin-top: clamp(150px, 20vh, 180px);
   margin-left: clamp(28px, 4.5vw, 58px);
@@ -116,10 +139,16 @@ a {
     min-height: 100svh;
     padding: 28px 24px 56px;
     align-items: end;
+  }
+
+  .threshold-hero__media img {
+    object-position: 58% center;
+  }
+
+  .threshold-hero::before {
     background:
       linear-gradient(0deg, rgb(var(--rgb-night) / 0.86) 0%, rgb(var(--rgb-night) / 0.62) 44%, rgb(var(--rgb-night) / 0.1) 100%),
-      linear-gradient(90deg, rgb(var(--rgb-night) / 0.46), rgb(var(--rgb-night) / 0.08)),
-      var(--hero-background-image) 58% center / cover;
+      linear-gradient(90deg, rgb(var(--rgb-night) / 0.46), rgb(var(--rgb-night) / 0.08));
   }
 
   .hero-copy {

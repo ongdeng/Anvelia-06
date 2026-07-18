@@ -6,6 +6,14 @@ Detailed task-by-task build plan:
 docs/superpowers/plans/2026-06-30-anvelia-phase-1-build-plan.md
 ```
 
+Canonical design language:
+
+```text
+docs/anvelia-design-language.md
+```
+
+If aesthetic wording in this plan conflicts with that document, the canonical design language takes precedence.
+
 ## 1. Objective
 
 Build a single-page English website for Anvelia Sanctuary that showcases the resort, increases exposure, and makes WhatsApp contact easy. Phase 1 is resort-first, not detox-first. Wellness should appear through atmosphere: fresh hillside air, slower pace, timber, greenery, quiet, and open-air living.
@@ -19,7 +27,7 @@ https://wa.me/60136683113
 
 Do not include pricing, forms, social links, gallery, detox program claims, medical language, exact cabin count, or exact capacity.
 
-Detail principle: every visible element should feel considered. Anvelia should not look like a template with resort images dropped in. The page should feel built from timber, stone, air, shade, greenery, and careful spacing.
+Detail principle: communicate “silent wealth” through proportion, material, light, restraint, and attentive hospitality. Avoid rustic tourism, wellness-clinic minimalism, Japanese theming, generic luxury, and decorative spectacle.
 
 ## 2. Visual Source Of Truth
 
@@ -48,7 +56,7 @@ Single-page section order:
 4. Open-Air Living
 5. Gatherings
 6. Visit
-7. Footer
+7. Integrated copyright end note within Visit; no separate visible footer
 
 Navigation:
 
@@ -265,7 +273,7 @@ Required image roles:
 - cabin or timber detail
 - open-air sitting or pavilion
 - private dinner / retreat gathering
-- visit/footer atmosphere
+- visit closing atmosphere
 
 Generate new imagery only if these roles are missing or visually inconsistent.
 
@@ -283,9 +291,10 @@ Required interactions:
 
 - anchor navigation
 - mobile menu
-- WhatsApp links from hero, header, visit, and footer
+- WhatsApp links from hero, header, and visit
 - visible hover/focus states
-- reduced-motion-safe reveal animations if motion is added
+- functional feedback and reduced-motion-safe restrained reveals only when they improve comprehension
+- no decorative section-transition animation, scroll spectacle, or parallax
 
 Preview after every major layout, color, imagery, section, or interaction change.
 

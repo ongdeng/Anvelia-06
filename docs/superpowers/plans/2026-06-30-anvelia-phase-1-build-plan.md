@@ -8,6 +8,10 @@
 
 **Tech Stack:** React, TypeScript, Vite, custom CSS, local assets, Vitest/Testing Library, Playwright.
 
+## Global Design Constraint
+
+All visual, copy, image, layout, and motion decisions must follow `docs/anvelia-design-language.md`. It is the canonical aesthetic authority; this implementation plan governs task order and acceptance. Do not add decorative section-transition animation. `/stays` remains visibly disabled until Phase 2, while Gatherings and Visit remain required Phase 1 sections.
+
 ---
 
 ## Approval Rule
@@ -77,7 +81,6 @@ src/components/sections/CabinsSection.tsx
 src/components/sections/OpenAirLivingSection.tsx
 src/components/sections/GatheringsSection.tsx
 src/components/sections/VisitSection.tsx
-src/components/sections/SiteFooter.tsx
 src/components/ui/Button.tsx
 src/components/ui/ImageFrame.tsx
 src/components/ui/SectionShell.tsx
@@ -103,7 +106,7 @@ tests/components/site-content.test.tsx
 **Recommended tools:** PowerShell copy command, `view_image`, asset manifest, browser image preview.
 
 - [ ] Copy the actual original Option 2 image from `C:\Users\neo16\.codex\generated_images\019f1838-7eeb-7e82-8034-52d615e4d733\ig_015876740a940226016a43b48bc2f0819183671a90b2ee4d6e.png`.
-- [ ] Inspect current Anvelia images and assign one image to each role: hero threshold, place, cabins, open-air living, gatherings, visit/footer.
+- [ ] Inspect current Anvelia images and assign one image to each role: hero threshold, place, cabins, open-air living, gatherings, and the Visit closing atmosphere.
 - [ ] Record which images are concept visuals and which claims they must not imply.
 - [ ] Update `ASSET_MANIFEST.csv` with the selected visual source.
 
@@ -286,27 +289,104 @@ rtk npm run test
 
 **Stop and preview:** Show section screenshots and selected image crops. Continue only after approval.
 
-## Task 9: Build Gatherings, Visit, And Footer
+## Task 8.5: Truth And Runtime Stabilization
 
-**Goal:** Complete the conversion and practical information path.
+**Goal:** Make the approved upper-page experience truthful, lighter, and technically dependable before building Gatherings, Visit, and the integrated closing end note. Preserve the existing visual composition.
+
+**Files:**
+- Modify: `index.html`
+- Modify: `src/App.tsx`
+- Modify: `src/content/siteContent.ts`
+- Modify: `src/content/images.ts`
+- Modify: relevant section and image components only when required
+- Modify: relevant `src/styles/` files only for stability
+- Modify: `tests/components/site-content.test.tsx`
+- Modify: `tests/e2e/site.spec.ts`
+- Create: optimized runtime image derivatives only for active imagery
+
+**Recommended tools:** content registry review, responsive image tooling, browser network inspection, Playwright, TypeScript, Vitest.
+
+### Outcomes
+
+- `/stays` cannot send a Phase 1 visitor to an unfinished page, while its Phase 2 intent remains easy to restore.
+- Public copy is concise, resort-first, and free of misleading, repetitive, medical, detox, capacity, pricing, availability, or documentary implications.
+- Browser tabs, search previews, and shared links identify Anvelia accurately.
+- Mobile visitors download appropriately sized images instead of unnecessary desktop-scale assets.
+- Lazy loading and optimization do not disturb navigation, crops, section positions, or the approved design.
+- The visible result remains essentially the same approved website.
+
+### Work
+
+- [ ] Disable active navigation from `Cabin stays` without displaying internal wording such as “Phase 2.”
+- [ ] Preserve the Cabin Stays visual treatment and implementation structure so `/stays` can be enabled when Phase 2 exists.
+- [ ] Add a test proving the Phase 1 interface cannot navigate to the unfinished route.
+- [ ] Review Hero, Place, Cabins, and Open-Air copy against `docs/anvelia-design-language.md`.
+- [ ] Remove internal explanations, defensive wording, and unnecessary repetition of elevation or location.
+- [ ] Verify the WhatsApp URL, phone number, address, and every factual statement.
+- [ ] Confirm no pricing, capacity, availability, detox, medical, clinical, treatment, or documentary claims appear.
+- [ ] Add an accurate page title, meta description, document language, and basic Open Graph metadata.
+- [ ] Use approved metadata wording and imagery without inventing hotel classifications or facilities.
+- [ ] Inventory only images currently rendered by Phase 1.
+- [ ] Keep original source assets untouched and create optimized runtime derivatives where they materially reduce transfer size.
+- [ ] Add responsive `srcset` and `sizes` where the component architecture supports them cleanly.
+- [ ] Keep only the hero eager and high priority; lazy-load below-fold imagery.
+- [ ] Preserve approved crops, colour, texture, botanical detail, and stable image dimensions.
+- [ ] Remove unused runtime imports without deleting archive, concept, or QA assets.
+- [ ] Verify the mobile menu widget retains the same position and dimensions at the top, while scrolled, and while open.
+- [ ] Verify anchor navigation, image loading, layout stability, horizontal overflow, console output, and broken requests.
+
+### Verification
+
+Run:
+
+```powershell
+rtk npm.cmd run test
+rtk npm.cmd run build
+rtk npm.cmd run test:e2e
+```
+
+Review at `390x844`, `768x1024`, landscape tablet, and desktop widths. Record before-and-after runtime image transfer measurements.
+
+**Acceptance criteria:**
+- `/stays` is inaccessible from the Phase 1 interface.
+- Gatherings and Visit navigation remains prepared for Task 9.
+- All public copy passes the truth restrictions.
+- Page title, meta description, language, and Open Graph basics are populated.
+- Only the hero is intentionally eager.
+- Responsive images preserve acceptable visual fidelity.
+- No broken links, requests, console errors, horizontal overflow, blank anchor states, or new layout shifts occur.
+- Hero, Place, Cabins, Open-Air Living, header, and mobile menu retain their approved layout and design language.
+- Tests, production build, and Playwright checks pass.
+
+**Stop and preview:** Show before-and-after transfer measurements, portrait and desktop screenshots, changed files, verification output, and remaining Task 9 risks. Continue only after approval.
+
+
+## Task 9: Build Gatherings, Visit, And Closing End Note
+
+**Goal:** Complete the conversion and practical information path without repeating Visit content in a separate footer.
+
+**Approved refinement (2026-07-17):** The former standalone footer requirement is superseded. Visit ends with one timeless `© Anvelia Sanctuary` note integrated over its lower image edge. It has no year, repeated address, location, WhatsApp action, navigation, paper band, hairline, or added page height.
+
+**Task 9.5 refinement (2026-07-17):** Open-Air Living appears in navigation as `Rhythm` without changing its `#open-air-living` anchor, approved image, proportions, or `Living with the hillside` title. A restrained lower-margin `See activities` editorial passage connects it to a complete `/activities` page with one `100svh` chapter and three concise, unprogrammed moments. The label precedes its right-side hairline, short-landscape copy remains visible and readable at `844x390` and `568x320`, secondary-page anchors return home, `/stays` remains disabled, and no pricing, booking, capacity, availability, medical, detox, or scheduled-program claims are introduced. Base-path normalization, route metadata, and a Vite multi-page Activities entry make direct `/Anvelia-06/activities/` activation safe while keeping all GitHub Pages links and assets inside `/Anvelia-06/`. Implementation and complete verification are green: 63 Vitest checks, both normal and GitHub Pages builds, 17 focused Activities browser checks, the complete 42-test Playwright suite, the deployed-base artifact smoke test, and `git diff --check` pass.
 
 **Files:**
 - Create: `src/components/sections/GatheringsSection.tsx`
 - Create: `src/components/sections/VisitSection.tsx`
-- Create: `src/components/sections/SiteFooter.tsx`
 - Modify: `src/App.tsx`
 
 **Recommended tools:** link checker, keyboard test, mobile preview.
 
 - [ ] Add private dinners, small corporate retreats, and wellness retreats.
 - [ ] Add address and visitor guidance.
-- [ ] Add WhatsApp CTA in Visit and footer.
+- [ ] Add one WhatsApp CTA in Visit only.
+- [ ] Integrate the timeless copyright end note without creating a separate footer section.
 - [ ] Leave room for future map link without adding a fake map.
 
 **Acceptance criteria:**
 - Visitor knows how to contact Anvelia.
 - Address is visible and readable.
 - No form, pricing, gallery, or social links appear.
+- No separate footer repeats Visit information or extends the closing chapter.
 
 **Stop and preview:** Show lower-page desktop/mobile screenshots and all CTA locations. Continue only after approval.
 

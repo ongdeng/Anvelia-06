@@ -1,5 +1,7 @@
 # Anvelia World-Class Elevation Implementation Plan
 
+> **SUPERSEDED HISTORICAL REFERENCE:** Do not execute this plan. It predates the approved original Option 2 direction and conflicts with current Phase 1 decisions on positioning, navigation, forms, pricing, motion, imagery, and scope. Current authorities are `AGENTS.md`, `docs/anvelia-design-language.md`, `docs/anvelia-current-build-state.md`, `md files/2026-06-30-anvelia-phase-1-master-plan.md`, and `docs/superpowers/plans/2026-06-30-anvelia-phase-1-build-plan.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Elevate Anvelia into a distinctive, mature, high-end sanctuary website with world-class art direction, credible content, refined conversion paths, WCAG 2.2 AA accessibility, strong Core Web Vitals, production-grade engineering, and measurable launch quality. The final website must be a visibly new creative build, not a polished version of the old Anvelia page.

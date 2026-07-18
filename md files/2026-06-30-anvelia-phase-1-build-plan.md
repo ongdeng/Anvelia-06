@@ -8,6 +8,10 @@
 
 **Tech Stack:** React, TypeScript, Vite, custom CSS, local assets, Vitest/Testing Library, Playwright.
 
+## Global Design Constraint
+
+All visual, copy, image, layout, and motion decisions must follow `docs/anvelia-design-language.md`. It is the canonical aesthetic authority; this implementation plan governs task order and acceptance. Do not add decorative section-transition animation. `/stays` remains visibly disabled until Phase 2, while Gatherings and Visit remain required Phase 1 sections.
+
 ---
 
 ## Approval Rule
@@ -285,6 +289,78 @@ rtk npm run test
 - Copy remains resort-first.
 
 **Stop and preview:** Show section screenshots and selected image crops. Continue only after approval.
+
+## Task 8.5: Truth And Runtime Stabilization
+
+**Goal:** Make the approved upper-page experience truthful, lighter, and technically dependable before building Gatherings, Visit, and the footer. Preserve the existing visual composition.
+
+**Files:**
+- Modify: `index.html`
+- Modify: `src/App.tsx`
+- Modify: `src/content/siteContent.ts`
+- Modify: `src/content/images.ts`
+- Modify: relevant section and image components only when required
+- Modify: relevant `src/styles/` files only for stability
+- Modify: `tests/components/site-content.test.tsx`
+- Modify: `tests/e2e/site.spec.ts`
+- Create: optimized runtime image derivatives only for active imagery
+
+**Recommended tools:** content registry review, responsive image tooling, browser network inspection, Playwright, TypeScript, Vitest.
+
+### Outcomes
+
+- `/stays` cannot send a Phase 1 visitor to an unfinished page, while its Phase 2 intent remains easy to restore.
+- Public copy is concise, resort-first, and free of misleading, repetitive, medical, detox, capacity, pricing, availability, or documentary implications.
+- Browser tabs, search previews, and shared links identify Anvelia accurately.
+- Mobile visitors download appropriately sized images instead of unnecessary desktop-scale assets.
+- Lazy loading and optimization do not disturb navigation, crops, section positions, or the approved design.
+- The visible result remains essentially the same approved website.
+
+### Work
+
+- [ ] Disable active navigation from `Cabin stays` without displaying internal wording such as “Phase 2.”
+- [ ] Preserve the Cabin Stays visual treatment and implementation structure so `/stays` can be enabled when Phase 2 exists.
+- [ ] Add a test proving the Phase 1 interface cannot navigate to the unfinished route.
+- [ ] Review Hero, Place, Cabins, and Open-Air copy against `docs/anvelia-design-language.md`.
+- [ ] Remove internal explanations, defensive wording, and unnecessary repetition of elevation or location.
+- [ ] Verify the WhatsApp URL, phone number, address, and every factual statement.
+- [ ] Confirm no pricing, capacity, availability, detox, medical, clinical, treatment, or documentary claims appear.
+- [ ] Add an accurate page title, meta description, document language, and basic Open Graph metadata.
+- [ ] Use approved metadata wording and imagery without inventing hotel classifications or facilities.
+- [ ] Inventory only images currently rendered by Phase 1.
+- [ ] Keep original source assets untouched and create optimized runtime derivatives where they materially reduce transfer size.
+- [ ] Add responsive `srcset` and `sizes` where the component architecture supports them cleanly.
+- [ ] Keep only the hero eager and high priority; lazy-load below-fold imagery.
+- [ ] Preserve approved crops, colour, texture, botanical detail, and stable image dimensions.
+- [ ] Remove unused runtime imports without deleting archive, concept, or QA assets.
+- [ ] Verify the mobile menu widget retains the same position and dimensions at the top, while scrolled, and while open.
+- [ ] Verify anchor navigation, image loading, layout stability, horizontal overflow, console output, and broken requests.
+
+### Verification
+
+Run:
+
+```powershell
+rtk npm.cmd run test
+rtk npm.cmd run build
+rtk npm.cmd run test:e2e
+```
+
+Review at `390x844`, `768x1024`, landscape tablet, and desktop widths. Record before-and-after runtime image transfer measurements.
+
+**Acceptance criteria:**
+- `/stays` is inaccessible from the Phase 1 interface.
+- Gatherings and Visit navigation remains prepared for Task 9.
+- All public copy passes the truth restrictions.
+- Page title, meta description, language, and Open Graph basics are populated.
+- Only the hero is intentionally eager.
+- Responsive images preserve acceptable visual fidelity.
+- No broken links, requests, console errors, horizontal overflow, blank anchor states, or new layout shifts occur.
+- Hero, Place, Cabins, Open-Air Living, header, and mobile menu retain their approved layout and design language.
+- Tests, production build, and Playwright checks pass.
+
+**Stop and preview:** Show before-and-after transfer measurements, portrait and desktop screenshots, changed files, verification output, and remaining Task 9 risks. Continue only after approval.
+
 
 ## Task 9: Build Gatherings, Visit, And Footer
 

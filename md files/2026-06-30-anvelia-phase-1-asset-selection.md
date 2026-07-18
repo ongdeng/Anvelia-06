@@ -4,6 +4,8 @@ Date: 2026-06-30
 
 Scope: Task 1 only. This document preserves the selected visual source and assigns phase 1 image roles before frontend scaffolding begins.
 
+Image selection and treatment must follow `docs/anvelia-design-language.md`. Each image needs a distinct narrative role; do not repeat generic misty hillside views across consecutive sections.
+
 ## Visual Source Of Truth
 
 Use the actual original Option 2 concept only:
@@ -36,24 +38,23 @@ All selected imagery is concept visual material. It can communicate mood, settin
 | --- | --- | --- | --- | --- |
 | Hero threshold / arrival | `assets/anvelia/01-current-production-candidates/anvelia-arrival-threshold-hero-concept-optimized.jpg` | Primary phase 1 hero candidate. Use for the name-led arrival threshold, dark left-side title area, timber framing, stone path, lantern warmth, and hillside reveal. | Exact entry design, exact site layout, final built appearance, cabin count, or confirmed facilities. | Covered by new generated asset. |
 | Place / hillside setting | `assets/anvelia/01-current-production-candidates/anvelia-sanctuary-background-v1-optimized.jpg` | Foot-of-Genting, hillside air, greenery, slower stay context. | Exact garden layout, farm size, or stream/path availability. | No immediate gap. |
-| Cabins | `assets/anvelia/01-current-production-candidates/anvelia-cabin-hero-optimized.jpg` | Cabin-led stay experience for couples, families, solo travelers, and small groups. | Exact cabin design, number, size, interior layout, or availability. | No immediate gap. |
+| Cabins | `assets/anvelia/01-current-production-candidates/anvelia-cabin-calm-stay-concept.png` | A calmer, stay-led cabin experience with pitched roof, timber, glazing, deck, warm interior, and hillside planting. | Exact cabin design, number, size, interior layout, weather, or availability. | Current trial; verify final crop and optimize before launch. |
 | Cabin / timber detail | `assets/anvelia/06-moodboard-thumbnails-mcp/vernacular-timber-craft.jpg` | Small detail crop for timber, craft, rain, and material care. | Exact joinery or confirmed construction detail. | Optional. Generate a closer cabin interior or timber detail if a larger production image is needed. |
 | Open-air living | `assets/anvelia/01-current-production-candidates/anvelia-ritual-sharing-circle-v1-optimized.jpg` | Open-air pavilion, cushions, lanterns, mountain view, slower evening pace. | Detox, therapy, formal ritual, or exact retreat setup. | No immediate gap. Rename in code/content as open-air living, not ritual. |
-| Private dinners / small retreats | `assets/anvelia/06-moodboard-thumbnails-mcp/vernacular-shared-table.jpg` | Intimate meal and hosted gathering atmosphere. | Exact menu, dining service, chef, capacity, or event package. | Optional. Generate a polished private dinner at dusk if the section needs a stronger resort image. |
-| Visit / footer atmosphere | `assets/anvelia/01-current-production-candidates/anvelia-mist-forest-transition-optimized.jpg` | Quiet closing atmosphere, hillside mist, breathing room behind contact details. | Guaranteed weather, exact view, or access route. | No immediate gap. |
+| Gatherings | `assets/anvelia/01-current-production-candidates/anvelia-gatherings-quiet-readiness-concept.png` | A people-free timber pavilion after rain, with a tactile shared table, tea ware, carafe, linen, notebook, and pulled-back chair suggesting quiet readiness. | Exact facility, setup, view, service, capacity, availability, or event. | Approved for Task 9.2. The 640px, 1024px, and 1536px WebP runtime derivatives are recorded in the manifest. |
+| Visit / footer atmosphere | `assets/anvelia/01-current-production-candidates/anvelia-mist-forest-transition-optimized.jpg` | Quiet closing atmosphere, hillside mist, breathing room behind contact details. | Guaranteed weather, exact view, or access route. | Implemented for Task 9.3 with 640px, 960px, 1280px, and 1672px responsive WebPs; reassess only when verified photography is available. |
 
 ## Supplemental Candidates
 
 - `assets/anvelia/01-current-production-candidates/anvelia-hero-banner-optimized.jpg` can be used as a secondary wide hillside resort image if the hero needs a broader estate view.
 - `assets/anvelia/01-current-production-candidates/anvelia-ritual-river-walk-v1-optimized.jpg` can support a transition image, but avoid implying a confirmed river walk facility.
 - `assets/anvelia/01-current-production-candidates/anvelia-auditorium-hero-v2-optimized.jpg` can support small corporate or wellness retreat atmosphere, but avoid auditorium capacity or program claims.
-- `assets/anvelia/06-moodboard-thumbnails-mcp/cinematic-kitchen-hands.jpg` can support hosted-food detail if a small editorial crop is needed.
 
 ## Generation Recommendations
 
 1. Dedicated entrance / arrival threshold hero image is now generated and stored as `anvelia-arrival-threshold-hero-concept-optimized.jpg`.
 2. Consider one larger cabin interior or timber detail image if the cabin section needs more intimacy than the current exterior shot.
-3. Consider one refined private dinner image if the gatherings section needs to feel more resort hospitality and less moodboard reference.
+3. No additional Gatherings generation is needed for Task 9.2; use the approved quiet-readiness concept and its responsive derivatives.
 
 Open-air sitting is covered by the existing pavilion image, so it does not need immediate generation.
 
