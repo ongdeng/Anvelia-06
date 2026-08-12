@@ -15,6 +15,8 @@ Status: approved; final-audit corrections are being closed sequentially before T
 - One `h1`, ordered `h2` chapter headings, named header/navigation landmarks, semantic lists and descriptions, meaningful image alternatives, and hidden decorative imagery are present.
 - The skip link, visible focus treatment, menu focus loop, Escape behavior, chapter focus transfer, cross-route chapter arrival, WhatsApp URLs, Activities path, disabled `/stays` destination, and reduced-motion mode are covered by browser tests.
 - The full-screen menu remains visually identical to the approved Task 10.3 state; the corrections change semantics and focus behavior, not layout.
+- Chromium remains the exhaustive geometry engine, while a dedicated WebKit release matrix now verifies Safari-class rendering at portrait, short-landscape, and desktop sizes; responsive image decoding; fixed-header and full-screen-menu behavior; and the homepage-to-Activities journey.
+- Opening the mobile menu now focuses the unchanged menu/close control explicitly. This removes a WebKit pointer-focus ambiguity while preserving its exact `44px` geometry and position.
 
 ## Performance And Production
 
@@ -25,7 +27,8 @@ Status: approved; final-audit corrections are being closed sequentially before T
 ## Verification
 
 - `rtk npm.cmd run test`: 76 tests passed.
-- `rtk npm.cmd run test:e2e`: 61 tests passed.
+- `rtk npm.cmd run test:e2e`: 65 tests passed across Chromium and WebKit.
+- `rtk npm.cmd run test:e2e:webkit`: 4 WebKit compatibility tests passed.
 - `rtk npm.cmd run build`: passed.
 - `rtk npm.cmd run build:pages`: passed.
 - `rtk npm.cmd run test:e2e:pages`: 1 test passed.

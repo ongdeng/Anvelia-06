@@ -65,6 +65,8 @@ export function SiteHeader({ homeRooted = false }: SiteHeaderProps) {
       return undefined;
     }
 
+    menuButtonRef.current?.focus();
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();

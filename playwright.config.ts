@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  testIgnore: "pages-build.spec.ts",
+  testIgnore: ["pages-build.spec.ts", "webkit.spec.ts"],
   use: {
     baseURL: "http://127.0.0.1:5173",
     trace: "on-first-retry"
@@ -11,6 +11,12 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] }
+    },
+    {
+      name: "webkit",
+      testMatch: "webkit.spec.ts",
+      testIgnore: [],
+      use: { ...devices["Desktop Safari"] }
     }
   ],
   webServer: {
