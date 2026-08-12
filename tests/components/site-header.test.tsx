@@ -150,6 +150,26 @@ describe("SiteHeader", () => {
     });
   });
 
+  it("keeps the mobile close control inside the modal dialog", () => {
+    render(<SiteHeader />);
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: siteContent.accessibility.mobileMenuOpenLabel
+      })
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: siteContent.accessibility.mobileMenuLabel
+    });
+
+    expect(
+      within(dialog).queryByRole("button", {
+        name: siteContent.accessibility.mobileMenuCloseLabel
+      })
+    ).toBeInTheDocument();
+  });
+
   it("closes the mobile menu after a mobile nav link is selected", () => {
     render(<SiteHeader />);
 

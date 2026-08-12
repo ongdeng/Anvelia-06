@@ -204,9 +204,15 @@ export function SiteHeader({ homeRooted = false }: SiteHeaderProps) {
   return (
     <header
       className="site-header"
-      aria-label={accessibility.primaryHeaderLabel}
+      aria-label={
+        isMenuOpen
+          ? accessibility.mobileMenuLabel
+          : accessibility.primaryHeaderLabel
+      }
+      aria-modal={isMenuOpen ? "true" : undefined}
       data-menu-open={isMenuOpen ? "true" : undefined}
       data-scrolled={hasScrolled ? "true" : undefined}
+      role={isMenuOpen ? "dialog" : undefined}
     >
       <a
         aria-hidden={isMenuOpen ? true : undefined}
@@ -261,13 +267,10 @@ export function SiteHeader({ homeRooted = false }: SiteHeaderProps) {
       </button>
 
       <div
-        aria-label={accessibility.mobileMenuLabel}
-        aria-modal="true"
         className="mobile-nav-panel"
         hidden={!isMenuOpen}
         id={menuId}
         ref={menuPanelRef}
-        role="dialog"
       >
         <div className="mobile-nav-panel__content">
           <nav

@@ -3961,13 +3961,16 @@ test("Task 10.4 mobile menu isolates the page and moves focus to its selected ch
 
   const main = page.locator("#main-content");
   const skipLink = page.locator(".skip-link");
+  const dialog = page.getByRole("dialog", {
+    name: "Mobile site sections"
+  });
 
   await expect(main).toHaveAttribute("inert", "");
   await expect(main).toHaveAttribute("aria-hidden", "true");
-  await expect(page.locator(".mobile-nav-panel")).toHaveAttribute(
-    "aria-label",
-    "Mobile site sections"
-  );
+  await expect(dialog).toHaveAttribute("aria-modal", "true");
+  await expect(
+    dialog.getByRole("button", { name: "Close menu" })
+  ).toBeVisible();
   await expect(page.locator(".brand-link")).toHaveAttribute(
     "aria-hidden",
     "true"

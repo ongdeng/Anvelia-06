@@ -4,7 +4,7 @@ Status: approved; final-audit corrections are being closed sequentially before T
 
 ## Corrections
 
-- The mobile navigation is now a named modal dialog. While open, the page, skip link, brand, desktop navigation, and header WhatsApp action leave the active accessibility path; Escape restores focus and selecting a chapter moves focus to that destination.
+- The mobile navigation is now a named modal dialog whose boundary contains the unchanged menu/close control. While open, the page, skip link, brand, desktop navigation, and header WhatsApp action leave the active accessibility path; Escape restores focus and selecting a chapter moves focus to that destination.
 - The focus indicator now uses muted neutral brass with at least `3:1` contrast on paper, forest, timber, and ink. Place fact labels now meet the `4.5:1` normal-text threshold.
 - Homepage and Activities publish route-specific canonical URLs, `og:url`, shared-site metadata, theme colour, favicons, and a truthful Open Graph image. The share image reuses the approved threshold Hero rather than implying an unconfirmed resort scale.
 - The Hero explicitly selects its 960px portrait or 1600px landscape WebP. Only English Latin font subsets ship.
@@ -24,7 +24,7 @@ Status: approved; final-audit corrections are being closed sequentially before T
 
 ## Verification
 
-- `rtk npm.cmd run test`: 73 tests passed.
+- `rtk npm.cmd run test`: 74 tests passed.
 - `rtk npm.cmd run test:e2e`: 61 tests passed.
 - `rtk npm.cmd run build`: passed.
 - `rtk npm.cmd run build:pages`: passed.
