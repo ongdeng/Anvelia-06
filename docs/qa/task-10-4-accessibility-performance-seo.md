@@ -18,13 +18,13 @@ Status: approved; final-audit corrections are being closed sequentially before T
 
 ## Performance And Production
 
-- Standard build: passed. Main JavaScript is `174.36 kB` (`55.06 kB` gzip); CSS is `72.24 kB` (`12.52 kB` gzip).
+- Standard build: passed. Main JavaScript is `174.92 kB` (`55.19 kB` gzip); CSS is `72.24 kB` (`12.52 kB` gzip).
 - GitHub Pages build: passed. The bundle contains 8 Latin font files (`219,484` bytes) and no non-Latin subsets. The 960px Hero is `79.19 kB`; the 1600px Hero is `184.43 kB`.
 - Pages artifact smoke: passed. Homepage and direct Activities entry load under `/Anvelia-06/`; links, canonical metadata, icons, all decoded images, console, page errors, and failed requests are verified.
 
 ## Verification
 
-- `rtk npm.cmd run test`: 74 tests passed.
+- `rtk npm.cmd run test`: 76 tests passed.
 - `rtk npm.cmd run test:e2e`: 61 tests passed.
 - `rtk npm.cmd run build`: passed.
 - `rtk npm.cmd run build:pages`: passed.
@@ -37,7 +37,7 @@ Status: approved; final-audit corrections are being closed sequentially before T
 - Evidence: `assets/anvelia/08-visual-qa-captures/task-10-4/`.
 - Final Task 10.4 captures and the Task 10.3 responsive matrix remain release evidence. Loose iteration captures, redundant runtime-source copies, and local execution logs are excluded from Git; canonical source assets remain under `assets/anvelia/`.
 - The current public deployment returns `200` for homepage and Activities with a clean runtime console, but predates this Task 10.4 artifact and its new metadata/share asset. Publishing remains a later release action.
-- All principal imagery remains explicitly registered as conceptual. Documentary photographs should replace concept visuals when verified material becomes available.
-- A fresh final subagent review was attempted but unavailable because the subagent service reached its usage limit. The earlier independent review's five findings were each corrected and protected by focused tests.
+- All 11 active image masters remain explicitly registered as `phase-1-runtime-concept`; every bundled runtime file has an exact-path `phase-1-runtime-concept-derivative` manifest record. The original moodboard and reference-only records remain outside the active inventory.
+- Registry and manifest tests enforce concept-only treatment, non-documentary notes, exact bundled runtime paths, and the separation between active and reference imagery. Documentary photographs should replace concept visuals when verified material becomes available.
 
 Task 10.4 result: approved and passed locally; final-audit corrections remain gated before Task 11.

@@ -50,7 +50,7 @@ export type SiteImage = {
   alt: string;
   conceptOnly: boolean;
   sourcePath: string;
-  publicationStatus: "runtime-candidate" | "reference-only";
+  publicationStatus: "phase-1-runtime-concept" | "reference-only";
 };
 
 export const imagesByRole = {
@@ -63,7 +63,7 @@ export const imagesByRole = {
     height: 900,
     alt: "Concept visual of a shaded arrival threshold in a hillside resort setting.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-arrival-threshold-hero-concept-optimized.jpg"
   },
@@ -76,7 +76,7 @@ export const imagesByRole = {
     height: 900,
     alt: "Concept visual for the hillside setting and surrounding greenery.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-sanctuary-background-v1-optimized.jpg"
   },
@@ -89,7 +89,7 @@ export const imagesByRole = {
     height: 941,
     alt: "Concept visual of a timber cabin stay with a pitched roof, deck, warm interior light, and hillside greenery.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-cabin-calm-stay-concept.png"
   },
@@ -101,7 +101,7 @@ export const imagesByRole = {
     height: 900,
     alt: "Concept botanical engraving background for the cabins section.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/09-generated-backgrounds/anvelia-botanical-background-dark.png"
   },
@@ -124,7 +124,7 @@ export const imagesByRole = {
     height: 1024,
     alt: "Concept visual of an open-air timber veranda with lounge seating and tea overlooking a green hillside.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-open-air-living-veranda-concept.png"
   },
@@ -137,7 +137,7 @@ export const imagesByRole = {
     height: 576,
     alt: "Concept botanical drawing on warm paper for the Open-Air Living section.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/09-generated-backgrounds/anvelia-botanical-background-light.png"
   },
@@ -147,9 +147,9 @@ export const imagesByRole = {
     src: mobileNavigationTimberSrc,
     alt: "Concept detail of rain on timber craft for the mobile navigation atmosphere.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
-      "assets/anvelia/06-moodboard-thumbnails-mcp/vernacular-timber-craft.jpg"
+      "assets/anvelia/01-current-production-candidates/anvelia-mobile-navigation-timber-craft.jpg"
   },
   "gatherings-shared-table": {
     id: "gatherings-shared-table",
@@ -160,7 +160,7 @@ export const imagesByRole = {
     height: 1024,
     alt: "Concept visual of a people-free timber pavilion after rain, with tea ware, a carafe, a notebook, and a pulled-back chair beside hillside greenery.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-gatherings-quiet-readiness-concept.png"
   },
@@ -173,7 +173,7 @@ export const imagesByRole = {
     height: 683,
     alt: "Concept material background of warm handmade paper with subtle gathering-inspired embossing.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/09-generated-backgrounds/anvelia-gatherings-material-paper.png"
   },
@@ -186,7 +186,7 @@ export const imagesByRole = {
     height: 992,
     alt: "Concept visual of a stone arrival path through hillside planting, framed by a timber threshold and a warm lantern.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-visit-arrival-path-concept.png"
   },
@@ -199,7 +199,7 @@ export const imagesByRole = {
     height: 1536,
     alt: "Concept warm-ivory handmade paper texture for the Visit section.",
     conceptOnly: true,
-    publicationStatus: "runtime-candidate",
+    publicationStatus: "phase-1-runtime-concept",
     sourcePath:
       "assets/anvelia/09-generated-backgrounds/anvelia-visit-paper-field.png"
   }
