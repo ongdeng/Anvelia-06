@@ -1,6 +1,6 @@
 # Anvelia Current Build State
 
-Updated: 2026-08-12
+Updated: 2026-08-13
 
 ## Purpose
 
@@ -62,8 +62,8 @@ This file is the compact implementation memory for the Anvelia Sanctuary Phase 1
 - Task 9.5 is approved. `Rhythm` appears in both navigation modes, the homepage passage and complete `/activities` route ship together, and base-aware routing preserves direct `/Anvelia-06/activities/` activation.
 - Task 10.1 visual consistency corrections and Task 10.2 motion consistency are implemented and verified.
 - Task 10.3 is approved. All six homepage chapters and the Activities chapter hold the exact one-viewport contract across the locked and breakpoint-boundary matrix, with no clipped visible content or horizontal overflow.
-- Task 10.4 is approved and fully verified locally. The menu is a named, isolated modal with complete focus behavior; contrast, canonical/social/structured metadata, truthful concept-image treatment, crawler artifacts, Latin-only fonts, responsive Hero delivery, deployment CI, exact build identification, and GitHub Pages base-path checks are in place. The sixth and final correction is awaiting checkpoint approval.
-- Continue to Task 11 handoff/release preparation after the sixth correction checkpoint is approved. Do not publish without explicit approval.
+- Task 10.4 and its sixth final-audit correction are approved and committed. The menu is a named, isolated modal with complete focus behavior; contrast, canonical/social/structured metadata, truthful concept-image treatment, crawler artifacts, Latin-only fonts, responsive Hero delivery, deployment CI, exact build identification, and GitHub Pages base-path checks are in place.
+- Task 11 is approved. Phase 1 is complete, with final evidence and the release boundary recorded in `md files/2026-06-30-anvelia-phase-1-handoff.md`. Publication remains a separate explicit action.
 
 ## Verification Baseline
 
@@ -85,8 +85,11 @@ Task 10.3 verification after breakpoint correction: all 63 Vitest checks passed,
 
 Task 10.4 verification after the sixth final-audit correction: all 82 Vitest checks passed, all 65 Playwright checks passed across Chromium and WebKit, both production builds passed, the GitHub Pages artifact smoke passed, `git diff --check` passed, and independent review found no issues. Static homepage and Activities entries now include truthful social metadata, restrained resort/page structured data, sitemap discovery, and an exact build-SHA marker. Deployment CI verifies the propagated SHA and public metadata before reporting success. The public deployment remains the previous artifact until a later approved release; the GitHub Project Pages origin-level robots limitation is documented in `docs/qa/task-10-4-accessibility-performance-seo.md`.
 
+Task 11 approved final review: fresh desktop, portrait, menu, short-landscape, and dedicated Place, Rhythm, Gatherings, Visit, and Activities captures were compared with the original Option 2 and the canonical design-language checklist. The final verification matrix again passed with 82 Vitest checks, 65 Chromium/WebKit checks, both builds, the GitHub Pages artifact smoke, and a clean browser console. No Phase 1 blocker was found; documentary photography and expanded routes remain Phase 2 work. Evidence is in `assets/anvelia/08-visual-qa-captures/task-11-final/`.
+
 Latest visual QA captures:
 
+- `assets/anvelia/08-visual-qa-captures/task-11-final/`
 - `assets/anvelia/08-visual-qa-captures/task-10-4/`
 - `assets/anvelia/08-visual-qa-captures/task-10-3-correction/`
 - `assets/anvelia/08-visual-qa-captures/task9-2-gatherings-desktop-1440x900.png`
