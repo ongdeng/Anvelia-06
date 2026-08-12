@@ -9,3 +9,23 @@ vite-dev.*.log
 .env
 .env.*
 !.env.example
+
+# Local execution records are not release artifacts.
+.superpowers/
+
+# QA evidence belongs in named task folders; loose captures are iterations.
+assets/anvelia/08-visual-qa-captures/*.jpg
+assets/anvelia/08-visual-qa-captures/*.jpeg
+assets/anvelia/08-visual-qa-captures/*.png
+assets/anvelia/08-visual-qa-captures/*.webp
+assets/anvelia/08-visual-qa-captures/task-10-4/*.png
+
+# Canonical originals live under assets/anvelia; runtime uses selected derivatives.
+src/assets/images/anvelia-botanical-background-dark.png
+src/assets/images/anvelia-botanical-linework-dark.png
+src/assets/images/anvelia-cabin-calm-stay-concept.png
+src/assets/images/anvelia-cabin-stay-concept.jpg
+src/assets/images/anvelia-cabin-threshold-stay-concept.png
+src/assets/images/anvelia-mist-forest-transition-optimized-*.webp
+src/assets/images/anvelia-open-air-living-concept.jpg
+src/assets/images/anvelia-open-air-living-concept-*.webp

@@ -124,6 +124,11 @@ describe("SiteHeader", () => {
         name: siteContent.accessibility.mobileMenuLabel
       })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", {
+        name: siteContent.accessibility.mobileMenuLabel
+      })
+    ).toBeInTheDocument();
     expect(container.querySelector(".mobile-nav-panel")).not.toHaveAttribute(
       "hidden"
     );
@@ -177,13 +182,17 @@ describe("SiteHeader", () => {
       })
     );
 
-    expect(
-      screen.getByRole("link", { name: siteContent.brand.homeAriaLabel })
-    ).toHaveAttribute("tabindex", "-1");
-    expect(
-      screen.getAllByRole("link", {
-        name: siteContent.contact.whatsappAriaLabel
-      })[0]
-    ).toHaveAttribute("tabindex", "-1");
+    expect(document.querySelector(".brand-link")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+    expect(document.querySelector(".header-whatsapp")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+    expect(document.querySelector(".primary-nav--desktop")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
   });
 });

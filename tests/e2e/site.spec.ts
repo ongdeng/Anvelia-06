@@ -23,6 +23,187 @@ test("Task 4 foundation has no 320px horizontal overflow", async ({ page }) => {
   expect(overflow.overflowingElements).toEqual([]);
 });
 
+test("Task 10.1 fits a 320px device after a reserved scrollbar reduces its layout viewport", async ({
+  page
+}) => {
+  const states = [
+    { path: "/", menuOpen: false },
+    { path: "/", menuOpen: true },
+    { path: "/activities/", menuOpen: false }
+  ];
+
+  await page.setViewportSize({ width: 320, height: 568 });
+
+  for (const state of states) {
+    await page.goto(state.path);
+
+    if (state.menuOpen) {
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await expect(
+        page.getByRole("button", { name: "Close menu" })
+      ).toBeVisible();
+    }
+
+    const overflow = await page.evaluate(() => {
+      const root = document.documentElement;
+      const layoutWidth = document.body.clientWidth;
+      const overflowingElements = Array.from(
+        document.body.querySelectorAll<HTMLElement>("*")
+      )
+        .filter((element) => {
+          const rect = element.getBoundingClientRect();
+          const styles = window.getComputedStyle(element);
+
+          if (
+            styles.display === "none" ||
+            styles.visibility === "hidden" ||
+            rect.width === 0 ||
+            rect.height === 0
+          ) {
+            return false;
+          }
+
+          return rect.left < -1 || rect.right > layoutWidth + 1;
+        })
+        .map((element) => ({
+          tag: element.tagName.toLowerCase(),
+          className: element.getAttribute("class") ?? "",
+          id: element.id
+        }));
+
+      return {
+        innerWidth: window.innerWidth,
+        layoutWidth,
+        rootScrollWidth: root.scrollWidth,
+        bodyScrollWidth: document.body.scrollWidth,
+        rootOverflowX: window.getComputedStyle(root).overflowX,
+        bodyOverflowX: window.getComputedStyle(document.body).overflowX,
+        overflowingElements
+      };
+    });
+
+    expect(overflow.innerWidth).toBe(320);
+    expect(overflow.layoutWidth).toBe(305);
+    expect(overflow.rootScrollWidth).toBeLessThanOrEqual(overflow.layoutWidth);
+    expect(overflow.bodyScrollWidth).toBeLessThanOrEqual(overflow.layoutWidth);
+    expect(["hidden", "clip"]).not.toContain(overflow.rootOverflowX);
+
+    if (!state.menuOpen) {
+      expect(["hidden", "clip"]).not.toContain(overflow.bodyOverflowX);
+    }
+
+    expect(overflow.overflowingElements).toEqual([]);
+  }
+});
+
+test("Task 10.1 shared phone header separates controls and clears page content", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 }
+  ];
+  const paths = ["/", "/activities/"];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+
+    for (const path of paths) {
+      await page.goto(path);
+
+      const readGeometry = () =>
+        page.evaluate(() => {
+          const header = document.querySelector<HTMLElement>(".site-header");
+          const whatsapp = document.querySelector<HTMLElement>(
+            ".site-header > .header-whatsapp"
+          );
+          const menu = document.querySelector<HTMLElement>(
+            ".mobile-menu-toggle"
+          );
+          const eyebrow = document.querySelector<HTMLElement>(
+            ".activities-chapter__eyebrow"
+          );
+          const rect = (element: Element | null) =>
+            element?.getBoundingClientRect() ?? null;
+          const headerRect = rect(header);
+          const whatsappRect = rect(whatsapp);
+          const menuRect = rect(menu);
+          const eyebrowRect = rect(eyebrow);
+          const headerStyles = header
+            ? window.getComputedStyle(header)
+            : null;
+          const headerSurfaceStyles = header
+            ? window.getComputedStyle(header, "::before")
+            : null;
+
+          return {
+            headerBottom: headerRect?.bottom,
+            headerBackdropFilter: headerStyles?.backdropFilter,
+            headerSurfaceBackdropFilter:
+              headerSurfaceStyles?.backdropFilter,
+            whatsappMenuGap:
+              whatsappRect && menuRect
+                ? menuRect.left - whatsappRect.right
+                : null,
+            whatsappMenuCenterDelta:
+              whatsappRect && menuRect
+                ? Math.abs(
+                    whatsappRect.top +
+                      whatsappRect.height / 2 -
+                      (menuRect.top + menuRect.height / 2)
+                  )
+                : null,
+            menu: menuRect
+              ? {
+                  top: menuRect.top,
+                  right: document.body.clientWidth - menuRect.right,
+                  width: menuRect.width,
+                  height: menuRect.height
+                }
+              : null,
+            eyebrowClearance:
+              headerRect && eyebrowRect
+                ? eyebrowRect.top - headerRect.bottom
+                : null
+          };
+        });
+
+      const topGeometry = await readGeometry();
+
+      expect(Number(topGeometry.whatsappMenuGap)).toBeGreaterThanOrEqual(9);
+      expect(Number(topGeometry.whatsappMenuCenterDelta)).toBeLessThanOrEqual(
+        2
+      );
+      expect(topGeometry.menu).toMatchObject({ width: 44, height: 44 });
+
+      if (path === "/activities/") {
+        expect(Number(topGeometry.eyebrowClearance)).toBeGreaterThanOrEqual(16);
+        expect(topGeometry.headerBackdropFilter).toBe("none");
+        expect(topGeometry.headerSurfaceBackdropFilter).toContain("blur");
+      }
+
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await expect(
+        page.getByRole("button", { name: "Close menu" })
+      ).toBeVisible();
+
+      const openGeometry = await readGeometry();
+
+      expect(
+        Math.abs(
+          Number(openGeometry.menu?.top) - Number(topGeometry.menu?.top)
+        )
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(
+          Number(openGeometry.menu?.right) - Number(topGeometry.menu?.right)
+        )
+      ).toBeLessThanOrEqual(1);
+      expect(openGeometry.menu).toMatchObject({ width: 44, height: 44 });
+    }
+  }
+});
+
 test("Task 4 focus state is visibly stronger than decorative hairlines", async ({
   page
 }) => {
@@ -98,7 +279,7 @@ test("Task 4 runtime tokens are loaded into the page", async ({ page }) => {
     timber: "#4a2f22",
     forest: "#203a2b",
     brass: "#b08a54",
-    focus: "#d6b37a"
+    focus: "#94856a"
   });
   expect(tokens.displayFont).toContain("Cormorant Garamond");
 });
@@ -274,14 +455,9 @@ test("Place portrait keeps the current image blended while landscape stays split
 
   expect(portraitState.imageSrc).toContain("anvelia-place-hillside-setting");
   expect(portraitState.imageLoaded).toBe(true);
-  expect(Number(portraitState.imageHeight)).toBeGreaterThanOrEqual(300);
-  expect(Number(portraitState.imageHeight)).toBeLessThanOrEqual(430);
-  expect(Number.parseFloat(String(portraitState.imageMarginTop))).toBeLessThanOrEqual(
-    -72
-  );
-  expect(Number.parseFloat(String(portraitState.imageMarginTop))).toBeGreaterThanOrEqual(
-    -124
-  );
+  expect(Number(portraitState.imageHeight) / 844).toBeGreaterThanOrEqual(0.28);
+  expect(Number(portraitState.imageHeight) / 844).toBeLessThanOrEqual(0.36);
+  expect(Number.parseFloat(String(portraitState.imageMarginTop))).toBe(-18);
   expect(portraitState.imageObjectFit).toBe("cover");
   expect(portraitState.imageObjectPosition).toBe("58% 46%");
   expect(portraitState.fadeContent).toBe('""');
@@ -312,13 +488,237 @@ test("Place portrait keeps the current image blended while landscape stays split
     return {
       gridTemplateColumns: placeStyles?.gridTemplateColumns,
       imageHeight: imageRect?.height,
-      imageSrc: image?.getAttribute("src")
+      imageSrc: image?.getAttribute("src"),
+      narrativeParagraphs:
+        place?.querySelectorAll(
+          ".place-section__copy p:not(.place-section__eyebrow)"
+        ).length ?? 0,
+      intro:
+        place?.querySelector(".place-section__intro")?.textContent?.trim() ??
+        "",
+      factCount:
+        place?.querySelectorAll(".place-section__fact").length ?? 0
     };
   });
 
   expect(landscapeState.imageSrc).toBe(portraitState.imageSrc);
   expect(landscapeState.gridTemplateColumns).not.toBe("1fr");
   expect(Number(landscapeState.imageHeight)).toBeGreaterThan(500);
+  expect(landscapeState.narrativeParagraphs).toBe(1);
+  expect(landscapeState.intro).toContain("fresh hillside air");
+  expect(landscapeState.factCount).toBe(3);
+
+  await page.setViewportSize({ width: 821, height: 1180 });
+  await page.reload();
+
+  const breakpointState = await page.evaluate(() => {
+    const section = document.querySelector<HTMLElement>("#place");
+    const image = section?.querySelector<HTMLElement>(".place-section__image");
+    const sectionStyles = section ? window.getComputedStyle(section) : null;
+    const sectionBounds = section?.getBoundingClientRect();
+    const imageBounds = image?.getBoundingClientRect();
+
+    return {
+      innerWidth: window.innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      gridTemplateColumns: sectionStyles?.gridTemplateColumns ?? "",
+      sectionHeight: sectionBounds?.height ?? 0,
+      imageHeight: imageBounds?.height ?? 0
+    };
+  });
+
+  expect(breakpointState.scrollWidth).toBeLessThanOrEqual(
+    breakpointState.innerWidth
+  );
+  expect(breakpointState.gridTemplateColumns.split(" ")).toHaveLength(2);
+  expect(breakpointState.sectionHeight).toBeGreaterThanOrEqual(520);
+  expect(breakpointState.imageHeight).toBe(breakpointState.sectionHeight);
+});
+
+test("Task 10.1 Place portrait is one composed, readable viewport", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 820, height: 1180 }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await page
+      .getByRole("navigation", { name: "Mobile site sections" })
+      .getByRole("link", { name: "Place", exact: true })
+      .click();
+    await expect(page).toHaveURL(/#place$/);
+    await expect
+      .poll(() =>
+        page
+          .locator("#place")
+          .evaluate((section) => section.getBoundingClientRect().top)
+      )
+      .toBeLessThanOrEqual(1);
+    await expect
+      .poll(() =>
+        page
+          .locator(".site-header")
+          .getAttribute("data-scrolled")
+      )
+      .toBe("true");
+
+    const state = await page.evaluate(() => {
+      const section = document.querySelector<HTMLElement>("#place");
+      const copy = section?.querySelector<HTMLElement>(".place-section__copy");
+      const eyebrow = section?.querySelector<HTMLElement>(
+        ".place-section__eyebrow"
+      );
+      const title = section?.querySelector<HTMLElement>(
+        ".place-section__title"
+      );
+      const imageFrame = section?.querySelector<HTMLElement>(
+        ".place-section__image"
+      );
+      const image = imageFrame?.querySelector<HTMLImageElement>("img");
+      const header = document.querySelector<HTMLElement>(".site-header");
+      const facts = Array.from(
+        section?.querySelectorAll<HTMLElement>(".place-section__fact") ?? []
+      );
+      const labels = Array.from(
+        section?.querySelectorAll<HTMLElement>(".place-section__fact dt") ?? []
+      );
+      const values = Array.from(
+        section?.querySelectorAll<HTMLElement>(".place-section__fact dd") ?? []
+      );
+      const sectionBounds = section?.getBoundingClientRect();
+      const copyBounds = copy?.getBoundingClientRect();
+      const eyebrowBounds = eyebrow?.getBoundingClientRect();
+      const imageBounds = imageFrame?.getBoundingClientRect();
+      const headerBounds = header?.getBoundingClientRect();
+      const botanical = copy
+        ? window.getComputedStyle(copy, "::before")
+        : null;
+      const visibleHeaderControls = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          ".site-header .brand-link, .site-header .header-whatsapp, .mobile-menu-toggle"
+        )
+      ).filter((control) => {
+        const styles = window.getComputedStyle(control);
+
+        return (
+          styles.display !== "none" &&
+          styles.visibility !== "hidden" &&
+          Number.parseFloat(styles.opacity) > 0.01
+        );
+      });
+      const textBounds = (element: Element | null) => {
+        if (!element) {
+          return [];
+        }
+
+        const range = document.createRange();
+        range.selectNodeContents(element);
+
+        return Array.from(range.getClientRects());
+      };
+      const leadBounds = [
+        ...textBounds(eyebrow),
+        ...textBounds(title)
+      ];
+      const leadOverlapsHeaderControl = visibleHeaderControls.some((control) => {
+        const controlBounds = control.getBoundingClientRect();
+
+        return leadBounds.some(
+          (bounds) =>
+            bounds.left < controlBounds.right &&
+            bounds.right > controlBounds.left &&
+            bounds.top < controlBounds.bottom &&
+            bounds.bottom > controlBounds.top
+        );
+      });
+      const visibleHeaderControlBounds = visibleHeaderControls.map((control) => {
+        const bounds = control.getBoundingClientRect();
+
+        return {
+          className: control.className,
+          top: bounds.top,
+          right: bounds.right,
+          bottom: bounds.bottom,
+          left: bounds.left
+        };
+      });
+
+      return {
+        innerHeight: window.innerHeight,
+        sectionHeight: sectionBounds?.height ?? 0,
+        sectionTop: sectionBounds?.top ?? null,
+        sectionScrollHeight: section?.scrollHeight ?? 0,
+        copyBottom: copyBounds?.bottom ?? 0,
+        eyebrowTop: eyebrowBounds?.top ?? 0,
+        headerBottom: headerBounds?.bottom ?? 0,
+        leadOverlapsHeaderControl,
+        visibleHeaderControlBounds,
+        imageTop: imageBounds?.top ?? 0,
+        imageBottom: imageBounds?.bottom ?? 0,
+        imageHeight: imageBounds?.height ?? 0,
+        imageSrc: image?.getAttribute("src") ?? "",
+        narrativeParagraphs:
+          copy?.querySelectorAll(
+            "p:not(.place-section__eyebrow)"
+          ).length ?? 0,
+        factCount: facts.length,
+        factGridColumns: section
+          ? window.getComputedStyle(
+              section.querySelector<HTMLElement>(".place-section__facts")!
+            ).gridTemplateColumns
+          : "",
+        smallestLabel: Math.min(
+          ...labels.map((label) =>
+            Number.parseFloat(window.getComputedStyle(label).fontSize)
+          )
+        ),
+        smallestValue: Math.min(
+          ...values.map((value) =>
+            Number.parseFloat(window.getComputedStyle(value).fontSize)
+          )
+        ),
+        botanicalContent: botanical?.content ?? "none",
+        botanicalImage: botanical?.backgroundImage ?? "none",
+        botanicalOpacity: Number.parseFloat(botanical?.opacity ?? "1")
+      };
+    });
+
+    expect(Math.abs(state.sectionHeight - state.innerHeight)).toBeLessThanOrEqual(
+      1
+    );
+    expect(Math.abs(Number(state.sectionTop))).toBeLessThanOrEqual(1);
+    expect(state.sectionScrollHeight).toBeLessThanOrEqual(state.innerHeight + 1);
+    expect(state.eyebrowTop).toBeGreaterThanOrEqual(64);
+    if (viewport.width > 600) {
+      expect(state.eyebrowTop).toBeGreaterThanOrEqual(state.headerBottom + 12);
+    }
+    expect(
+      state.leadOverlapsHeaderControl,
+      JSON.stringify(state.visibleHeaderControlBounds)
+    ).toBe(false);
+    expect(state.copyBottom).toBeLessThanOrEqual(state.imageBottom);
+    expect(state.imageTop).toBeGreaterThan(0);
+    expect(state.imageBottom).toBeLessThanOrEqual(state.innerHeight + 1);
+    expect(state.imageHeight / state.innerHeight).toBeGreaterThanOrEqual(0.28);
+    expect(state.imageHeight / state.innerHeight).toBeLessThanOrEqual(0.36);
+    expect(state.imageSrc).toContain("anvelia-place-hillside-setting");
+    expect(state.narrativeParagraphs).toBe(1);
+    expect(state.factCount).toBe(3);
+    expect(state.factGridColumns.split(" ")).toHaveLength(3);
+    expect(state.smallestLabel).toBeGreaterThanOrEqual(10);
+    expect(state.smallestValue).toBeGreaterThanOrEqual(12);
+    expect(state.botanicalContent).toBe('""');
+    expect(state.botanicalImage).toContain("anvelia-botanical-background-light");
+    expect(state.botanicalOpacity).toBeGreaterThan(0);
+    expect(state.botanicalOpacity).toBeLessThanOrEqual(0.12);
+  }
 });
 
 test("Task 8 Cabins and Open-Air sections load with distinct Option 2 rhythms", async ({
@@ -824,7 +1224,7 @@ test("Task 9.2 Gatherings is responsive, semantic, and clears the fixed header",
   expect(Number(desktopState.titleTop)).toBeGreaterThan(
     Number(desktopState.headerBottom) + 24
   );
-  expect(parseFloat(desktopState.scrollMarginTop ?? "0")).toBeGreaterThan(0);
+  expect(parseFloat(desktopState.scrollMarginTop ?? "0")).toBe(0);
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#gatherings");
@@ -857,6 +1257,330 @@ test("Task 9.2 Gatherings is responsive, semantic, and clears the fixed header",
   expect(portraitState.objectFit).toBe("cover");
   expect(portraitState.objectPosition).toBe("50% 54%");
   expect(portraitState.materialObjectPosition).toBe("78% 62%");
+});
+
+test("Task 10.1 Gatherings keeps every occasion inside the smallest portrait chapter", async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto("/");
+
+  const gatherings = page.locator("#gatherings");
+  const occasions = gatherings.locator(".gatherings-section__occasions li");
+
+  await expect(gatherings.locator(".gatherings-section__eyebrow")).toBeVisible();
+  await expect(
+    gatherings.getByRole("heading", {
+      level: 2,
+      name: "A quieter way to gather"
+    })
+  ).toBeVisible();
+  await expect(occasions).toHaveText([
+    "Private dinners",
+    "Small corporate retreats",
+    "Wellness retreats"
+  ]);
+
+  const smallestPortraitState = await gatherings.evaluate((section) => {
+    const sectionRect = section.getBoundingClientRect();
+    const image = section.querySelector(".gatherings-section__image");
+    const panel = section.querySelector(".gatherings-section__panel");
+    const eyebrow = section.querySelector(".gatherings-section__eyebrow");
+    const title = section.querySelector(".gatherings-section__title");
+    const intro = section.querySelector(".gatherings-section__intro");
+    const items = Array.from(
+      section.querySelectorAll(".gatherings-section__occasions li")
+    );
+    const imageRect = image?.getBoundingClientRect();
+    const panelRect = panel?.getBoundingClientRect();
+    const eyebrowRect = eyebrow?.getBoundingClientRect();
+    const titleRect = title?.getBoundingClientRect();
+
+    return {
+      sectionHeight: sectionRect.height,
+      viewportHeight: window.innerHeight,
+      imageHeight: imageRect?.height ?? 0,
+      imageFirst:
+        imageRect && panelRect
+          ? imageRect.top >= sectionRect.top - 0.5 &&
+            imageRect.bottom <= panelRect.top + 0.5
+          : false,
+      headingContentContained:
+        eyebrowRect && titleRect && panelRect
+          ? eyebrowRect.width > 0 &&
+            eyebrowRect.height > 0 &&
+            eyebrowRect.top >= panelRect.top - 0.5 &&
+            titleRect.width > 0 &&
+            titleRect.height > 0 &&
+            titleRect.top >= panelRect.top - 0.5 &&
+            titleRect.bottom <= panelRect.bottom + 0.5
+          : false,
+      titleFontSize: title
+        ? parseFloat(window.getComputedStyle(title).fontSize)
+        : 0,
+      allOccasionsContained: items.every((item) => {
+        const itemRect = item.getBoundingClientRect();
+
+        return (
+          itemRect.top >= sectionRect.top &&
+          itemRect.bottom <= sectionRect.bottom + 0.5
+        );
+      }),
+      introFontSize: intro
+        ? parseFloat(window.getComputedStyle(intro).fontSize)
+        : 0,
+      occasionFontSizes: items.map((item) =>
+        parseFloat(window.getComputedStyle(item).fontSize)
+      )
+    };
+  });
+
+  expect(
+    Math.abs(
+      smallestPortraitState.sectionHeight -
+        smallestPortraitState.viewportHeight
+    )
+  ).toBeLessThanOrEqual(1);
+  expect(smallestPortraitState.imageHeight).toBeGreaterThanOrEqual(180);
+  expect(smallestPortraitState.imageFirst).toBe(true);
+  expect(smallestPortraitState.headingContentContained).toBe(true);
+  expect(smallestPortraitState.titleFontSize).toBeGreaterThanOrEqual(45);
+  expect(smallestPortraitState.allOccasionsContained).toBe(true);
+  expect(smallestPortraitState.introFontSize).toBeGreaterThanOrEqual(14);
+  expect(
+    smallestPortraitState.occasionFontSizes.every((size) => size >= 13.5)
+  ).toBe(true);
+});
+
+test("Task 10.1 practical type, editorial rules, and header controls stay optically coherent", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 568, height: 320 },
+    { width: 768, height: 1024 },
+    { width: 844, height: 390 },
+    { width: 1024, height: 768 },
+    { width: 1280, height: 800 },
+    { width: 1440, height: 900 }
+  ];
+  const practicalSelectors = [
+    ".hero-subtitle",
+    ".hero-lede",
+    ".hero-detail",
+    ".place-section__intro",
+    ".place-section__fact dd",
+    ".cabins-section__intro",
+    ".open-air-section__intro",
+    ".gatherings-section__intro",
+    ".gatherings-section__occasions",
+    ".visit-section__intro",
+    ".visit-section__address",
+    ".visit-section__number",
+    ".mobile-nav-panel__address"
+  ];
+  const restrainedSelectors = [
+    ".place-section__eyebrow",
+    ".place-section__fact dt",
+    ".cabins-section__eyebrow",
+    ".cabins-section__marker",
+    ".open-air-section__passage",
+    ".visit-section__whatsapp",
+    ".visit-section__endnote",
+    ".header-whatsapp",
+    ".mobile-nav__whatsapp"
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const state = await page.evaluate(
+      ({ practical, restrained }) => {
+        const fontSize = (selector: string) => {
+          const element = document.querySelector(selector);
+
+          return element
+            ? Number.parseFloat(window.getComputedStyle(element).fontSize)
+            : 0;
+        };
+        const centerY = (rect: DOMRect) => (rect.top + rect.bottom) / 2;
+        const marker = document.querySelector(".cabins-section__marker");
+        const markerLabel = marker?.querySelector("span:first-child");
+        const markerRule = marker?.querySelector(
+          ".cabins-section__marker-rule"
+        );
+        const markerLabelRange = document.createRange();
+
+        if (markerLabel) {
+          markerLabelRange.selectNodeContents(markerLabel);
+        }
+
+        const markerLabelRect = markerLabel
+          ? markerLabelRange.getBoundingClientRect()
+          : undefined;
+        const markerRuleRect = markerRule?.getBoundingClientRect();
+        const passage = document.querySelector(
+          ".open-air-section__passage"
+        );
+        const passageStyles = passage
+          ? window.getComputedStyle(passage)
+          : undefined;
+        const passageRule = passage
+          ? window.getComputedStyle(passage, "::after")
+          : undefined;
+        const visitAction = document.querySelector(
+          ".visit-section__whatsapp"
+        );
+        const visitRule = visitAction
+          ? window.getComputedStyle(visitAction, "::before")
+          : undefined;
+        const visitPractical = document.querySelector(
+          ".visit-section__practical"
+        );
+        const visitNumber = document.querySelector(".visit-section__number");
+        const visitEndnote = document.querySelector(
+          ".visit-section__endnote"
+        );
+        const textRect = (element: Element | null) => {
+          if (!element) {
+            return undefined;
+          }
+
+          const range = document.createRange();
+          range.selectNodeContents(element);
+
+          return range.getBoundingClientRect();
+        };
+        const visitNumberRect = textRect(visitNumber);
+        const visitEndnoteRect = textRect(visitEndnote);
+        const visitEndnoteBox = visitEndnote?.getBoundingClientRect();
+        const visitPracticalRect = visitPractical?.getBoundingClientRect();
+        const headerControls = Array.from(
+          document.querySelectorAll(
+            ".site-header .brand-link, .site-header .primary-nav--desktop, .site-header > .header-whatsapp, .site-header .mobile-menu-toggle"
+          )
+        )
+          .filter((element) => {
+            const styles = window.getComputedStyle(element);
+            const rect = element.getBoundingClientRect();
+
+            return (
+              styles.display !== "none" &&
+              styles.visibility !== "hidden" &&
+              Number.parseFloat(styles.opacity) > 0 &&
+              rect.width > 0 &&
+              rect.height > 0
+            );
+          })
+          .map((element) => centerY(element.getBoundingClientRect()));
+
+        return {
+          practical: practical.map((selector) => ({
+            selector,
+            size: fontSize(selector)
+          })),
+          restrained: restrained.map((selector) => ({
+            selector,
+            size: fontSize(selector)
+          })),
+          markerGap:
+            markerLabelRect && markerRuleRect
+              ? markerRuleRect.left - markerLabelRect.right
+              : Number.POSITIVE_INFINITY,
+          markerCenterDelta:
+            markerLabelRect && markerRuleRect
+              ? Math.abs(centerY(markerRuleRect) - centerY(markerLabelRect))
+              : Number.POSITIVE_INFINITY,
+          passageGap: Number.parseFloat(
+            passageStyles?.columnGap || passageStyles?.gap || "0"
+          ),
+          passageRuleWidth: Number.parseFloat(passageRule?.width ?? "0"),
+          passageRuleHeight: Number.parseFloat(passageRule?.height ?? "0"),
+          visitRuleWidth: Number.parseFloat(visitRule?.width ?? "0"),
+          visitRuleBorder: Number.parseFloat(
+            visitRule?.borderTopWidth ?? "0"
+          ),
+          visitRuleGap: Number.parseFloat(
+            visitAction
+              ? window.getComputedStyle(visitAction).columnGap ||
+                  window.getComputedStyle(visitAction).gap
+              : "0"
+          ),
+          visitRuleMarginLeft: Number.parseFloat(
+            visitRule?.marginLeft ?? "0"
+          ),
+          visitRuleMarginRight: Number.parseFloat(
+            visitRule?.marginRight ?? "0"
+          ),
+          visitFooterLeftDelta:
+            visitPracticalRect && visitEndnoteBox
+              ? Math.abs(visitPracticalRect.left - visitEndnoteBox.left)
+              : Number.POSITIVE_INFINITY,
+          visitFooterBaselineDelta:
+            visitNumberRect && visitEndnoteRect
+              ? Math.abs(visitNumberRect.bottom - visitEndnoteRect.bottom)
+              : Number.POSITIVE_INFINITY,
+          orientation:
+            window.innerWidth > window.innerHeight
+              ? "landscape"
+              : "portrait",
+          headerCenterSpread:
+            headerControls.length > 1
+              ? Math.max(...headerControls) - Math.min(...headerControls)
+              : 0
+        };
+      },
+      {
+        practical: practicalSelectors,
+        restrained: restrainedSelectors
+      }
+    );
+
+    for (const text of state.practical) {
+      expect(
+        text.size,
+        `${text.selector} keeps a 12px practical floor at ${viewport.width}x${viewport.height}`
+      ).toBeGreaterThanOrEqual(12);
+    }
+
+    for (const text of state.restrained) {
+      expect(
+        text.size,
+        `${text.selector} keeps a restrained readable floor at ${viewport.width}x${viewport.height}`
+      ).toBeGreaterThanOrEqual(10.5);
+    }
+
+    expect(state.markerGap).toBeGreaterThanOrEqual(8);
+    expect(state.markerGap).toBeLessThanOrEqual(18.5);
+    expect(state.markerCenterDelta).toBeLessThanOrEqual(1);
+    expect(state.passageGap).toBeGreaterThanOrEqual(8);
+    expect(state.passageGap).toBeLessThanOrEqual(18.5);
+    expect(state.passageRuleWidth).toBeGreaterThanOrEqual(34);
+    expect(state.passageRuleHeight).toBe(1);
+    expect(state.visitRuleWidth).toBeGreaterThanOrEqual(34);
+    expect(state.visitRuleBorder).toBe(1);
+    expect(state.visitRuleGap).toBe(0);
+    expect(state.visitRuleMarginLeft).toBeGreaterThanOrEqual(8);
+    expect(state.visitRuleMarginLeft).toBeLessThanOrEqual(18.5);
+    expect(state.visitRuleMarginRight).toBeGreaterThanOrEqual(8);
+    expect(state.visitRuleMarginRight).toBeLessThanOrEqual(10);
+
+    if (state.orientation === "portrait") {
+      expect(
+        state.visitFooterLeftDelta,
+        `Visit footer aligns left at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(0.5);
+    } else {
+      expect(
+        state.visitFooterBaselineDelta,
+        `Visit footer shares its baseline at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(2);
+    }
+
+    expect(state.headerCenterSpread).toBeLessThanOrEqual(0.5);
+  }
 });
 
 test("Task 9.2 Gatherings keeps its split in narrow landscape", async ({
@@ -1153,6 +1877,7 @@ test("Task 9.3 Visit and Task 9.4 end note fill one calm chapter", async ({
           ? window.getComputedStyle(endNote).fontSize
           : "0",
         addressFontSize: address ? window.getComputedStyle(address).fontSize : "0",
+        numberFontSize: number ? window.getComputedStyle(number).fontSize : "0",
         paperWidth: paperRect?.width,
         paperHeight: paperRect?.height,
         imageWidth: imageRect?.width,
@@ -1197,9 +1922,10 @@ test("Task 9.3 Visit and Task 9.4 end note fill one calm chapter", async ({
     }
     expect(Number(compactState.endNoteBottom)).toBeLessThanOrEqual(Number(compactState.sectionBottom) - 10);
     expect(Number(compactState.endNoteBottom)).toBeGreaterThanOrEqual(Number(compactState.sectionBottom) - 40);
-    expect(parseFloat(compactState.endNoteFontSize)).toBeGreaterThanOrEqual(9.5);
+    expect(parseFloat(compactState.endNoteFontSize)).toBeGreaterThanOrEqual(10.5);
     expect(parseFloat(compactState.introFontSize)).toBeGreaterThanOrEqual(12);
-    expect(parseFloat(compactState.addressFontSize)).toBeGreaterThanOrEqual(11);
+    expect(parseFloat(compactState.addressFontSize)).toBeGreaterThanOrEqual(12);
+    expect(parseFloat(compactState.numberFontSize)).toBeGreaterThanOrEqual(12);
     expect(Math.abs(Number(compactState.imageWidth) - Number(compactState.sectionWidth))).toBeLessThanOrEqual(1);
     expect(Math.abs(Number(compactState.imageHeight) - compactState.innerHeight)).toBeLessThanOrEqual(1);
 
@@ -1319,6 +2045,262 @@ test("viewport chapters fill one screen in portrait and landscape", async ({
         chapter.contentCoversWidth,
         `${chapter.id} has no unused track at ${viewport.width}x${viewport.height}`
       ).toBe(true);
+    }
+  }
+});
+
+test("Task 10.1 compact-landscape chapters fit one screen below the fixed header", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 568, height: 320 },
+    { width: 844, height: 390 }
+  ];
+  const chapters = [
+    {
+      name: "hero",
+      selector: ".threshold-hero",
+      leadSelector: ".hero-copy h1",
+      requiredSelectors: [
+        ".hero-copy",
+        ".hero-subtitle",
+        ".hero-lede",
+        ".hero-detail",
+        ".hero-whatsapp"
+      ],
+      textMinimums: [
+        { selector: ".hero-copy h1", pixels: 28 },
+        { selector: ".hero-subtitle", pixels: 11 },
+        { selector: ".hero-lede", pixels: 12 },
+        { selector: ".hero-detail", pixels: 12 }
+      ]
+    },
+    {
+      name: "place",
+      selector: "#place",
+      leadSelector: ".place-section__eyebrow",
+      requiredSelectors: [
+        ".place-section__copy",
+        ".place-section__image",
+        ".place-section__title",
+        ".place-section__intro",
+        ".place-section__facts",
+        ".place-section__fact:nth-child(1)",
+        ".place-section__fact:nth-child(2)",
+        ".place-section__fact:nth-child(3)"
+      ],
+      textMinimums: [
+        { selector: ".place-section__eyebrow", pixels: 9 },
+        { selector: ".place-section__title", pixels: 28 },
+        { selector: ".place-section__intro", pixels: 12 },
+        { selector: ".place-section__fact dt", pixels: 9 },
+        { selector: ".place-section__fact dd", pixels: 12 }
+      ]
+    },
+    {
+      name: "cabins",
+      selector: "#cabins",
+      leadSelector: ".cabins-section__eyebrow",
+      requiredSelectors: [
+        ".cabins-section__image",
+        ".cabins-section__panel",
+        ".cabins-section__title",
+        ".cabins-section__intro",
+        ".cabins-section__marker"
+      ],
+      textMinimums: [
+        { selector: ".cabins-section__eyebrow", pixels: 9 },
+        { selector: ".cabins-section__title", pixels: 28 },
+        { selector: ".cabins-section__intro", pixels: 12 },
+        { selector: ".cabins-section__marker", pixels: 10.5 }
+      ]
+    },
+    {
+      name: "rhythm",
+      selector: "#open-air-living",
+      leadSelector: ".open-air-section__eyebrow",
+      requiredSelectors: [
+        ".open-air-section__copy",
+        ".open-air-section__image",
+        ".open-air-section__title",
+        ".open-air-section__intro",
+        ".open-air-section__passage"
+      ],
+      textMinimums: [
+        { selector: ".open-air-section__eyebrow", pixels: 9 },
+        { selector: ".open-air-section__title", pixels: 28 },
+        { selector: ".open-air-section__intro", pixels: 12 },
+        { selector: ".open-air-section__passage", pixels: 10.5 }
+      ]
+    },
+    {
+      name: "gatherings",
+      selector: "#gatherings",
+      leadSelector: ".gatherings-section__eyebrow",
+      requiredSelectors: [
+        ".gatherings-section__image",
+        ".gatherings-section__panel",
+        ".gatherings-section__title",
+        ".gatherings-section__intro",
+        ".gatherings-section__occasions",
+        ".gatherings-section__occasions li:nth-child(1)",
+        ".gatherings-section__occasions li:nth-child(2)",
+        ".gatherings-section__occasions li:nth-child(3)"
+      ],
+      textMinimums: [
+        { selector: ".gatherings-section__eyebrow", pixels: 9 },
+        { selector: ".gatherings-section__title", pixels: 28 },
+        { selector: ".gatherings-section__intro", pixels: 12 },
+        { selector: ".gatherings-section__occasions", pixels: 12 }
+      ]
+    }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const state = await page.evaluate((chapterDefinitions) => {
+      const header = document.querySelector(".site-header");
+      const headerRect = header?.getBoundingClientRect();
+      const rect = (element: Element | null) => {
+        const bounds = element?.getBoundingClientRect();
+
+        return bounds
+          ? {
+              top: bounds.top,
+              right: bounds.right,
+              bottom: bounds.bottom,
+              left: bounds.left,
+              width: bounds.width,
+              height: bounds.height
+            }
+          : null;
+      };
+
+      return {
+        innerHeight: window.innerHeight,
+        innerWidth: window.innerWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        headerBottom: headerRect?.bottom ?? 0,
+        chapters: chapterDefinitions.map((definition) => {
+          const section = document.querySelector(definition.selector);
+          const sectionRect = section?.getBoundingClientRect();
+          const lead = section?.querySelector(definition.leadSelector) ?? null;
+          const leadRect = lead?.getBoundingClientRect();
+          const required = definition.requiredSelectors.map((selector) => {
+            const element = section?.querySelector(selector) ?? null;
+            const bounds = rect(element);
+
+            return {
+              selector,
+              bounds,
+              fontSize: element
+                ? Number.parseFloat(window.getComputedStyle(element).fontSize)
+                : null
+            };
+          });
+
+          return {
+            name: definition.name,
+            section: rect(section),
+            scrollHeight: section?.scrollHeight ?? null,
+            clientHeight: section?.clientHeight ?? null,
+            leadLocalTop:
+              sectionRect && leadRect ? leadRect.top - sectionRect.top : null,
+            required,
+            requiredFits:
+              Boolean(sectionRect) &&
+              required.every(
+                ({ bounds }) =>
+                  bounds &&
+                  bounds.top >= sectionRect.top - 1 &&
+                  bounds.bottom <= sectionRect.bottom + 1 &&
+                  bounds.left >= sectionRect.left - 1 &&
+                  bounds.right <= sectionRect.right + 1
+              )
+          };
+        })
+      };
+    }, chapters);
+
+    expect(state.scrollWidth).toBeLessThanOrEqual(state.innerWidth);
+
+    for (const chapter of state.chapters) {
+      expect(
+        Math.abs(Number(chapter.section?.height) - state.innerHeight),
+        `${chapter.name} fills ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(1);
+      expect(chapter.clientHeight).toBe(viewport.height);
+      expect(chapter.scrollHeight).toBeLessThanOrEqual(viewport.height + 1);
+      expect(
+        chapter.requiredFits,
+        `${chapter.name} keeps required content inside its chapter: ${JSON.stringify(chapter.required)}`
+      ).toBe(true);
+      expect(
+        Number(chapter.leadLocalTop),
+        `${chapter.name} clears the fixed header`
+      ).toBeGreaterThanOrEqual(state.headerBottom + 6);
+
+      const definition = chapters.find(
+        ({ name }) => name === chapter.name
+      );
+
+      for (const minimum of definition?.textMinimums ?? []) {
+        const textElement = chapter.required.find(
+          ({ selector }) => selector === minimum.selector
+        );
+        const measuredFontSize =
+          textElement?.fontSize ??
+          (await page
+            .locator(`${definition?.selector} ${minimum.selector}`)
+            .first()
+            .evaluate((element) =>
+              Number.parseFloat(window.getComputedStyle(element).fontSize)
+            ));
+
+        expect(
+          measuredFontSize,
+          `${chapter.name} keeps ${minimum.selector} readable at ${viewport.width}x${viewport.height}`
+        ).toBeGreaterThanOrEqual(minimum.pixels);
+      }
+    }
+
+    for (const chapter of chapters) {
+      await page.evaluate((selector) => {
+        const section = document.querySelector(selector);
+
+        if (section) {
+          section.scrollIntoView({ behavior: "instant", block: "start" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        }
+      }, chapter.selector);
+      await page.waitForTimeout(100);
+
+      const scrolledHeaderState = await page.evaluate((definition) => {
+        const header = document.querySelector(".site-header");
+        const section = document.querySelector(definition.selector);
+        const lead = section?.querySelector(definition.leadSelector);
+        const headerBounds = header?.getBoundingClientRect();
+        const sectionBounds = section?.getBoundingClientRect();
+        const leadBounds = lead?.getBoundingClientRect();
+
+        return {
+          headerBottom: headerBounds?.bottom ?? 0,
+          sectionTop: sectionBounds?.top ?? null,
+          leadTop: leadBounds?.top ?? null
+        };
+      }, chapter);
+
+      expect(
+        Math.abs(Number(scrolledHeaderState.sectionTop)),
+        `${chapter.name} aligns to the viewport after navigation`
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Number(scrolledHeaderState.leadTop),
+        `${chapter.name} clears the real scrolled header`
+      ).toBeGreaterThanOrEqual(scrolledHeaderState.headerBottom + 6);
     }
   }
 });
@@ -1506,12 +2488,14 @@ test("fixed header stays elegant and readable after scroll", async ({ page }) =>
   const topState = await header.evaluate((element) => {
     const rect = element.getBoundingClientRect();
     const styles = window.getComputedStyle(element);
+    const surfaceStyles = window.getComputedStyle(element, "::after");
 
     return {
       dataScrolled: element.getAttribute("data-scrolled"),
       position: styles.position,
       top: Math.round(rect.top),
-      backgroundColor: styles.backgroundColor
+      backgroundColor: styles.backgroundColor,
+      surfaceOpacity: surfaceStyles.opacity
     };
   });
 
@@ -1521,14 +2505,22 @@ test("fixed header stays elegant and readable after scroll", async ({ page }) =>
   });
   expect(topState.top).toBeGreaterThanOrEqual(0);
   expect(topState.top).toBeLessThanOrEqual(26);
+  expect(topState.surfaceOpacity).toBe("0");
 
   await page.evaluate(() => window.scrollTo(0, window.innerHeight + 120));
   await expect(header).toHaveAttribute("data-scrolled", "true");
-  await page.waitForTimeout(220);
+  await header.evaluate(async (element) => {
+    await Promise.all(
+      element
+        .getAnimations({ subtree: true })
+        .map((animation) => animation.finished)
+    );
+  });
 
   const scrolledState = await header.evaluate((element) => {
     const rect = element.getBoundingClientRect();
     const styles = window.getComputedStyle(element);
+    const surfaceStyles = window.getComputedStyle(element, "::after");
     const brandStyles = window.getComputedStyle(
       element.querySelector(".brand-link") as Element
     );
@@ -1544,9 +2536,11 @@ test("fixed header stays elegant and readable after scroll", async ({ page }) =>
       bottom: Math.round(rect.bottom),
       height: Math.round(rect.height),
       backgroundColor: styles.backgroundColor,
-      backgroundImage: styles.backgroundImage,
-      backdropFilter: styles.backdropFilter,
-      borderColor: styles.borderTopColor,
+      surfaceOpacity: surfaceStyles.opacity,
+      surfaceBackgroundImage: surfaceStyles.backgroundImage,
+      surfaceBackdropFilter: surfaceStyles.backdropFilter,
+      surfaceBorderColor: surfaceStyles.borderTopColor,
+      surfaceTransitionDuration: surfaceStyles.transitionDuration,
       brandColor: brandStyles.color,
       navColor: navStyles.color,
       whatsappBackground: whatsappStyles.backgroundColor,
@@ -1557,10 +2551,12 @@ test("fixed header stays elegant and readable after scroll", async ({ page }) =>
   expect(scrolledState.top).toBe(topState.top);
   expect(scrolledState.bottom).toBeGreaterThan(54);
   expect(scrolledState.height).toBeLessThanOrEqual(58);
-  expect(scrolledState.backgroundColor).not.toBe(topState.backgroundColor);
-  expect(scrolledState.backgroundImage).toContain("linear-gradient");
-  expect(scrolledState.backdropFilter).toContain("blur");
-  expect(scrolledState.borderColor).not.toBe("rgba(0, 0, 0, 0)");
+  expect(scrolledState.backgroundColor).toBe(topState.backgroundColor);
+  expect(scrolledState.surfaceOpacity).toBe("1");
+  expect(scrolledState.surfaceBackgroundImage).toContain("linear-gradient");
+  expect(scrolledState.surfaceBackdropFilter).toContain("blur");
+  expect(scrolledState.surfaceBorderColor).not.toBe("rgba(0, 0, 0, 0)");
+  expect(scrolledState.surfaceTransitionDuration).toBe("0.2s");
   expect(scrolledState.brandColor).toBe(scrolledState.navColor);
   expect(scrolledState.brandColor).toMatch(
     /rgba\((?:19|20), (?:15|16), (?:12|13), 0\.8\)/
@@ -1880,6 +2876,7 @@ test("Task 6 mobile menu opens, closes, returns focus, and avoids overflow", asy
 
   const openOverflow = await page.evaluate(() => ({
     innerWidth: window.innerWidth,
+    layoutWidth: document.body.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,
     rootScrollLocked: document.documentElement.getAttribute(
       "data-scroll-locked"
@@ -1955,7 +2952,7 @@ test("Task 6 mobile menu opens, closes, returns focus, and avoids overflow", asy
     position: "fixed",
     borderRadius: "0px"
   });
-  expect(openOverflow.panel?.width).toBe(openOverflow.innerWidth);
+  expect(openOverflow.panel?.width).toBe(openOverflow.layoutWidth);
   expect(openOverflow.panel?.height).toBe(844);
   expect(openOverflow.panel?.backgroundImage).toContain("url(");
   expect(openOverflow.panel?.backgroundImage).toContain(
@@ -1994,4 +2991,1081 @@ test("Task 6 mobile menu opens, closes, returns focus, and avoids overflow", asy
     rootScrollLocked: null,
     bodyOverflow: "visible"
   });
+});
+
+test("Task 10.1 menu fits compact screens and protects approved widget states", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 320, height: 568, compact: true },
+    { width: 568, height: 320, compact: true },
+    { width: 390, height: 844, compact: false },
+    { width: 768, height: 1024, compact: false }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const menuButton = page.getByRole("button", { name: "Open menu" });
+    const readWidget = () => menuButton.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+
+      return {
+        top: rect.top,
+        right: window.innerWidth - rect.right,
+        width: rect.width,
+        height: rect.height
+      };
+    });
+    const closedWidget = await readWidget();
+
+    expect(closedWidget).toMatchObject({ width: 44, height: 44 });
+
+    await page.evaluate(() => window.scrollTo(0, window.innerHeight + 120));
+    await expect(page.locator(".site-header")).toHaveAttribute(
+      "data-scrolled",
+      "true"
+    );
+
+    const scrolledWidget = await readWidget();
+
+    expect(Math.abs(scrolledWidget.top - closedWidget.top)).toBeLessThanOrEqual(
+      1
+    );
+    expect(
+      Math.abs(scrolledWidget.right - closedWidget.right)
+    ).toBeLessThanOrEqual(1);
+    expect(scrolledWidget).toMatchObject({ width: 44, height: 44 });
+
+    await menuButton.click();
+    await expect(page.getByRole("button", { name: "Close menu" })).toBeVisible();
+
+    const geometry = await page.evaluate(() => {
+      const panel = document.querySelector<HTMLElement>(".mobile-nav-panel");
+      const content = document.querySelector<HTMLElement>(
+        ".mobile-nav-panel__content"
+      );
+      const nav = document.querySelector<HTMLElement>(".mobile-nav");
+      const footer = document.querySelector<HTMLElement>(
+        ".mobile-nav-panel__footer"
+      );
+      const closeButton = document.querySelector<HTMLElement>(
+        ".mobile-menu-toggle"
+      );
+      const visibleItems = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          ".mobile-nav a, .mobile-nav__whatsapp, .mobile-nav-panel__address"
+        )
+      );
+      const rect = (element: Element | null) => {
+        const bounds = element?.getBoundingClientRect();
+
+        return bounds
+          ? {
+              top: bounds.top,
+              right: bounds.right,
+              bottom: bounds.bottom,
+              left: bounds.left,
+              width: bounds.width,
+              height: bounds.height
+            }
+          : null;
+      };
+
+      return {
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          layoutWidth: document.body.clientWidth
+        },
+        panel: rect(panel),
+        panelScrollHeight: panel?.scrollHeight,
+        panelOverflowY: panel
+          ? window.getComputedStyle(panel).overflowY
+          : null,
+        content: rect(content),
+        nav: rect(nav),
+        footer: rect(footer),
+        closeButton: rect(closeButton),
+        items: visibleItems.map((item) => ({
+          label: item.textContent?.trim(),
+          rect: rect(item),
+          visible: window.getComputedStyle(item).visibility === "visible"
+        }))
+      };
+    });
+
+    expect(geometry.panel).toMatchObject({
+      top: 0,
+      left: 0,
+      width: geometry.viewport.layoutWidth,
+      height: viewport.height
+    });
+    expect(Number(geometry.panelScrollHeight)).toBeLessThanOrEqual(
+      viewport.height + 1
+    );
+
+    if (viewport.compact) {
+      expect(geometry.panelOverflowY).toBe("auto");
+    }
+
+    expect(Number(geometry.content?.top)).toBeGreaterThanOrEqual(0);
+    expect(Number(geometry.content?.bottom)).toBeLessThanOrEqual(
+      viewport.height
+    );
+    expect(Number(geometry.footer?.bottom)).toBeLessThanOrEqual(
+      viewport.height
+    );
+    const navToFooterGap = Math.max(
+      Number(geometry.footer?.top) - Number(geometry.nav?.bottom),
+      Number(geometry.nav?.top) - Number(geometry.footer?.bottom),
+      Number(geometry.footer?.left) - Number(geometry.nav?.right),
+      Number(geometry.nav?.left) - Number(geometry.footer?.right)
+    );
+
+    expect(navToFooterGap).toBeGreaterThanOrEqual(viewport.compact ? 12 : 0);
+    const intersectionArea = (
+      first: typeof geometry.closeButton,
+      second: typeof geometry.closeButton
+    ) =>
+      Math.max(
+        0,
+        Math.min(Number(first?.right), Number(second?.right)) -
+          Math.max(Number(first?.left), Number(second?.left))
+      ) *
+      Math.max(
+        0,
+        Math.min(Number(first?.bottom), Number(second?.bottom)) -
+          Math.max(Number(first?.top), Number(second?.top))
+      );
+
+    expect(Number(geometry.closeButton?.top)).toBeCloseTo(
+      scrolledWidget.top,
+      0
+    );
+    expect(viewport.width - Number(geometry.closeButton?.right)).toBeCloseTo(
+      scrolledWidget.right,
+      0
+    );
+    expect(geometry.closeButton).toMatchObject({
+      width: 44,
+      height: 44
+    });
+    expect(geometry.items).toHaveLength(7);
+
+    for (const item of geometry.items) {
+      expect(item.visible).toBe(true);
+      expect(Number(item.rect?.top)).toBeGreaterThanOrEqual(0);
+      expect(Number(item.rect?.right)).toBeLessThanOrEqual(viewport.width);
+      expect(Number(item.rect?.bottom)).toBeLessThanOrEqual(viewport.height);
+      expect(Number(item.rect?.left)).toBeGreaterThanOrEqual(0);
+      expect(intersectionArea(geometry.closeButton, item.rect)).toBe(0);
+    }
+  }
+});
+
+test("Task 10.2 uses one restrained motion vocabulary without layout shift", async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+
+  const initialState = await page.evaluate(() => {
+    const rootStyles = window.getComputedStyle(document.documentElement);
+    const marker = document.querySelector<HTMLElement>(
+      ".cabins-section__marker"
+    );
+    const passage = document.querySelector<HTMLElement>(
+      ".open-air-section__passage"
+    );
+    const passageRule = passage
+      ? window.getComputedStyle(passage, "::after")
+      : null;
+    const passageRect = passage?.getBoundingClientRect();
+    const skipLink = document.querySelector<HTMLElement>(".skip-link");
+    const button = document.querySelector<HTMLElement>(".ui-button");
+    const header = document.querySelector<HTMLElement>(".site-header");
+    const headerSurface = header
+      ? window.getComputedStyle(header, "::after")
+      : null;
+    const chapterSelectors = [
+      ".threshold-hero",
+      ".place-section",
+      ".cabins-section",
+      ".open-air-section",
+      ".gatherings-section",
+      ".visit-section"
+    ];
+
+    return {
+      tokens: {
+        fast: rootStyles.getPropertyValue("--motion-duration-fast").trim(),
+        standard: rootStyles
+          .getPropertyValue("--motion-duration-standard")
+          .trim(),
+        slow: rootStyles.getPropertyValue("--motion-duration-slow").trim(),
+        delayNone: rootStyles.getPropertyValue("--motion-delay-none").trim(),
+        easeStandard: rootStyles
+          .getPropertyValue("--motion-ease-standard")
+          .trim(),
+        easeSettle: rootStyles.getPropertyValue("--motion-ease-settle").trim(),
+        distanceSubtle: rootStyles
+          .getPropertyValue("--motion-distance-subtle")
+          .trim(),
+        distanceSettle: rootStyles
+          .getPropertyValue("--motion-distance-settle")
+          .trim(),
+        opacityEnter: rootStyles
+          .getPropertyValue("--motion-opacity-enter")
+          .trim()
+      },
+      markerTransition: marker
+        ? window.getComputedStyle(marker).transitionDuration
+        : null,
+      skipTransition: skipLink
+        ? window.getComputedStyle(skipLink).transitionDuration
+        : null,
+      buttonTransitionProperty: button
+        ? window.getComputedStyle(button).transitionProperty
+        : null,
+      headerTransition: header
+        ? window.getComputedStyle(header).transitionDuration
+        : null,
+      headerSurface: headerSurface
+        ? {
+            opacity: headerSurface.opacity,
+            transitionDuration: headerSurface.transitionDuration,
+            transitionProperty: headerSurface.transitionProperty
+          }
+        : null,
+      passage: passageRect
+        ? {
+            left: passageRect.left,
+            right: passageRect.right,
+            width: passageRect.width
+          }
+        : null,
+      passageRule: passageRule
+        ? {
+            width: passageRule.width,
+            transform: passageRule.transform,
+            transitionDuration: passageRule.transitionDuration,
+            transitionProperty: passageRule.transitionProperty
+          }
+        : null,
+      chapters: chapterSelectors.map((selector) => {
+        const element = document.querySelector<HTMLElement>(selector);
+        const styles = element ? window.getComputedStyle(element) : null;
+
+        return {
+          selector,
+          exists: Boolean(element),
+          opacity: styles?.opacity,
+          visibility: styles?.visibility,
+          animationName: styles?.animationName,
+          animationIterationCount: styles?.animationIterationCount
+        };
+      })
+    };
+  });
+
+  expect(initialState.tokens).toEqual({
+    fast: "140ms",
+    standard: "200ms",
+    slow: "260ms",
+    delayNone: "0ms",
+    easeStandard: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+    easeSettle: "cubic-bezier(0.22, 1, 0.36, 1)",
+    distanceSubtle: "2px",
+    distanceSettle: "4px",
+    opacityEnter: "0.94"
+  });
+  expect(initialState.markerTransition).toBe("0s");
+  expect(initialState.skipTransition).toBe("0s");
+  expect(initialState.buttonTransitionProperty).not.toContain("transform");
+  expect(initialState.headerTransition).toBe("0s");
+  expect(initialState.headerSurface).toEqual({
+    opacity: "0",
+    transitionDuration: "0.2s",
+    transitionProperty: "opacity"
+  });
+  expect(initialState.passageRule?.transitionProperty).toContain("transform");
+  expect(initialState.passageRule?.transitionProperty).not.toContain("width");
+  expect(initialState.passageRule?.transitionDuration).toBe("0.2s, 0.2s");
+
+  for (const chapter of initialState.chapters) {
+    expect(chapter.exists).toBe(true);
+    expect(chapter.opacity).toBe("1");
+    expect(chapter.visibility).toBe("visible");
+    expect(chapter.animationName).toBe("none");
+    expect(chapter.animationIterationCount).not.toBe("infinite");
+  }
+
+  await page.locator(".open-air-section__passage").hover();
+  await page.waitForTimeout(300);
+
+  const hoverState = await page.evaluate(() => {
+    const passage = document.querySelector<HTMLElement>(
+      ".open-air-section__passage"
+    );
+    const passageRule = passage
+      ? window.getComputedStyle(passage, "::after")
+      : null;
+    const passageRect = passage?.getBoundingClientRect();
+
+    return {
+      passage: passageRect
+        ? {
+            left: passageRect.left,
+            right: passageRect.right,
+            width: passageRect.width
+          }
+        : null,
+      passageRule: passageRule
+        ? {
+            width: passageRule.width,
+            transform: passageRule.transform
+          }
+        : null
+    };
+  });
+
+  expect(hoverState.passage).toEqual(initialState.passage);
+  expect(hoverState.passageRule?.width).toBe(initialState.passageRule?.width);
+  expect(hoverState.passageRule?.transform).not.toBe(
+    initialState.passageRule?.transform
+  );
+});
+
+test("Task 10.2 menu settles without changing its full-screen geometry", async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open menu" }).click();
+
+  const readMenuState = () =>
+    page.evaluate(() => {
+      const panel = document.querySelector<HTMLElement>(".mobile-nav-panel");
+      const content = document.querySelector<HTMLElement>(
+        ".mobile-nav-panel__content"
+      );
+      const panelRect = panel?.getBoundingClientRect();
+      const panelStyles = panel ? window.getComputedStyle(panel) : null;
+      const contentStyles = content ? window.getComputedStyle(content) : null;
+
+      return {
+        viewport: {
+          width: document.body.clientWidth,
+          height: window.innerHeight
+        },
+        panel: panelRect
+          ? {
+              top: panelRect.top,
+              left: panelRect.left,
+              width: panelRect.width,
+              height: panelRect.height
+            }
+          : null,
+        panelMotion: panelStyles
+          ? {
+              name: panelStyles.animationName,
+              duration: panelStyles.animationDuration,
+              delay: panelStyles.animationDelay,
+              count: panelStyles.animationIterationCount
+            }
+          : null,
+        contentMotion: contentStyles
+          ? {
+              name: contentStyles.animationName,
+              duration: contentStyles.animationDuration,
+              delay: contentStyles.animationDelay,
+              count: contentStyles.animationIterationCount
+            }
+          : null
+      };
+    });
+
+  const openingState = await readMenuState();
+
+  expect(openingState.panel).toEqual({
+    top: 0,
+    left: 0,
+    width: openingState.viewport.width,
+    height: openingState.viewport.height
+  });
+  expect(openingState.panelMotion).toEqual({
+    name: "anvelia-menu-surface-settle",
+    duration: "0.2s",
+    delay: "0s",
+    count: "1"
+  });
+  expect(openingState.contentMotion).toEqual({
+    name: "anvelia-menu-content-settle",
+    duration: "0.26s",
+    delay: "0s",
+    count: "1"
+  });
+
+  await page.locator(".mobile-nav-panel").evaluate(async (element) => {
+    await Promise.all(
+      element
+        .getAnimations({ subtree: true })
+        .map((animation) => animation.finished)
+    );
+  });
+
+  const settledState = await readMenuState();
+
+  expect(settledState.panel).toEqual(openingState.panel);
+  expect(settledState.viewport).toEqual(openingState.viewport);
+});
+
+test("Task 10.2 reduced motion keeps content immediate and removes motion", async ({
+  page
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  const reducedState = await page.evaluate(() => {
+    const selectors = [
+      ".ui-button",
+      ".site-header",
+      ".brand-link",
+      ".primary-nav a",
+      ".header-whatsapp",
+      ".mobile-menu-toggle",
+      ".cabins-section__marker",
+      ".open-air-section__passage"
+    ];
+    const chapters = [
+      ".threshold-hero",
+      ".place-section",
+      ".cabins-section",
+      ".open-air-section",
+      ".gatherings-section",
+      ".visit-section"
+    ];
+    const readMotion = (styles: CSSStyleDeclaration) => ({
+      transitionDuration: styles.transitionDuration,
+      animationName: styles.animationName,
+      animationDuration: styles.animationDuration
+    });
+
+    return {
+      elements: selectors.map((selector) => {
+        const element = document.querySelector<HTMLElement>(selector);
+        const styles = element ? window.getComputedStyle(element) : null;
+
+        return {
+          selector,
+          exists: Boolean(element),
+          motion: styles ? readMotion(styles) : null
+        };
+      }),
+      passageRule: (() => {
+        const passage = document.querySelector<HTMLElement>(
+          ".open-air-section__passage"
+        );
+        const styles = passage
+          ? window.getComputedStyle(passage, "::after")
+          : null;
+
+        return styles
+          ? {
+              ...readMotion(styles),
+              transform: styles.transform
+            }
+          : null;
+      })(),
+      headerSurface: (() => {
+        const header = document.querySelector<HTMLElement>(".site-header");
+        const styles = header
+          ? window.getComputedStyle(header, "::after")
+          : null;
+
+        return styles
+          ? {
+              transitionDuration: styles.transitionDuration,
+              animationName: styles.animationName
+            }
+          : null;
+      })(),
+      chapters: chapters.map((selector) => {
+        const element = document.querySelector<HTMLElement>(selector);
+        const styles = element ? window.getComputedStyle(element) : null;
+
+        return {
+          selector,
+          exists: Boolean(element),
+          opacity: styles?.opacity,
+          visibility: styles?.visibility,
+          animationName: styles?.animationName
+        };
+      })
+    };
+  });
+
+  for (const element of reducedState.elements) {
+    expect(element.exists).toBe(true);
+    expect(element.motion).toEqual({
+      transitionDuration: "0s",
+      animationName: "none",
+      animationDuration: "0s"
+    });
+  }
+  expect(reducedState.passageRule).toEqual({
+    transitionDuration: "0s",
+    animationName: "none",
+    animationDuration: "0s",
+    transform: "none"
+  });
+  expect(reducedState.headerSurface).toEqual({
+    transitionDuration: "0s",
+    animationName: "none"
+  });
+
+  for (const chapter of reducedState.chapters) {
+    expect(chapter.exists).toBe(true);
+    expect(chapter.opacity).toBe("1");
+    expect(chapter.visibility).toBe("visible");
+    expect(chapter.animationName).toBe("none");
+  }
+
+  await page.locator(".open-air-section__passage").hover();
+  await expect
+    .poll(() =>
+      page
+        .locator(".open-air-section__passage")
+        .evaluate((element) =>
+          window.getComputedStyle(element, "::after").transform
+        )
+    )
+    .toBe("none");
+
+  await page.getByRole("button", { name: "Open menu" }).click();
+
+  const menuState = await page.evaluate(() => {
+    const panel = document.querySelector<HTMLElement>(".mobile-nav-panel");
+    const content = document.querySelector<HTMLElement>(
+      ".mobile-nav-panel__content"
+    );
+    const read = (element: HTMLElement | null) => {
+      const styles = element ? window.getComputedStyle(element) : null;
+
+      return styles
+        ? {
+            animationName: styles.animationName,
+            animationDuration: styles.animationDuration,
+            opacity: styles.opacity,
+            transform: styles.transform,
+            visibility: styles.visibility
+          }
+        : null;
+    };
+
+    return {
+      panel: read(panel),
+      content: read(content)
+    };
+  });
+
+  expect(menuState.panel).toEqual({
+    animationName: "none",
+    animationDuration: "0s",
+    opacity: "1",
+    transform: "none",
+    visibility: "visible"
+  });
+  expect(menuState.content).toEqual({
+    animationName: "none",
+    animationDuration: "0s",
+    opacity: "1",
+    transform: "none",
+    visibility: "visible"
+  });
+
+  await page.goto("/activities");
+  const activitiesHeaderMotion = await page
+    .locator(".site-header")
+    .evaluate((element) => {
+      const activitySurface = window.getComputedStyle(element, "::before");
+      const sharedSurface = window.getComputedStyle(element, "::after");
+
+      return {
+        transitionDuration: activitySurface.transitionDuration,
+        animationName: activitySurface.animationName,
+        sharedSurfaceDisplay: sharedSurface.display
+      };
+    });
+
+  expect(activitiesHeaderMotion).toEqual({
+    transitionDuration: "0s",
+    animationName: "none",
+    sharedSurfaceDisplay: "none"
+  });
+});
+
+test("Task 10.3 keeps every narrative chapter to one exact viewport", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 568, height: 320 },
+    { width: 768, height: 700 },
+    { width: 820, height: 440 },
+    { width: 820, height: 441 },
+    { width: 821, height: 441 },
+    { width: 800, height: 600 },
+    { width: 800, height: 620 },
+    { width: 800, height: 621 },
+    { width: 800, height: 640 },
+    { width: 800, height: 790 },
+    { width: 800, height: 800 },
+    { width: 820, height: 600 },
+    { width: 820, height: 620 },
+    { width: 820, height: 621 },
+    { width: 820, height: 800 },
+    { width: 821, height: 600 },
+    { width: 920, height: 440 },
+    { width: 920, height: 441 },
+    { width: 920, height: 620 },
+    { width: 920, height: 621 },
+    { width: 921, height: 441 },
+    { width: 921, height: 620 },
+    { width: 921, height: 621 },
+    { width: 1000, height: 600 },
+    { width: 1000, height: 700 },
+    { width: 1000, height: 701 },
+    { width: 1001, height: 600 },
+    { width: 768, height: 1024 },
+    { width: 844, height: 390 },
+    { width: 1024, height: 768 },
+    { width: 1280, height: 800 },
+    { width: 1366, height: 500 },
+    { width: 1366, height: 501 },
+    { width: 1366, height: 520 },
+    { width: 1366, height: 540 },
+    { width: 1366, height: 625 },
+    { width: 1440, height: 600 },
+    { width: 1440, height: 620 },
+    { width: 1440, height: 621 },
+    { width: 1440, height: 900 },
+    { width: 1920, height: 500 },
+    { width: 1920, height: 501 }
+  ];
+  const chapterSelectors = [
+    ".threshold-hero",
+    "#place",
+    "#cabins",
+    "#open-air-living",
+    "#gatherings",
+    "#visit"
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+    });
+
+    const state = await page.evaluate((selectors) => {
+      const root = document.documentElement;
+
+      return {
+        layoutWidth: document.body.clientWidth,
+        rootScrollWidth: root.scrollWidth,
+        bodyScrollWidth: document.body.scrollWidth,
+        chapters: selectors.map((selector) => {
+          const chapter = document.querySelector<HTMLElement>(selector);
+          const bounds = chapter?.getBoundingClientRect();
+          const visibleContent = Array.from(
+            chapter?.querySelectorAll<HTMLElement>(
+              "h1, h2, h3, p, a, button, li, dt, dd"
+            ) ?? []
+          ).filter((element) => {
+            const styles = window.getComputedStyle(element);
+            const rect = element.getBoundingClientRect();
+
+            return (
+              styles.display !== "none" &&
+              styles.visibility !== "hidden" &&
+              Number.parseFloat(styles.opacity) !== 0 &&
+              rect.width > 0 &&
+              rect.height > 0
+            );
+          });
+
+          return {
+            selector,
+            exists: Boolean(chapter),
+            width: bounds?.width ?? 0,
+            height: bounds?.height ?? 0,
+            clientHeight: chapter?.clientHeight ?? 0,
+            scrollHeight: chapter?.scrollHeight ?? 0,
+            hiddenContent: visibleContent
+              .filter((element) => {
+                if (!bounds) {
+                  return true;
+                }
+
+                const rect = element.getBoundingClientRect();
+
+                return (
+                  rect.left < bounds.left - 1 ||
+                  rect.right > bounds.right + 1 ||
+                  rect.top < bounds.top - 1 ||
+                  rect.bottom > bounds.bottom + 1
+                );
+              })
+              .map((element) => element.textContent?.trim() ?? element.tagName)
+          };
+        })
+      };
+    }, chapterSelectors);
+
+    expect(state.rootScrollWidth).toBeLessThanOrEqual(state.layoutWidth);
+    expect(state.bodyScrollWidth).toBeLessThanOrEqual(state.layoutWidth);
+
+    for (const chapter of state.chapters) {
+      expect(chapter.exists, chapter.selector).toBe(true);
+      expect(
+        Math.abs(chapter.height - viewport.height),
+        `${chapter.selector} height at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(chapter.width - state.layoutWidth),
+        `${chapter.selector} width at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(1);
+      expect(
+        chapter.scrollHeight,
+        `${chapter.selector} content height at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(chapter.clientHeight + 1);
+      expect(
+        chapter.hiddenContent,
+        `${chapter.selector} hidden content at ${viewport.width}x${viewport.height}`
+      ).toEqual([]);
+    }
+  }
+});
+
+test("Task 10.3 desktop chapter anchors reveal the complete composition", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 1024, height: 768 },
+    { width: 1280, height: 800 },
+    { width: 1440, height: 900 }
+  ];
+  const chapters = [
+    {
+      label: "Place",
+      selector: "#place",
+      lead: ".place-section__title",
+      ending: ".place-section__facts"
+    },
+    {
+      label: "Cabins",
+      selector: "#cabins",
+      lead: ".cabins-section__title",
+      ending: ".cabins-section__marker"
+    },
+    {
+      label: "Rhythm",
+      selector: "#open-air-living",
+      lead: ".open-air-section__title",
+      ending: ".open-air-section__passage"
+    },
+    {
+      label: "Gatherings",
+      selector: "#gatherings",
+      lead: ".gatherings-section__title",
+      ending: ".gatherings-section__occasions"
+    },
+    {
+      label: "Visit",
+      selector: "#visit",
+      lead: ".visit-section__title",
+      ending: ".visit-section__endnote"
+    }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    for (const chapter of chapters) {
+      await page
+        .getByRole("navigation", { name: "Site sections" })
+        .getByRole("link", { name: chapter.label, exact: true })
+        .click();
+      await page.waitForTimeout(280);
+
+      const state = await page.evaluate((definition) => {
+        const section = document.querySelector<HTMLElement>(
+          definition.selector
+        );
+        const lead = section?.querySelector<HTMLElement>(definition.lead);
+        const ending = section?.querySelector<HTMLElement>(definition.ending);
+        const header = document.querySelector<HTMLElement>(".site-header");
+        const sectionBounds = section?.getBoundingClientRect();
+        const leadBounds = lead?.getBoundingClientRect();
+        const endingBounds = ending?.getBoundingClientRect();
+        const headerBounds = header?.getBoundingClientRect();
+        const sectionStyles = section
+          ? window.getComputedStyle(section)
+          : null;
+
+        return {
+          sectionTop: sectionBounds?.top ?? Number.NaN,
+          sectionBottom: sectionBounds?.bottom ?? Number.NaN,
+          sectionHeight: sectionBounds?.height ?? 0,
+          leadTop: leadBounds?.top ?? Number.NaN,
+          endingBottom: endingBounds?.bottom ?? Number.NaN,
+          headerBottom: headerBounds?.bottom ?? 0,
+          scrollMarginTop: sectionStyles?.scrollMarginTop ?? ""
+        };
+      }, chapter);
+
+      expect(
+        Math.abs(state.sectionTop),
+        `${chapter.label} anchor top at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(state.sectionHeight - viewport.height),
+        `${chapter.label} anchor height at ${viewport.width}x${viewport.height}`
+      ).toBeLessThanOrEqual(1);
+      expect(state.sectionBottom).toBeLessThanOrEqual(viewport.height + 1);
+      expect(state.leadTop).toBeGreaterThan(state.headerBottom + 24);
+      expect(state.endingBottom).toBeLessThanOrEqual(viewport.height - 8);
+      expect(parseFloat(state.scrollMarginTop)).toBe(0);
+    }
+  }
+});
+
+test("Task 10.3 embeds the Place botanical trace into its paper surface", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 390, height: 844 },
+    { width: 1440, height: 900 }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/#place");
+
+    const surface = await page
+      .locator(".place-section__copy")
+      .evaluate((element) => {
+        const styles = window.getComputedStyle(element, "::before");
+
+        return {
+          backgroundImage: styles.backgroundImage,
+          backgroundRepeat: styles.backgroundRepeat,
+          mixBlendMode: styles.mixBlendMode,
+          opacity: Number.parseFloat(styles.opacity),
+          pointerEvents: styles.pointerEvents
+        };
+      });
+
+    expect(surface.backgroundImage).not.toBe("none");
+    expect(surface.backgroundRepeat).toBe("no-repeat");
+    expect(surface.mixBlendMode).toBe("multiply");
+    expect(surface.opacity).toBeGreaterThanOrEqual(0.03);
+    expect(surface.opacity).toBeLessThanOrEqual(0.1);
+    expect(surface.pointerEvents).toBe("none");
+  }
+});
+
+test("Task 10.3 keeps Activities exact and readable at every locked viewport", async ({
+  page
+}) => {
+  const viewports = [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 568, height: 320 },
+    { width: 768, height: 1024 },
+    { width: 844, height: 390 },
+    { width: 1024, height: 768 },
+    { width: 1280, height: 800 },
+    { width: 1440, height: 900 }
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.goto("/activities/");
+
+    const state = await page.evaluate(() => {
+      const root = document.documentElement;
+      const chapter = document.querySelector<HTMLElement>(
+        ".activities-chapter"
+      );
+      const bounds = chapter?.getBoundingClientRect();
+      const visibleContent = Array.from(
+        chapter?.querySelectorAll<HTMLElement>(
+          "h1, h2, h3, p, a, li, dt, dd"
+        ) ?? []
+      ).filter((element) => {
+        const styles = window.getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+
+        return (
+          styles.display !== "none" &&
+          styles.visibility !== "hidden" &&
+          rect.width > 0 &&
+          rect.height > 0
+        );
+      });
+
+      return {
+        layoutWidth: document.body.clientWidth,
+        rootScrollWidth: root.scrollWidth,
+        height: bounds?.height ?? 0,
+        width: bounds?.width ?? 0,
+        clientHeight: chapter?.clientHeight ?? 0,
+        scrollHeight: chapter?.scrollHeight ?? 0,
+        hiddenContent: visibleContent.filter((element) => {
+          const rect = element.getBoundingClientRect();
+
+          return (
+            rect.left < -1 ||
+            rect.right > root.clientWidth + 1 ||
+            rect.top < -1 ||
+            rect.bottom > window.innerHeight + 1
+          );
+        }).length
+      };
+    });
+
+    expect(state.rootScrollWidth).toBeLessThanOrEqual(state.layoutWidth);
+    expect(Math.abs(state.height - viewport.height)).toBeLessThanOrEqual(1);
+    expect(Math.abs(state.width - state.layoutWidth)).toBeLessThanOrEqual(1);
+    expect(state.scrollHeight).toBeLessThanOrEqual(state.clientHeight + 1);
+    expect(state.hiddenContent).toBe(0);
+  }
+});
+
+test("Task 10.4 mobile menu isolates the page and moves focus to its selected chapter", async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Open menu" }).click();
+
+  const main = page.locator("#main-content");
+  const skipLink = page.locator(".skip-link");
+
+  await expect(main).toHaveAttribute("inert", "");
+  await expect(main).toHaveAttribute("aria-hidden", "true");
+  await expect(page.locator(".mobile-nav-panel")).toHaveAttribute(
+    "aria-label",
+    "Mobile site sections"
+  );
+  await expect(page.locator(".brand-link")).toHaveAttribute(
+    "aria-hidden",
+    "true"
+  );
+  await expect(page.locator(".header-whatsapp")).toHaveAttribute(
+    "aria-hidden",
+    "true"
+  );
+  await expect(skipLink).toHaveAttribute("tabindex", "-1");
+  await expect(skipLink).toHaveAttribute("aria-hidden", "true");
+
+  const mobileNav = page.getByRole("navigation", {
+    name: "Mobile site sections"
+  });
+
+  await mobileNav.getByRole("link", { name: "Place" }).click();
+
+  await expect(page).toHaveURL(/#place$/);
+  await expect(page.locator("#place")).toBeFocused();
+  await expect(main).not.toHaveAttribute("inert", "");
+  await expect(main).not.toHaveAttribute("aria-hidden", "true");
+  await expect(skipLink).not.toHaveAttribute("tabindex", "-1");
+  await expect(skipLink).not.toHaveAttribute("aria-hidden", "true");
+});
+
+test("Task 10.4 paper text and focus indicators meet production contrast", async ({
+  page
+}) => {
+  await page.goto("/");
+
+  const contrast = await page.evaluate(() => {
+    const parse = (value: string) => {
+      const channels = value.match(/[\d.]+/g)?.map(Number) ?? [];
+      return [channels[0], channels[1], channels[2], channels[3] ?? 1] as const;
+    };
+    const composite = (
+      [red, green, blue, alpha]: readonly number[],
+      [backgroundRed, backgroundGreen, backgroundBlue]: readonly number[]
+    ) => [
+      red * alpha + backgroundRed * (1 - alpha),
+      green * alpha + backgroundGreen * (1 - alpha),
+      blue * alpha + backgroundBlue * (1 - alpha)
+    ] as const;
+    const luminance = ([red, green, blue]: readonly number[]) => {
+      const convert = (channel: number) => {
+        const value = channel / 255;
+        return value <= 0.04045
+          ? value / 12.92
+          : ((value + 0.055) / 1.055) ** 2.4;
+      };
+      return 0.2126 * convert(red) + 0.7152 * convert(green) + 0.0722 * convert(blue);
+    };
+    const ratio = (foreground: string, background: string) => {
+      const parsedBackground = parse(background);
+      const parsedForeground = parse(foreground);
+      const first = luminance(composite(parsedForeground, parsedBackground));
+      const second = luminance(parsedBackground);
+      const lighter = Math.max(first, second);
+      const darker = Math.min(first, second);
+      return (lighter + 0.05) / (darker + 0.05);
+    };
+    const resolveColor = (value: string) => {
+      const probe = document.createElement("span");
+      probe.style.color = value.trim();
+      document.body.appendChild(probe);
+      const resolved = getComputedStyle(probe).color;
+      probe.remove();
+      return resolved;
+    };
+    const label = document.querySelector(".place-section__fact dt") as Element;
+    const root = getComputedStyle(document.documentElement);
+    const paperColor = resolveColor(root.getPropertyValue("--color-paper"));
+
+    return {
+      label: ratio(getComputedStyle(label).color, paperColor),
+      focus: ratio(
+        resolveColor(root.getPropertyValue("--color-focus")),
+        paperColor
+      )
+    };
+  });
+
+  expect(contrast.label).toBeGreaterThanOrEqual(4.5);
+  expect(contrast.focus).toBeGreaterThanOrEqual(3);
+});
+
+test("Task 10.4 hero selects an intentional responsive source", async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844, expectedWidth: 960 },
+    { width: 1440, height: 900, expectedWidth: 1600 }
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const selectedWidth = await page
+      .locator(".threshold-hero__media img")
+      .evaluate((image: HTMLImageElement) => image.currentSrc.includes("960") ? 960 : image.currentSrc.includes("1600") ? 1600 : 0);
+
+    expect(selectedWidth).toBe(viewport.expectedWidth);
+  }
 });

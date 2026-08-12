@@ -27,6 +27,15 @@ describe("Activities production entry", () => {
     expect(html).toContain(
       'property="og:description"\n      content="Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."'
     );
+    expect(html).toContain(
+      '<link rel="canonical" href="https://ongdeng.github.io/Anvelia-06/activities/" />'
+    );
+    expect(html).toContain(
+      '<meta property="og:url" content="https://ongdeng.github.io/Anvelia-06/activities/" />'
+    );
+    expect(html).toContain(
+      '<meta property="og:image" content="https://ongdeng.github.io/Anvelia-06/og-anvelia-threshold.jpg" />'
+    );
     expect(html).toContain('<script type="module" src="/src/main.tsx"></script>');
   });
 

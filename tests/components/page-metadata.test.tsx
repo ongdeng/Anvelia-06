@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 const activitiesTitle = "Activities | Anvelia Sanctuary";
 const activitiesDescription =
   "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside.";
+const activitiesUrl = "https://ongdeng.github.io/Anvelia-06/activities/";
 
 describe("route metadata startup", () => {
   afterEach(() => {
@@ -36,5 +37,12 @@ describe("route metadata startup", () => {
         'meta[property="og:description"]'
       )?.content
     ).toBe(activitiesDescription);
+    expect(
+      document.querySelector<HTMLMetaElement>('meta[property="og:url"]')
+        ?.content
+    ).toBe(activitiesUrl);
+    expect(
+      document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href
+    ).toBe(activitiesUrl);
   });
 });

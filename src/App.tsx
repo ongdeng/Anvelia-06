@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { PageShell } from "./components/layout/PageShell";
 import { ActivitiesPage } from "./components/pages/ActivitiesPage";
 import { CabinsSection } from "./components/sections/CabinsSection";
@@ -28,6 +29,51 @@ if (typeof window !== "undefined") {
 
 function App() {
   const normalizedPath = getNormalizedPath();
+
+  useEffect(() => {
+    if (normalizedPath !== "/") {
+      return undefined;
+    }
+
+    let focusTimer: number | undefined;
+
+    const focusCurrentChapter = () => {
+      const encodedId = window.location.hash.slice(1);
+
+      if (!encodedId) {
+        return;
+      }
+
+      let destinationId: string;
+
+      try {
+        destinationId = decodeURIComponent(encodedId);
+      } catch {
+        return;
+      }
+
+      window.clearTimeout(focusTimer);
+      focusTimer = window.setTimeout(() => {
+        const destination = document.getElementById(destinationId);
+
+        if (!destination) {
+          return;
+        }
+
+        destination.setAttribute("tabindex", "-1");
+        destination.scrollIntoView?.({ block: "start" });
+        destination.focus({ preventScroll: true });
+      }, 0);
+    };
+
+    focusCurrentChapter();
+    window.addEventListener("hashchange", focusCurrentChapter);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("hashchange", focusCurrentChapter);
+    };
+  }, [normalizedPath]);
 
   if (
     import.meta.env.DEV &&

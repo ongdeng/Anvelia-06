@@ -39,6 +39,7 @@ export function PageShell({ children, hero }: PageShellProps) {
           >
             <picture className="threshold-hero__media" aria-hidden="true">
               <source media="(max-width: 820px)" srcSet={heroImage.smallSrc} />
+              <source media="(min-width: 821px)" srcSet={heroImage.src} />
               <img
                 {...{ fetchpriority: "high" }}
                 alt=""

@@ -99,9 +99,7 @@ export const siteContentByLocale = {
       eyebrow: "Place",
       title: "A place of quiet elevation",
       intro:
-        "Here, the hillside is shaped by timber, layered greenery, and open air, with a sense of distance from the city's faster rhythm.",
-      body:
-        "Sunny days often settle into cooler evenings here, while fresh hillside air moves through timber, greenery, and open-air spaces as the rhythm begins to slow.",
+        "Timber and layered greenery open to fresh hillside air, while sunny days and cooler evenings shape a slower rhythm away from the city.",
       facts: [
         {
           label: "Elevation",

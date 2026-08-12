@@ -12,7 +12,7 @@
   --color-ivory: #f6f0e6;
   --color-ivory-bright: #fffaf0;
   --color-display: #fbf5ea;
-  --color-focus: #d6b37a;
+  --color-focus: #94856a;
   --color-surface-dark: var(--color-ink);
   --color-surface-soft: var(--color-paper);
   --color-text-primary: var(--color-ivory);
@@ -39,6 +39,7 @@
   --type-display-line-height-mobile: 0.88;
   --type-label-size: 0.68rem;
   --type-label-tracking: 0.32em;
+  --type-practical-size: 0.75rem;
   --measure-copy: 65ch;
   --measure-hero-lede: 328px;
 
@@ -68,8 +69,30 @@
   --focus-offset: 4px;
   --focus-shadow: 0 0 0 4px rgb(var(--rgb-brass) / 0.2);
   --hairline-light: 1px solid var(--color-border-light);
+  --editorial-rule-gap: 18px;
   --link-underline-offset: 0.18em;
   --link-decoration-thickness: 0.06em;
   --shadow-soft: 0 10px 28px rgb(0 0 0 / 0.42);
   --shadow-display: 0 14px 34px rgb(0 0 0 / 0.3);
+
+  --motion-duration-fast: 140ms;
+  --motion-duration-standard: 200ms;
+  --motion-duration-slow: 260ms;
+  --motion-delay-none: 0ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-distance-subtle: 2px;
+  --motion-distance-settle: 4px;
+  --motion-opacity-enter: 0.94;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms;
+    --motion-duration-standard: 0ms;
+    --motion-duration-slow: 0ms;
+    --motion-distance-subtle: 0px;
+    --motion-distance-settle: 0px;
+    --motion-opacity-enter: 1;
+  }
 }

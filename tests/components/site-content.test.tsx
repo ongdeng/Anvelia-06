@@ -61,8 +61,9 @@ describe("siteContent registry", () => {
     expect(siteContent.hero.detailLine).toBe("Bentong, Pahang, Malaysia.");
     expect(siteContent.place.title).toBe("A place of quiet elevation");
     expect(siteContent.place.intro).toMatch(/timber/i);
-    expect(siteContent.place.body).toMatch(/cooler evenings/i);
-    expect(siteContent.place.body).toMatch(/fresh hillside air/i);
+    expect(siteContent.place.intro).toMatch(/cooler evenings/i);
+    expect(siteContent.place.intro).toMatch(/fresh hillside air/i);
+    expect("body" in siteContent.place).toBe(false);
     expect(siteContent.place.facts.map((fact) => fact.label)).toEqual([
       "Elevation",
       "Setting",

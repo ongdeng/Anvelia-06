@@ -314,18 +314,145 @@ Motion specifications:
 - Reduced motion should show all content immediately.
 - Never hide critical copy behind scroll animation.
 
-## 10. Quality Gates
+## 10. Task 10: Design Consistency, Motion, And Production Polish
 
-Before handoff:
+**Goal:** Resolve the small visual and behavioral inconsistencies that separate the current build from a world-class resort experience. Task 10 introduces no new narrative section. It refines the approved design language across the homepage and Activities page before final handoff.
 
-- build passes
-- no broken images
-- WhatsApp link opens correctly
-- no horizontal mobile overflow
-- keyboard navigation works
-- headings and landmarks are semantic
-- page title and meta description exist
-- rendered design is compared against Option 2
-- details pass: header spacing, button states, image crops, section rhythm, mobile WhatsApp access, and visit/address clarity
+### 10.1 Visual Consistency Audit
+
+Begin with an audit-only pass. Do not edit until the findings and proposed corrections are approved.
+
+- Compare typography, spacing, alignment, image crops, chapter proportions, and optical baselines.
+- Audit paper, timber, botanical, shadow, border, hairline, opacity, and blend treatments.
+- Check recurring elements including the header, mobile menu, WhatsApp actions, labels, editorial links, and end note.
+- Review chapter transitions and confirm each section feels related without losing its individual rhythm.
+- Compare the rendered site against original Option 2 and `docs/anvelia-design-language.md`.
+
+**Deliverable:** A severity-ordered correction register with screenshots, exact locations, recommended fixes, and elements that should remain unchanged. Stop for approval.
+
+**Status:** Audit complete. The approved correction register is `docs/qa/task-10-1-visual-consistency-audit.md`. No interface code was changed during the audit.
+
+### 10.1A Audit Correction Gate
+
+The audit found responsive blockers that must be resolved before motion is introduced. This is a sequencing correction, not a new feature or visual redesign.
+
+#### Correction 1: Stabilize Compact Navigation
+
+**What:** Repair the full-screen menu at `320x568` and `568x320` while preserving its approved imagery, content, and `44px` menu/close widget.
+
+**Method:** Replace tall-portrait fixed positioning with height-aware grid tracks and a dedicated short-landscape arrangement. Keep scrollbar handling stable across top, scrolled, and open states.
+
+**Acceptance:** Every navigation link, WhatsApp action, address line, and close control is reachable without overlap. The menu fits `100svh`, and the widget keeps exactly the same size and position in every state.
+
+#### Correction 2: Remove 320px Horizontal Overflow
+
+**What:** Eliminate the horizontal scrollbar on the homepage, Activities page, and open menu.
+
+**Method:** Correct the interaction between minimum widths, scrollbar reservation, `100vw`, and full-width containers. Fix dimensions at their source; do not conceal the problem with overflow clipping.
+
+**Acceptance:** `scrollWidth` equals `clientWidth` at every locked viewport, with no cropped content or horizontal movement.
+
+#### Correction 3: Repair The Activities Mobile Header
+
+**What:** Prevent the WhatsApp and menu controls from colliding or covering the Activities introduction.
+
+**Method:** Separate the translucent header surface from the fixed menu control's containing block, then rebalance the mobile header grid and content clearance.
+
+**Acceptance:** At `320px` and `390px`, controls never overlap, touch targets remain at least `44px`, and the Activities eyebrow and title remain unobstructed.
+
+#### Correction 4: Restore Compact-Landscape Chapter Fit
+
+**What:** Correct Hero, Place, Cabins, Rhythm, and Gatherings at `568x320` and `844x390`.
+
+**Method:** Add shared short-landscape tuning for grid tracks, image crops, fixed-header clearance, and spacing. Preserve approved desktop and regular-portrait compositions.
+
+**Acceptance:** Every chapter fits one `100svh` screen with no clipped copy, missing link, hidden occasion, or unintended internal scrolling.
+
+#### Correction 5: Refine Place In Portrait
+
+**What:** Bring Place closer to one composed screen without changing its factual meaning or current image.
+
+**Method:** Use one concise paragraph, compact the facts, tighten vertical rhythm, and give the image a controlled portrait track that remains visibly connected to the chapter.
+
+**Acceptance:** Place fits one screen at `320x568` and `390x844`; all facts remain readable, and the result retains the approved Option 2 character.
+
+#### Correction 6: Correct The Smallest Gatherings State
+
+**What:** Recover the final occasion that currently falls below the `320x568` viewport.
+
+**Method:** Tune only the smallest portrait image/text tracks and vertical spacing. Preserve the image-first order, title, three occasions, and current type character.
+
+**Acceptance:** Private dinners, small corporate retreats, and wellness retreats are all visible inside one `100svh` chapter without reducing body text below the practical reading floor.
+
+#### Correction 7: Normalize Practical Type And Optical Alignment
+
+**What:** Resolve undersized supporting copy, detached hairlines, and small baseline inconsistencies.
+
+**Method:** Establish a practical-copy size floor, then align recurring labels, editorial links, end notes, header items, and hairlines using shared tokens where appropriate.
+
+**Acceptance:** Practical information is comfortably legible at every locked viewport; repeated elements share consistent spacing and alignment; decorative rules always feel attached to their intended element.
+
+**Correction gate deliverable:** Before-and-after desktop, portrait, and short-landscape screenshots; changed-file list; measured viewport results; tests run; and remaining risks. Stop for approval after each correction group. Begin Task 10.2 only when responsive geometry is stable.
+
+### 10.2 Motion System
+
+- Define shared motion tokens for duration, easing, delay, movement distance, and opacity.
+- Limit motion to orientation and feedback: header state changes, menu opening, focus/hover responses, restrained editorial-link movement, and optional section reveals.
+- Motion should feel like settling, revealing, or entering. Do not add parallax, scroll spectacle, decorative transitions, or continuous movement.
+- Prevent animation-driven layout shift, hidden critical content, delayed usability, and conflicting motion between components.
+- Provide a complete `prefers-reduced-motion` experience with immediate content visibility.
+
+**Method:** Define CSS-first shared motion tokens and apply them only to approved orientation and feedback states. Verify normal and reduced-motion modes separately at representative desktop, portrait, and landscape viewports.
+
+**Acceptance:** One restrained motion vocabulary is used throughout. There is no parallax, continuous movement, layout shift, delayed control response, or critical content hidden behind animation. Reduced-motion mode presents all content immediately.
+
+**Deliverable:** A concise motion specification, implementation preview, and normal/reduced-motion verification. Stop for approval.
+
+### 10.3 Responsive Layout And Surface Polish
+
+- Validate `320x568`, `390x844`, `568x320`, `768x1024`, `844x390`, `1024x768`, `1280x800`, and `1440x900`.
+- Preserve every narrative chapter's exact `100svh` contract without clipping, unreadable compression, or horizontal overflow.
+- Refine portrait and landscape image crops, fixed-header clearances, text measure, chapter balance, and transition boundaries.
+- Ensure textures feel embedded and quiet rather than decorative, repeated, or visibly layered over the composition.
+
+**Method:** Capture before-and-after evidence at every locked viewport, inspect computed chapter dimensions and overflow, and tune only the affected responsive rules, crops, and surface treatments.
+
+**Acceptance:** Every narrative chapter preserves its exact `100svh` contract, all copy and controls remain visible, horizontal overflow is absent, approved compositions remain recognizable, and textures support quiet material depth without competing with content.
+
+**Deliverable:** Before-and-after responsive screenshots and a viewport matrix recording every correction. Stop for approval.
+
+### 10.4 Accessibility, Performance, And SEO
+
+- Verify keyboard order, skip link, focus visibility, landmarks, headings, labels, contrast, and mobile-menu behavior.
+- Verify all WhatsApp and internal links, direct Activities loading, GitHub Pages base paths, image loading, and clean console output.
+- Check layout stability, responsive image delivery, metadata, Open Graph basics, and reduced-motion behavior.
+- Run component tests, production builds, responsive Playwright checks, and the deployed-base smoke test.
+
+**Method:** Combine manual keyboard and screen review with focused component tests, Playwright viewport checks, production builds, link validation, browser-console inspection, and a public deployment smoke test.
+
+**Acceptance:** Keyboard order and focus are complete; semantics and contrast have no critical defects; WhatsApp and internal links work; direct Activities loading and GitHub Pages paths resolve; images and metadata load correctly; tests and production build pass; and the deployed console is clean.
+
+**Deliverable:** Accessibility and production checklist, test output, build result, deployed-base evidence, and any documented residual risk. Stop for approval.
+
+**Execution status (2026-08-12):** Approved and fully verified locally, with final-audit corrections proceeding one at a time before Task 11. All 73 component tests and all 61 browser tests pass after correcting cross-route chapter arrival from `/activities`. Accessibility, contrast, responsive Hero delivery, Latin-only fonts, route metadata, truthful Open Graph imagery, deployment CI, and release-package boundaries are in place. Evidence and residual release risk are recorded in `docs/qa/task-10-4-accessibility-performance-seo.md`. The current public deployment remains the previous artifact until a separately approved publish action.
+
+### Task 10 Execution Protocol
+
+- Work in the blocker-first order defined by the 10.1 audit.
+- Make one correction group at a time and avoid unrelated redesign or refactoring.
+- After every major group, show before-and-after previews, changed files, viewports checked, verification results, and remaining risks.
+- Continue only after approval. Protect the approved Hero, chapter order, imagery, resort-first copy, material palette, and core Option 2 compositions.
+
+### Task 10 Acceptance Criteria
+
+- One restrained motion vocabulary is used across the complete experience.
+- No animation causes distraction, layout shift, clipping, or delayed access to content.
+- Repeated components use consistent typography, spacing, alignment, surfaces, and interaction states.
+- Textures and image transitions support quiet material depth without competing with copy or imagery.
+- Every supported viewport remains readable, premium, and faithful to the Option 2 design language.
+- WhatsApp links work, imagery loads, keyboard navigation is complete, and no console or deployment-path errors remain.
+- The final build, tests, visual comparison, and public deployment checks pass.
+
+**Final checkpoint:** Show the complete correction register, motion specification, responsive previews, verification output, and Option 2 comparison. Continue to Task 11 handoff only after approval.
 
 Keep changes simple, scoped, and verifiable. Follow `C:\Users\neo16\.codex\skills\claudemd\SKILL.md`: state assumptions, avoid speculative features, make surgical edits, and verify success.

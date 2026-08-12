@@ -1,6 +1,6 @@
 # Anvelia Current Build State
 
-Updated: 2026-07-16
+Updated: 2026-08-12
 
 ## Purpose
 
@@ -58,9 +58,12 @@ This file is the compact implementation memory for the Anvelia Sanctuary Phase 1
 - Task 9.1 and Task 9.2 are approved: the real Gatherings section, quiet-readiness source, bespoke material paper, responsive derivatives, anchor behavior, narrow-landscape split, and focused test coverage are in place.
 - The approved and implemented direction is recorded in `docs/anvelia-task-9-1-gatherings-direction.md`.
 - Task 9.3 is approved: the Visit section uses the approved arrival-path imagery, bespoke paper material, continuous responsive composition, one practical contact path, exact anchor alignment, short-landscape containment, and focused test coverage.
-- Task 9.4 is implemented and awaiting checkpoint approval. The approved direction removes the separate footer entirely and integrates only `© Anvelia Sanctuary` over the quiet lower edge of the Visit image. It adds no year, repeated location, address, WhatsApp action, paper strip, hairline, navigation, back-to-top control, or page height.
-- Task 9.5 is implemented and awaiting checkpoint approval. `Rhythm` now appears in both navigation modes, the lower-margin homepage passage and complete `/activities` route ship together, and the secondary page remains concise, concept-disclosed, and free of operational or health claims. Base-aware routing and a real multi-page Activities entry keep direct `/Anvelia-06/activities/` activation safe on GitHub Pages; route-specific static and runtime metadata are aligned.
-- Complete responsive, accessibility, semantic, performance, metadata, and final visual QA.
+- Task 9.4 is approved. The Visit chapter integrates only `© Anvelia Sanctuary` over the quiet lower image edge, with no separate footer or repeated closing information.
+- Task 9.5 is approved. `Rhythm` appears in both navigation modes, the homepage passage and complete `/activities` route ship together, and base-aware routing preserves direct `/Anvelia-06/activities/` activation.
+- Task 10.1 visual consistency corrections and Task 10.2 motion consistency are implemented and verified.
+- Task 10.3 is approved. All six homepage chapters and the Activities chapter hold the exact one-viewport contract across the locked and breakpoint-boundary matrix, with no clipped visible content or horizontal overflow.
+- Task 10.4 is approved and fully verified locally. The menu is a named, isolated modal with complete focus behavior; contrast, canonical and Open Graph metadata, truthful share imagery, Latin-only fonts, responsive Hero delivery, deployment CI, and GitHub Pages base-path checks are in place. The final audit is being resolved one finding at a time before Task 11.
+- Continue to Task 11 handoff/release preparation only after the final-audit correction gate closes. Do not publish without explicit approval.
 
 ## Verification Baseline
 
@@ -78,8 +81,14 @@ Task 9.4 verification: 50 Vitest checks passed, the production build passed, 25 
 
 Task 9.5 verification after independent-review correction: all 63 Vitest checks passed, the normal production build passed, the GitHub Pages build passed and emitted both `dist/index.html` and `dist/activities/index.html` with `/Anvelia-06/` assets, all 17 focused Activities Playwright checks passed, the complete 42-test Playwright suite passed, the deployed-base artifact smoke test passed, and `git diff --check` passed. Coverage locks the label-before-hairline lower-margin relation, readable contained prose at `844x390` and `568x320`, route-specific runtime/static metadata, direct `/Anvelia-06/activities/` activation, and base-aware links. The superseded Task 8 coverage requires exactly one Open-Air link with `See activities` text and the clean Activities destination.
 
+Task 10.3 verification after breakpoint correction: all 63 Vitest checks passed, the production build passed, all 57 Playwright checks passed, `git diff --check` passed, and the browser console remained clean. The complete 44-size matrix spans small portrait through `1920x501`, with the eight locked sizes supplemented by 36 breakpoint-boundary cases. Playwright now checks visible descendant bounds after fonts load, not only chapter geometry. Detailed evidence is recorded in `docs/qa/task-10-3-responsive-layout-surface-polish.md` and `assets/anvelia/08-visual-qa-captures/task-10-3-correction/`.
+
+Task 10.4 verification after the first final-audit correction: all 73 Vitest checks passed, all 61 Playwright checks passed, the normal production build passed, and `git diff --check` passed. Cross-route chapter links from `/activities` now arrive with the selected homepage chapter at the viewport top and focused on desktop and mobile. The public deployment remains the previous artifact until a later approved release. Detailed evidence is recorded in `docs/qa/task-10-4-accessibility-performance-seo.md` and `assets/anvelia/08-visual-qa-captures/task-10-4/`.
+
 Latest visual QA captures:
 
+- `assets/anvelia/08-visual-qa-captures/task-10-4/`
+- `assets/anvelia/08-visual-qa-captures/task-10-3-correction/`
 - `assets/anvelia/08-visual-qa-captures/task9-2-gatherings-desktop-1440x900.png`
 - `assets/anvelia/08-visual-qa-captures/task9-2-gatherings-landscape-800x600.png`
 - `assets/anvelia/08-visual-qa-captures/task9-2-gatherings-portrait-390x844.png`

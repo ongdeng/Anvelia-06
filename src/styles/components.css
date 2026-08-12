@@ -27,17 +27,19 @@
   text-transform: uppercase;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+    background-color var(--motion-duration-standard) var(--motion-ease-standard)
+      var(--motion-delay-none),
+    border-color var(--motion-duration-standard) var(--motion-ease-standard)
+      var(--motion-delay-none),
+    color var(--motion-duration-fast) var(--motion-ease-standard)
+      var(--motion-delay-none);
 }
 
 .ui-button--compact {
   min-height: 40px;
   gap: 8px;
   padding-inline: 17px;
-  font-size: 0.62rem;
+  font-size: var(--type-label-size);
   letter-spacing: 0.26em;
 }
 
@@ -323,12 +325,6 @@
   line-height: 1.8;
 }
 
-@media (hover: hover) {
-  .ui-button:not(:disabled):not([aria-disabled="true"]):hover {
-    transform: translateY(-1px);
-  }
-}
-
 @media (min-width: 821px) {
   .section-shell--regular {
     padding-block: var(--section-pad-desktop);
@@ -370,10 +366,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ui-button {
+    animation: none;
     transition: none;
-  }
-
-  .ui-button:not(:disabled):not([aria-disabled="true"]):hover {
-    transform: none;
   }
 }
