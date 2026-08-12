@@ -15,7 +15,10 @@ describe("Activities production entry", () => {
       return;
     }
 
-    const html = readFileSync(activitiesEntryPath, "utf8");
+    const html = readFileSync(activitiesEntryPath, "utf8").replace(
+      /\r\n/g,
+      "\n"
+    );
 
     expect(html).toContain("<title>Activities | Anvelia Sanctuary</title>");
     expect(html).toContain(

@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const readProjectFile = (path: string) =>
-  readFileSync(resolve(projectRoot, path), "utf8");
+  readFileSync(resolve(projectRoot, path), "utf8").replace(/\r\n/g, "\n");
 
 const tokensCss = readProjectFile("src/styles/tokens.css");
 const typographyCss = readProjectFile("src/styles/typography.css");
