@@ -1,9 +1,15 @@
+import type { CSSProperties } from "react";
+
 import { imagesByRole } from "../../content/images";
 import { siteContent } from "../../content/siteContent";
 
 export function PlaceSection() {
   const { place } = siteContent;
   const image = imagesByRole["place-hillside-setting"];
+  const botanical = imagesByRole["open-air-botanical-background"];
+  const copyStyle = {
+    "--place-botanical-image": `url("${botanical.src}")`
+  } as CSSProperties;
 
   return (
     <section
@@ -11,13 +17,12 @@ export function PlaceSection() {
       className="place-section"
       id={place.id}
     >
-      <div className="place-section__copy">
+      <div className="place-section__copy" style={copyStyle}>
         <p className="place-section__eyebrow">{place.eyebrow}</p>
         <h2 className="place-section__title" id="place-title">
           {place.title}
         </h2>
         <p className="place-section__intro">{place.intro}</p>
-        <p className="place-section__body-copy">{place.body}</p>
         <dl className="place-section__facts" aria-label="Place details">
           {place.facts.map((fact) => (
             <div className="place-section__fact" key={fact.label}>

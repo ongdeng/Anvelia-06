@@ -190,4 +190,25 @@ final result: passed and approved
 - Viewport contract: passed. Visit remains exactly one `100svh` chapter with no extra closing band or scroll height.
 - Verification: 50 Vitest checks passed, production build passed, 25 Playwright checks passed, `git diff --check` passed, and independent review returned PASS.
 
-final result: passed; awaiting user approval
+final result: passed; approved
+
+## Task 10.4 Final Production QA - 2026-08-12
+
+**Source and evidence**
+- Source: `assets/anvelia/04-creative-direction-sheets/anvelia-selected-option-2-japanese-threshold-resort.png`
+- Final desktop: `assets/anvelia/08-visual-qa-captures/task-10-4/homepage-final-desktop-1440x900.jpg`
+- Final portrait: `assets/anvelia/08-visual-qa-captures/task-10-4/homepage-final-portrait-390x844.jpg`
+- Final menu: `assets/anvelia/08-visual-qa-captures/task-10-4/mobile-menu-final-390x844.jpg`
+- Same-input comparison: `assets/anvelia/08-visual-qa-captures/task-10-4/option-2-vs-final-production-desktop.jpg`
+
+**Final comparison**
+- P0/P1/P2 findings: none remain in the Task 10.4 local artifact.
+- Visual fidelity: passed. Timber framing, deep shade, warm lantern light, threshold reveal, editorial serif hierarchy, restrained labels, and asymmetric image/copy balance remain faithful to Option 2. The user-approved text-only wordmark and five-item navigation are intentional project refinements.
+- Responsive quality: passed. Desktop preserves the architectural split; portrait remains one complete arrival chapter with deliberate cropping, stable controls, readable copy, and no overlap.
+- Accessibility: passed. Keyboard order, skip link, named landmarks, semantic headings, modal isolation, focus containment/restoration/transfer, labels, reduced motion, and corrected contrast are verified.
+- Truthfulness and SEO: passed. Canonical and Open Graph metadata are route-specific; the approved Hero supplies the share image and is clearly described as conceptual.
+- Delivery: passed. Responsive Hero sources, lazy below-fold imagery, Latin-only fonts, clean GitHub Pages paths, CI gates, and decoded-image/console checks are in place.
+- Residual release note: the current public Pages deployment is healthy but predates this artifact. It will not expose the Task 10.4 metadata/share asset until a later approved publish action.
+- Independent review note: an earlier reviewer identified five accessibility/SEO/CI defects, all now corrected and test-locked. A fresh final reviewer could not run because the subagent service reached its usage limit.
+
+final result: passed

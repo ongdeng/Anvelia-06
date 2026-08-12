@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /Anvelia-06/
+
+Sitemap: https://ongdeng.github.io/Anvelia-06/sitemap.xml

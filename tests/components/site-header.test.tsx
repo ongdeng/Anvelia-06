@@ -124,6 +124,11 @@ describe("SiteHeader", () => {
         name: siteContent.accessibility.mobileMenuLabel
       })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", {
+        name: siteContent.accessibility.mobileMenuLabel
+      })
+    ).toBeInTheDocument();
     expect(container.querySelector(".mobile-nav-panel")).not.toHaveAttribute(
       "hidden"
     );
@@ -143,6 +148,26 @@ describe("SiteHeader", () => {
       expect(menuButton).toHaveAttribute("aria-expanded", "false");
       expect(menuButton).toHaveFocus();
     });
+  });
+
+  it("keeps the mobile close control inside the modal dialog", () => {
+    render(<SiteHeader />);
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: siteContent.accessibility.mobileMenuOpenLabel
+      })
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: siteContent.accessibility.mobileMenuLabel
+    });
+
+    expect(
+      within(dialog).queryByRole("button", {
+        name: siteContent.accessibility.mobileMenuCloseLabel
+      })
+    ).toBeInTheDocument();
   });
 
   it("closes the mobile menu after a mobile nav link is selected", () => {
@@ -177,13 +202,17 @@ describe("SiteHeader", () => {
       })
     );
 
-    expect(
-      screen.getByRole("link", { name: siteContent.brand.homeAriaLabel })
-    ).toHaveAttribute("tabindex", "-1");
-    expect(
-      screen.getAllByRole("link", {
-        name: siteContent.contact.whatsappAriaLabel
-      })[0]
-    ).toHaveAttribute("tabindex", "-1");
+    expect(document.querySelector(".brand-link")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+    expect(document.querySelector(".header-whatsapp")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+    expect(document.querySelector(".primary-nav--desktop")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
   });
 });

@@ -61,8 +61,9 @@ describe("siteContent registry", () => {
     expect(siteContent.hero.detailLine).toBe("Bentong, Pahang, Malaysia.");
     expect(siteContent.place.title).toBe("A place of quiet elevation");
     expect(siteContent.place.intro).toMatch(/timber/i);
-    expect(siteContent.place.body).toMatch(/cooler evenings/i);
-    expect(siteContent.place.body).toMatch(/fresh hillside air/i);
+    expect(siteContent.place.intro).toMatch(/cooler evenings/i);
+    expect(siteContent.place.intro).toMatch(/fresh hillside air/i);
+    expect("body" in siteContent.place).toBe(false);
     expect(siteContent.place.facts.map((fact) => fact.label)).toEqual([
       "Elevation",
       "Setting",
@@ -293,7 +294,11 @@ describe("image registry", () => {
   });
 
   it("keeps the active runtime inventory free of reference-only images", () => {
-    expect(siteImages.every((image) => image.publicationStatus === "runtime-candidate")).toBe(true);
+    expect(
+      siteImages.every(
+        (image) => image.publicationStatus === "phase-1-runtime-concept"
+      )
+    ).toBe(true);
   });
 
   it("registers the approved quiet-readiness concept for Gatherings", () => {
@@ -311,7 +316,7 @@ describe("image registry", () => {
     expect(image.width).toBe(1536);
     expect(image.height).toBe(1024);
     expect(image.conceptOnly).toBe(true);
-    expect(image.publicationStatus).toBe("runtime-candidate");
+    expect(image.publicationStatus).toBe("phase-1-runtime-concept");
   });
 
   it("registers the bespoke Gatherings material as a decorative runtime image", () => {
@@ -325,7 +330,7 @@ describe("image registry", () => {
     expect(image.width).toBe(1024);
     expect(image.height).toBe(683);
     expect(image.conceptOnly).toBe(true);
-    expect(image.publicationStatus).toBe("runtime-candidate");
+    expect(image.publicationStatus).toBe("phase-1-runtime-concept");
   });
 
   it("registers the responsive arrival-path concept for Visit", () => {
@@ -341,7 +346,7 @@ describe("image registry", () => {
     expect(image.width).toBe(1586);
     expect(image.height).toBe(992);
     expect(image.conceptOnly).toBe(true);
-    expect(image.publicationStatus).toBe("runtime-candidate");
+    expect(image.publicationStatus).toBe("phase-1-runtime-concept");
   });
 
   it("registers the Visit paper field as a decorative responsive image", () => {
@@ -353,7 +358,7 @@ describe("image registry", () => {
     expect(image.width).toBe(1024);
     expect(image.height).toBe(1536);
     expect(image.conceptOnly).toBe(true);
-    expect(image.publicationStatus).toBe("runtime-candidate");
+    expect(image.publicationStatus).toBe("phase-1-runtime-concept");
   });
 });
 

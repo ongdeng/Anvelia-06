@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@fontsource/cormorant-garamond/400.css";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
+import "@fontsource/cormorant-garamond/latin-400.css";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-600.css";
 import App from "./App";
 import { siteContent } from "./content/siteContent";
 import { stripBasePath } from "./utils/basePath";
@@ -20,6 +20,11 @@ const routeMetadata =
   routePath === "/activities"
     ? siteContent.activities.metadata
     : siteContent.metadata;
+const productionOrigin = "https://ongdeng.github.io";
+const canonicalUrl = new URL(
+  routePath === "/activities" ? "activities/" : "",
+  `${productionOrigin}/Anvelia-06/`
+).href;
 
 document.title = routeMetadata.title;
 
@@ -54,6 +59,32 @@ setMetaContent(
   { property: "og:description" },
   routeMetadata.description
 );
+setMetaContent(
+  'meta[property="og:url"]',
+  { property: "og:url" },
+  canonicalUrl
+);
+
+const setCanonicalUrl = (href: string) => {
+  const canonical =
+    document.querySelector<HTMLLinkElement>('link[rel="canonical"]') ??
+    document.head.appendChild(document.createElement("link"));
+
+  canonical.rel = "canonical";
+  canonical.href = href;
+};
+
+setCanonicalUrl(canonicalUrl);
+
+document
+  .querySelectorAll<HTMLLinkElement>("link[data-base-href]")
+  .forEach((link) => {
+    const path = link.dataset.baseHref;
+
+    if (path) {
+      link.href = `${import.meta.env.BASE_URL}${path}`;
+    }
+  });
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

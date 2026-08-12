@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const chapterViewports = [
+  { width: 320, height: 568 },
   { width: 390, height: 844 },
   { width: 768, height: 1024 },
   { width: 568, height: 320 },
@@ -130,19 +131,47 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
     "true"
   );
 
-  const imageState = await page
-    .locator(".activities-chapter__image img")
-    .evaluate((image: HTMLImageElement) => ({
-      complete: image.complete,
-      naturalWidth: image.naturalWidth
-    }));
+  const image = page.locator(".activities-chapter__image img");
 
-  expect(imageState.complete).toBe(true);
-  expect(imageState.naturalWidth).toBeGreaterThan(0);
+  await expect
+    .poll(() =>
+      image.evaluate(
+        (element: HTMLImageElement) =>
+          element.complete && element.naturalWidth > 0
+      )
+    )
+    .toBe(true);
 
   await desktopNav.getByRole("link", { name: "Place" }).click();
   await expect(page).toHaveURL(/\/#place$/);
-  await expect(page.locator("#place")).toBeVisible();
+  await expect
+    .poll(() =>
+      page
+        .locator("#place")
+        .evaluate((section) => Math.round(section.getBoundingClientRect().top))
+    )
+    .toBe(0);
+  await expect(page.locator("#place")).toBeFocused();
+});
+
+test("Activities mobile navigation lands on and focuses the selected home chapter", async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/activities");
+
+  await page.getByRole("button", { name: "Open menu" }).click();
+  await page.getByRole("link", { name: "Cabins", exact: true }).click();
+
+  await expect(page).toHaveURL(/\/#cabins$/);
+  await expect
+    .poll(() =>
+      page
+        .locator("#cabins")
+        .evaluate((section) => Math.round(section.getBoundingClientRect().top))
+    )
+    .toBe(0);
+  await expect(page.locator("#cabins")).toBeFocused();
 });
 
 for (const viewport of chapterViewports) {
@@ -161,7 +190,7 @@ for (const viewport of chapterViewports) {
       const imageRect = image?.getBoundingClientRect();
       const contentRects = Array.from(
         document.querySelectorAll(
-          ".activities-chapter__introduction, .activities-chapter__moment"
+          ".activities-chapter__introduction, .activities-chapter__moment, .activities-chapter__moment p"
         )
       ).map((element) => element.getBoundingClientRect());
       const introSize = Number.parseFloat(
@@ -244,10 +273,8 @@ for (const viewport of chapterViewports) {
       layout.viewportHeight + 1
     );
 
-    if (viewport.height <= 390) {
-      expect(layout.introSize).toBeGreaterThanOrEqual(12);
-      expect(Math.min(...layout.momentBodySizes)).toBeGreaterThanOrEqual(12);
-    }
+    expect(layout.introSize).toBeGreaterThanOrEqual(12);
+    expect(Math.min(...layout.momentBodySizes)).toBeGreaterThanOrEqual(12);
   });
 }
 

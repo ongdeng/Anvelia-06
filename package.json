@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "playwright test tests/e2e",
-    "test:e2e:pages": "playwright test --config=playwright.pages.config.ts"
+    "test:e2e:chromium": "playwright test tests/e2e --project=chromium",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:pages": "playwright test --config=playwright.pages.config.ts",
+    "verify:live": "node scripts/verify-live-release.mjs"
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.2.11",

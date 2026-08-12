@@ -425,10 +425,10 @@ Review at `390x844`, `768x1024`, landscape tablet, and desktop widths. Record be
 
 **Recommended tools:** final browser pass, build command, screenshot comparison, manual checklist.
 
-- [ ] Run final build and tests.
-- [ ] Record final screenshots and known follow-ups.
-- [ ] Record phase 2 candidates: gallery, cabin page, gatherings page, map link, languages, real photography.
-- [ ] Summarize changed files and verification commands.
+- [x] Run final build and tests.
+- [x] Record final screenshots and known follow-ups.
+- [x] Record phase 2 candidates: gallery, cabin page, gatherings page, map link, languages, real photography.
+- [x] Summarize changed files and verification commands.
 
 **Acceptance criteria:**
 - User approves the final preview.
@@ -436,6 +436,8 @@ Review at `390x844`, `768x1024`, landscape tablet, and desktop widths. Record be
 - Handoff doc records final state and next steps.
 
 **Stop and preview:** Show final site, verification summary, and handoff doc. End only after approval.
+
+**Completion record (2026-08-13):** Task 11 and the final Phase 1 preview are approved. The handoff, visual evidence, verification matrix, release boundary, and Phase 2 candidates are recorded. Publication remains a separate explicit action.
 
 ## Self-Review
 

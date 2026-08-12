@@ -10,13 +10,11 @@
 }
 
 html {
-  min-width: 320px;
   background: var(--color-surface-dark);
   scrollbar-gutter: stable;
 }
 
 body {
-  min-width: 320px;
   min-height: 100vh;
   margin: 0;
   background: var(--color-surface-dark);
@@ -54,6 +52,7 @@ a {
 
 .threshold-hero {
   position: relative;
+  height: 100svh;
   min-height: 100vh;
   min-height: 100svh;
   padding: var(--space-6) var(--layout-page-pad) clamp(32px, 4vh, 48px);
@@ -171,5 +170,93 @@ a {
 @media (max-width: 390px) {
   .threshold-hero {
     padding-inline: 20px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape),
+  (max-width: 920px) and (max-height: 620px) and (orientation: landscape) {
+  .threshold-hero {
+    height: 100svh;
+    min-height: 100svh;
+    align-items: start;
+    padding: 72px clamp(18px, 3.5vw, 28px) 10px;
+  }
+
+  .threshold-hero__media img {
+    object-position: 58% 48%;
+  }
+
+  .threshold-hero::before {
+    background:
+      linear-gradient(90deg, rgb(var(--rgb-night) / 0.84) 0%, rgb(var(--rgb-night) / 0.62) 42%, rgb(var(--rgb-night) / 0.12) 72%, rgb(var(--rgb-night) / 0.04) 100%),
+      linear-gradient(0deg, rgb(var(--rgb-night) / 0.34), rgb(var(--rgb-night) / 0.04));
+  }
+
+  .hero-copy {
+    width: min(62vw, 360px);
+    max-height: 100%;
+    margin: 0;
+  }
+
+  .hero-copy h1 {
+    max-width: 9ch;
+    font-size: clamp(2.45rem, 6.6vw, 3.35rem);
+    line-height: 0.86;
+  }
+
+  .hero-subtitle {
+    max-width: 340px;
+    margin-top: 7px;
+    font-size: max(
+      var(--type-practical-size),
+      clamp(0.72rem, 1.75vw, 0.88rem)
+    );
+    line-height: 1.26;
+  }
+
+  .hero-rule {
+    width: 80px;
+    margin: 7px 0;
+  }
+
+  .hero-lede {
+    max-width: 340px;
+    font-size: max(
+      var(--type-practical-size),
+      clamp(0.66rem, 1.55vw, 0.76rem)
+    );
+    line-height: 1.32;
+  }
+}
+
+@media (min-width: 921px) and (min-height: 501px) and (max-height: 700px) and (orientation: landscape),
+  (min-width: 821px) and (max-width: 920px) and (min-height: 621px) and (max-height: 700px) and (orientation: landscape) {
+  .threshold-hero {
+    height: 100svh;
+    min-height: 100svh;
+    padding-bottom: 16px;
+  }
+
+  .hero-copy {
+    margin-top: clamp(72px, 13svh, 104px);
+  }
+
+  .hero-copy h1 {
+    font-size: min(
+      var(--type-display-size),
+      clamp(4rem, 14svh, 6.45rem)
+    );
+  }
+
+  .hero-subtitle {
+    margin-top: 10px;
+  }
+
+  .hero-rule {
+    margin: 10px 0 12px;
+  }
+
+  .hero-lede {
+    line-height: 1.45;
   }
 }
