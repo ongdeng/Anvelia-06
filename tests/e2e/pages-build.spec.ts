@@ -44,10 +44,46 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
     "content",
     "https://ongdeng.github.io/Anvelia-06/og-anvelia-threshold.jpg"
   );
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    "index,follow,max-image-preview:large"
+  );
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image"
+  );
+  await expect(page.locator('link[rel="sitemap"]')).toHaveAttribute(
+    "href",
+    "https://ongdeng.github.io/Anvelia-06/sitemap.xml"
+  );
+  await expect(page.locator('meta[name="anvelia-build"]')).toHaveAttribute(
+    "content",
+    /^(local|[0-9a-f]{40})$/
+  );
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
     "href",
     "/Anvelia-06/favicon-32.png"
   );
+
+  const [robotsResponse, sitemapResponse, shareImageResponse] =
+    await Promise.all([
+      page.request.get("/Anvelia-06/robots.txt"),
+      page.request.get("/Anvelia-06/sitemap.xml"),
+      page.request.get("/Anvelia-06/og-anvelia-threshold.jpg")
+    ]);
+
+  expect(robotsResponse.ok()).toBe(true);
+  expect(await robotsResponse.text()).toContain(
+    "Sitemap: https://ongdeng.github.io/Anvelia-06/sitemap.xml"
+  );
+  expect(sitemapResponse.ok()).toBe(true);
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap).toContain(
+    "<loc>https://ongdeng.github.io/Anvelia-06/activities/</loc>"
+  );
+  expect(sitemap).not.toContain("stays");
+  expect(shareImageResponse.ok()).toBe(true);
+  expect(shareImageResponse.headers()["content-type"]).toContain("image/");
 
   await page.goto("/Anvelia-06/");
 
