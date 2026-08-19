@@ -180,6 +180,7 @@ for (const viewport of chapterViewports) {
   }) => {
     await page.setViewportSize(viewport);
     await page.goto("/activities");
+    await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
       const chapter = document.querySelector(".activities-chapter");

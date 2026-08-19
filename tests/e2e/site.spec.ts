@@ -2159,6 +2159,7 @@ test("Task 10.1 compact-landscape chapters fit one screen below the fixed header
   for (const viewport of viewports) {
     await page.setViewportSize(viewport);
     await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
 
     const state = await page.evaluate((chapterDefinitions) => {
       const header = document.querySelector(".site-header");
