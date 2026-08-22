@@ -410,7 +410,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   position: relative;
   display: grid;
   min-height: clamp(600px, 78svh, 760px);
-  grid-template-columns: minmax(340px, 0.38fr) minmax(0, 0.62fr);
+  grid-template-columns: minmax(340px, 38%) minmax(0, 1fr);
   scroll-margin-top: 0;
   color: var(--color-ink);
   background:
@@ -537,7 +537,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
 .gatherings-section {
   display: grid;
   min-height: clamp(620px, 76svh, 720px);
-  grid-template-columns: minmax(0, 0.58fr) minmax(360px, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 42%);
   scroll-margin-top: 0;
   color: var(--color-ink);
   background: var(--color-paper);

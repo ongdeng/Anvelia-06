@@ -1954,6 +1954,8 @@ test("viewport chapters fill one screen in portrait and landscape", async ({
     { width: 667, height: 375 },
     { width: 844, height: 390 },
     { width: 800, height: 600 },
+    { width: 821, height: 900 },
+    { width: 880, height: 1184 },
     { width: 1024, height: 768 },
     { width: 1440, height: 900 }
   ];
