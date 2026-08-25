@@ -1,8 +1,11 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   inspectHtml,
   inspectRobots,
-  inspectSitemap
+  inspectSitemap,
+  releasePages
 } from "../../scripts/verify-live-release.mjs";
 
 const baseUrl = "https://ongdeng.github.io/Anvelia-06/";
@@ -67,6 +70,21 @@ const expectedPage = {
 };
 
 describe("live release inspection", () => {
+  it("keeps the live Activities contract aligned with its source metadata", () => {
+    const activitiesHtml = readFileSync(
+      resolve(process.cwd(), "activities/index.html"),
+      "utf8"
+    ).replace(/\r\n/g, "\n");
+    const activitiesPage = releasePages.find(
+      (page) => page.path === "activities/"
+    );
+
+    expect(activitiesPage).toBeDefined();
+    expect(activitiesHtml).toContain(
+      `name="description"\n      content="${activitiesPage.description}"`
+    );
+  });
+
   it("accepts complete static crawler metadata", () => {
     expect(inspectHtml(validHtml, expectedPage)).toEqual([]);
   });

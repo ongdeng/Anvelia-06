@@ -4,6 +4,21 @@ const defaultBaseUrl = "https://ongdeng.github.io/Anvelia-06/";
 const defaultAttempts = 12;
 const defaultDelayMs = 5_000;
 
+export const releasePages = [
+  {
+    path: "",
+    title: "Anvelia Sanctuary",
+    description:
+      "A hillside resort at the foot of Genting Highlands, with cabin stays, open-air living, and quiet gatherings shaped by cooler evenings and fresh hillside air."
+  },
+  {
+    path: "activities/",
+    title: "Activities | Anvelia Sanctuary",
+    description:
+      "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
+  }
+];
+
 const escapeRegExp = (value) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -190,20 +205,6 @@ const verifyLive = async () => {
 
   if (!expectedSha) throw new Error("ANVELIA_EXPECTED_SHA is required");
 
-  const pages = [
-    {
-      path: "",
-      title: "Anvelia Sanctuary",
-      description:
-        "A hillside resort at the foot of Genting Highlands, with cabin stays, open-air living, and quiet gatherings shaped by cooler evenings and fresh hillside air."
-    },
-    {
-      path: "activities/",
-      title: "Activities | Anvelia Sanctuary",
-      description:
-        "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."
-    }
-  ];
   let lastErrors = [];
 
   for (let attempt = 1; attempt <= defaultAttempts; attempt += 1) {
@@ -211,7 +212,7 @@ const verifyLive = async () => {
     const errors = [];
 
     try {
-      for (const page of pages) {
+      for (const page of releasePages) {
         const url = `${baseUrl}${page.path}`;
         const { response, body } = await fetchResponse(`${url}${cacheBust}`);
         if (!response.ok) errors.push(`${url}: HTTP ${response.status}`);
