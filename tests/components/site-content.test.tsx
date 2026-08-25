@@ -161,38 +161,48 @@ describe("siteContent registry", () => {
       metadata: {
         title: "Activities | Anvelia Sanctuary",
         description:
-          "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."
+          "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
       },
-      eyebrow: "Activities",
-      title: "Time, left open",
-      intro:
-        "Time here moves quietly between timber, greenery and the cooler evening air.",
+      opening: {
+        eyebrow: "Rhythm",
+        title: "A slower way to spend the day",
+        body: "Sunlight, natural wind and quiet spaces set the pace.",
+        imageRole: "activities-borrowed-light"
+      },
       moments: [
         {
-          title: "Tea in the open air",
+          id: "restore",
+          eyebrow: "Time to restore",
+          title: "A quieter interval",
           body:
-            "Afternoon tea can linger with quiet conversation and the hillside close by."
+            "Meditation, water and time at the spa let the day settle.",
+          imageRole: "activities-water-interval"
         },
         {
-          title: "A place to read",
-          body: "Reading finds its own pace beside timber and greenery."
-        },
-        {
-          title: "Evening, slowly",
+          id: "together",
+          eyebrow: "Together, slowly",
+          title: "Together, without hurry",
           body:
-            "Cooler evening air invites the day to settle gently across the hillside."
+            "Tea, private dinners and intimate gatherings carry the day into evening.",
+          imageRole: "activities-evening-warmth"
         }
-      ]
+      ],
+      closing: {
+        title: "Let the day find its own pace",
+        linkLabel: "Plan your visit",
+        linkHref: "#visit"
+      }
     });
 
     const activitiesText = collectStrings(siteContent.activities).join(" ");
 
     expect(activitiesText).toMatch(/tea/i);
-    expect(activitiesText).toMatch(/reading|read/i);
-    expect(activitiesText).toMatch(/quiet conversation/i);
-    expect(activitiesText).toMatch(/timber/i);
-    expect(activitiesText).toMatch(/greenery/i);
-    expect(activitiesText).toMatch(/cooler evening air/i);
+    expect(activitiesText).toMatch(/sunlight/i);
+    expect(activitiesText).toMatch(/natural wind/i);
+    expect(activitiesText).toMatch(/meditation/i);
+    expect(activitiesText).toMatch(/water/i);
+    expect(activitiesText).toMatch(/spa/i);
+    expect(activitiesText).toMatch(/gatherings/i);
     expect(activitiesText).not.toMatch(
       /\b(?:price|pricing|booking|detox|medical|clinic|treatment|programme|program|schedule|capacity|available|availability)\b/i
     );
@@ -280,6 +290,9 @@ describe("image registry", () => {
       "mobile-navigation-atmosphere",
       "open-air-living",
       "open-air-botanical-background",
+      "activities-borrowed-light",
+      "activities-water-interval",
+      "activities-evening-warmth",
       "gatherings-shared-table",
       "gatherings-material-background",
       "visit-arrival-path",

@@ -140,28 +140,37 @@ export const siteContentByLocale = {
       metadata: {
         title: "Activities | Anvelia Sanctuary",
         description:
-          "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."
+          "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
       },
-      eyebrow: "Activities",
-      title: "Time, left open",
-      intro:
-        "Time here moves quietly between timber, greenery and the cooler evening air.",
+      opening: {
+        eyebrow: "Rhythm",
+        title: "A slower way to spend the day",
+        body: "Sunlight, natural wind and quiet spaces set the pace.",
+        imageRole: "activities-borrowed-light" as SiteImageRole
+      },
       moments: [
         {
-          title: "Tea in the open air",
+          id: "restore",
+          eyebrow: "Time to restore",
+          title: "A quieter interval",
           body:
-            "Afternoon tea can linger with quiet conversation and the hillside close by."
+            "Meditation, water and time at the spa let the day settle.",
+          imageRole: "activities-water-interval" as SiteImageRole
         },
         {
-          title: "A place to read",
-          body: "Reading finds its own pace beside timber and greenery."
-        },
-        {
-          title: "Evening, slowly",
+          id: "together",
+          eyebrow: "Together, slowly",
+          title: "Together, without hurry",
           body:
-            "Cooler evening air invites the day to settle gently across the hillside."
+            "Tea, private dinners and intimate gatherings carry the day into evening.",
+          imageRole: "activities-evening-warmth" as SiteImageRole
         }
-      ]
+      ],
+      closing: {
+        title: "Let the day find its own pace",
+        linkLabel: "Plan your visit",
+        linkHref: "#visit" as NavItemHref
+      }
     },
     gatherings: englishGatherings,
     visit: {

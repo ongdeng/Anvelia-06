@@ -2,7 +2,6 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
-import { imagesByRole } from "../../src/content/images";
 import { siteContent } from "../../src/content/siteContent";
 
 describe("ActivitiesPage", () => {
@@ -16,51 +15,66 @@ describe("ActivitiesPage", () => {
     vi.unstubAllEnvs();
   });
 
-  it("renders one complete semantic Activities chapter from registry content", () => {
+  it("renders the three-movement Long Veranda narrative", () => {
     const { container } = render(<App />);
     const main = screen.getByRole("main");
-    const chapter = container.querySelector(".activities-chapter");
+    const movements = container.querySelectorAll("[data-rhythm-movement]");
 
     expect(main).toHaveAttribute("id", siteContent.accessibility.mainContentId);
-    expect(chapter).toHaveClass("viewport-chapter");
-    expect(chapter).toHaveAttribute(
-      "aria-labelledby",
-      "activities-page-title"
-    );
+    expect(main).toHaveClass("rhythm-page__main");
+    expect(movements).toHaveLength(3);
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: siteContent.activities.title
+        name: "A slower way to spend the day"
       })
     ).toHaveAttribute("id", "activities-page-title");
-    expect(chapter).toHaveTextContent(siteContent.activities.eyebrow);
-    expect(chapter).toHaveTextContent(siteContent.activities.intro);
     expect(
-      within(chapter as HTMLElement)
+      within(main)
         .getAllByRole("heading", { level: 2 })
         .map((heading) => heading.textContent)
-    ).toEqual(siteContent.activities.moments.map((moment) => moment.title));
-    expect(chapter?.querySelectorAll("article")).toHaveLength(3);
-    expect(chapter?.querySelector("button, form")).toBeNull();
+    ).toEqual([
+      "A quieter interval",
+      "Together, without hurry",
+      "Let the day find its own pace"
+    ]);
+    expect(main.querySelector("button, form")).toBeNull();
   });
 
-  it("discloses and responsively delivers the approved concept imagery", () => {
+  it("discloses and responsively delivers each approved concept aperture", () => {
     const { container } = render(<App />);
-    const figure = container.querySelector(".activities-chapter__image");
-    const image = figure?.querySelector("img");
-    const botanical = container.querySelector(
-      ".activities-chapter__botanical"
+    const figures = Array.from(
+      container.querySelectorAll("figure[data-concept-only='true']")
     );
 
-    expect(figure).toHaveAttribute("data-concept-only", "true");
-    expect(image).toHaveAttribute("alt", imagesByRole["open-air-living"].alt);
-    expect(image).toHaveAttribute("loading", "eager");
-    expect(image).toHaveAttribute("decoding", "async");
-    expect(image).toHaveAttribute("srcset");
-    expect(image).toHaveAttribute("sizes");
-    expect(botanical).toHaveAttribute("alt", "");
-    expect(botanical).toHaveAttribute("aria-hidden", "true");
-    expect(botanical).toHaveAttribute("srcset");
+    expect(figures).toHaveLength(3);
+    expect(figures.map((figure) => figure.getAttribute("data-image-role"))).toEqual([
+      "activities-borrowed-light",
+      "activities-water-interval",
+      "activities-evening-warmth"
+    ]);
+
+    for (const [index, figure] of figures.entries()) {
+      const image = figure.querySelector("img");
+
+      expect(image).toHaveAttribute("alt");
+      expect(image?.getAttribute("alt")).not.toBe("");
+      expect(image).toHaveAttribute(
+        "loading",
+        index === 0 ? "eager" : "lazy"
+      );
+      expect(image).toHaveAttribute("decoding", "async");
+      expect(image).toHaveAttribute("srcset");
+      expect(image).toHaveAttribute("sizes");
+    }
+  });
+
+  it("ends with one quiet route back to the Visit chapter", () => {
+    render(<App />);
+
+    expect(
+      screen.getByRole("link", { name: "Plan your visit" })
+    ).toHaveAttribute("href", "/#visit");
   });
 
   it("keeps the rendered page free of operational and health claims", () => {
@@ -82,7 +96,7 @@ describe("ActivitiesPage", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: siteContent.activities.title
+        name: siteContent.activities.opening.title
       })
     ).toBeInTheDocument();
   });

@@ -4,6 +4,8 @@ const chapterViewports = [
   { width: 320, height: 568 },
   { width: 390, height: 844 },
   { width: 768, height: 1024 },
+  { width: 821, height: 1180 },
+  { width: 834, height: 1194 },
   { width: 568, height: 320 },
   { width: 844, height: 390 },
   { width: 1024, height: 768 },
@@ -41,12 +43,19 @@ test("Rhythm passage opens the complete Activities page and exposes focus", asyn
   await passage.click();
   await expect(page).toHaveURL(/\/activities\/$/);
   await expect(
-    page.getByRole("heading", { level: 1, name: "Time, left open" })
+    page.getByRole("heading", {
+      level: 1,
+      name: "A slower way to spend the day"
+    })
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { level: 1, name: "Time, left open" })
+    page.getByRole("heading", {
+      level: 1,
+      name: "A slower way to spend the day"
+    })
   ).toHaveCSS("color", "rgb(19, 15, 12)");
-  await expect(page.locator(".activities-chapter__moment")).toHaveCount(3);
+  await expect(page.locator("[data-rhythm-movement]")).toHaveCount(3);
+  await expect(page.locator(".rhythm-aperture")).toHaveCount(3);
 });
 
 for (const viewport of [
@@ -104,7 +113,7 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
   await expect(page).toHaveTitle("Activities | Anvelia Sanctuary");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."
+    "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
   );
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
@@ -114,7 +123,7 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
     page.locator('meta[property="og:description"]')
   ).toHaveAttribute(
     "content",
-    "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside."
+    "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
   );
 
   const desktopNav = page.getByRole("navigation", { name: "Site sections" });
@@ -126,21 +135,20 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
   await expect(
     desktopNav.getByRole("link", { name: "Rhythm" })
   ).toHaveAttribute("href", "/#open-air-living");
-  await expect(page.locator(".activities-chapter__image")).toHaveAttribute(
-    "data-concept-only",
-    "true"
-  );
+  const apertures = page.locator(".rhythm-aperture");
+  await expect(apertures).toHaveCount(3);
 
-  const image = page.locator(".activities-chapter__image img");
-
-  await expect
-    .poll(() =>
-      image.evaluate(
-        (element: HTMLImageElement) =>
-          element.complete && element.naturalWidth > 0
+  for (const aperture of await apertures.all()) {
+    await expect(aperture).toHaveAttribute("data-concept-only", "true");
+    await expect
+      .poll(() =>
+        aperture.locator("img").evaluate(
+          (element: HTMLImageElement) =>
+            element.complete && element.naturalWidth > 0
+        )
       )
-    )
-    .toBe(true);
+      .toBe(true);
+  }
 
   await desktopNav.getByRole("link", { name: "Place" }).click();
   await expect(page).toHaveURL(/\/#place$/);
@@ -175,7 +183,7 @@ test("Activities mobile navigation lands on and focuses the selected home chapte
 });
 
 for (const viewport of chapterViewports) {
-  test(`Activities chapter contains content at ${viewport.width}x${viewport.height}`, async ({
+  test(`Activities promenade stays restrained and readable at ${viewport.width}x${viewport.height}`, async ({
     page
   }) => {
     await page.setViewportSize(viewport);
@@ -183,99 +191,87 @@ for (const viewport of chapterViewports) {
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const chapter = document.querySelector(".activities-chapter");
-      const copy = document.querySelector(".activities-chapter__copy");
-      const image = document.querySelector(".activities-chapter__image");
-      const chapterRect = chapter?.getBoundingClientRect();
-      const copyRect = copy?.getBoundingClientRect();
-      const imageRect = image?.getBoundingClientRect();
-      const contentRects = Array.from(
-        document.querySelectorAll(
-          ".activities-chapter__introduction, .activities-chapter__moment, .activities-chapter__moment p"
-        )
+      const main = document.querySelector<HTMLElement>(".rhythm-page__main");
+      const movementRects = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-rhythm-movement]")
       ).map((element) => element.getBoundingClientRect());
-      const introSize = Number.parseFloat(
-        window.getComputedStyle(
-          document.querySelector(".activities-chapter__intro") as Element
-        ).fontSize
-      );
-      const momentBodySizes = Array.from(
-        document.querySelectorAll(".activities-chapter__moment p")
-      ).map((element) =>
-        Number.parseFloat(window.getComputedStyle(element).fontSize)
+      const apertureRects = Array.from(
+        document.querySelectorAll<HTMLElement>(".rhythm-aperture")
+      ).map((element) => element.getBoundingClientRect());
+      const textElements = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          ".rhythm-page__main h1, .rhythm-page__main h2, .rhythm-page__main p, .rhythm-page__main a"
+        )
       );
 
       return {
         viewportHeight: window.innerHeight,
         viewportWidth: window.innerWidth,
         documentWidth: document.documentElement.scrollWidth,
-        introSize,
-        momentBodySizes,
-        chapter: chapterRect
-          ? {
-              top: chapterRect.top,
-              right: chapterRect.right,
-              bottom: chapterRect.bottom,
-              left: chapterRect.left,
-              height: chapterRect.height
-            }
-          : null,
-        copy: copyRect
-          ? {
-              top: copyRect.top,
-              right: copyRect.right,
-              bottom: copyRect.bottom,
-              left: copyRect.left,
-              scrollHeight: (copy as HTMLElement).scrollHeight,
-              clientHeight: (copy as HTMLElement).clientHeight
-            }
-          : null,
-        image: imageRect
-          ? {
-              top: imageRect.top,
-              right: imageRect.right,
-              bottom: imageRect.bottom,
-              left: imageRect.left
-            }
-          : null,
-        content: contentRects.map((rect) => ({
+        mainHeight: main?.scrollHeight ?? 0,
+        movements: movementRects.map((rect) => ({
           top: rect.top,
           right: rect.right,
           bottom: rect.bottom,
-          left: rect.left
-        }))
+          left: rect.left,
+          height: rect.height
+        })),
+        apertures: apertureRects.map((rect) => ({
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height
+        })),
+        text: textElements.map((element) => {
+          const rect = element.getBoundingClientRect();
+          return {
+            left: rect.left,
+            right: rect.right,
+            fontSize: Number.parseFloat(window.getComputedStyle(element).fontSize)
+          };
+        })
       };
     });
 
-    expect(layout.chapter).not.toBeNull();
-    expect(Math.round(layout.chapter?.height ?? 0)).toBe(
-      layout.viewportHeight
-    );
-    expect(Math.round(layout.chapter?.top ?? -1)).toBe(0);
-    expect(Math.round(layout.chapter?.bottom ?? 0)).toBe(
-      layout.viewportHeight
-    );
     expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth);
-    expect(layout.copy?.scrollHeight).toBeLessThanOrEqual(
-      (layout.copy?.clientHeight ?? 0) + 1
-    );
+    expect(layout.mainHeight).toBeGreaterThan(layout.viewportHeight * 2.2);
+    expect(layout.movements).toHaveLength(3);
+    expect(layout.apertures).toHaveLength(3);
 
-    for (const rect of layout.content) {
-      expect(rect.left).toBeGreaterThanOrEqual((layout.copy?.left ?? 0) - 1);
-      expect(rect.right).toBeLessThanOrEqual((layout.copy?.right ?? 0) + 1);
-      expect(rect.top).toBeGreaterThanOrEqual((layout.copy?.top ?? 0) - 1);
-      expect(rect.bottom).toBeLessThanOrEqual((layout.copy?.bottom ?? 0) + 1);
+    for (const [index, movement] of layout.movements.entries()) {
+      expect(movement.left).toBeGreaterThanOrEqual(-1);
+      expect(movement.right).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(movement.height).toBeGreaterThan(layout.viewportHeight * 0.55);
+      if (index > 0) {
+        expect(movement.top).toBeGreaterThanOrEqual(
+          layout.movements[index - 1].bottom - 1
+        );
+      }
     }
 
-    expect(layout.image?.left).toBeGreaterThanOrEqual(-1);
-    expect(layout.image?.right).toBeLessThanOrEqual(layout.viewportWidth + 1);
-    expect(layout.image?.top).toBeGreaterThanOrEqual(-1);
-    expect(layout.image?.bottom).toBeLessThanOrEqual(
-      layout.viewportHeight + 1
-    );
+    for (const aperture of layout.apertures) {
+      expect(aperture.left).toBeGreaterThanOrEqual(-1);
+      expect(aperture.right).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(aperture.width).toBeLessThanOrEqual(layout.viewportWidth * 0.93 + 1);
+      expect(aperture.height).toBeLessThanOrEqual(layout.viewportHeight * 0.92 + 1);
+    }
 
-    expect(layout.introSize).toBeGreaterThanOrEqual(12);
-    expect(Math.min(...layout.momentBodySizes)).toBeGreaterThanOrEqual(12);
+    if (
+      layout.viewportHeight > layout.viewportWidth &&
+      layout.viewportWidth >= 821
+    ) {
+      expect(layout.apertures[0].width).toBeGreaterThanOrEqual(
+        layout.viewportWidth * 0.9
+      );
+    }
+
+    for (const text of layout.text) {
+      expect(text.left).toBeGreaterThanOrEqual(-1);
+      expect(text.right).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(text.fontSize).toBeGreaterThanOrEqual(10);
+    }
   });
 }
 

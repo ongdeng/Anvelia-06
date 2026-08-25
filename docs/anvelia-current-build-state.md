@@ -1,6 +1,6 @@
 # Anvelia Current Build State
 
-Updated: 2026-08-13
+Updated: 2026-08-24
 
 ## Purpose
 
@@ -32,10 +32,10 @@ This file is the compact implementation memory for the Anvelia Sanctuary Phase 1
 - Header/navigation has a sticky premium treatment. On smaller portrait screens, the menu control is minimal and should remain consistent in position and widget size between closed, scrolled, and open states.
 - Mobile navigation uses a full-screen panel with calm material imagery and quiet links.
 - The former Open-Air Living chapter now appears in navigation as `Rhythm` while retaining the `#open-air-living` anchor, selected veranda concept, `Living with the hillside` title, 38/62 landscape split, and one-viewport 58/42 portrait rhythm. Its only onward path is the restrained `See activities` editorial passage.
-- `/activities` is a complete secondary page with one exact-viewport editorial chapter, the approved veranda and botanical registry imagery, and three unprogrammed moments grounded in tea, reading, quiet conversation, timber, greenery, and cooler evening air. Secondary-page navigation returns to the homepage anchors, while `/stays` remains disabled.
+- `/activities` is a complete multi-movement editorial page in the approved `Long Veranda` direction. It moves through borrowed light, a water interval, evening warmth, and a quiet closing passage using three concept-only image apertures, restrained paper fields, deep green, and concise resort-first copy. Secondary-page navigation returns to the homepage anchors, while `/stays` remains disabled.
 - Gatherings now uses the approved people-free quiet-readiness concept with a 58/42 image-left/paper-right landscape split and image-first portrait order. Its copy is limited to the approved introduction and one semantic occasions list, with no CTA or operational claims. The text panel carries a bespoke handmade-paper material layer derived from the photograph's timber grain, glass reflection, linen, and abstract cup rhythm; it remains decorative, low contrast, and excluded from accessibility output.
 - Visit uses the people-free arrival-path concept with rain-darkened stone, dense hillside planting, a restrained lantern, and a timber threshold edge. A generated warm-ivory paper field blends broadly over the full-bleed image: paper-left/image-right in landscape and paper-above/image-below in portrait. It presents one concise invitation, the exact address, visible WhatsApp number, one `Plan your visit` WhatsApp action, and the timeless `© Anvelia Sanctuary` end note over the quiet lower image edge. It contains no map, form, pricing, social links, separate footer, or repeated closing information.
-- Open-Air Living, Gatherings, and Visit use the shared `ViewportChapter` primitive and occupy exactly one `100svh` chapter in portrait and landscape. Their internal compositions remain distinct, and compact landscape rules preserve content fit down to short phone viewports.
+- The homepage Open-Air Living, Gatherings, and Visit sections use the shared `ViewportChapter` primitive and occupy exactly one `100svh` chapter in portrait and landscape. Their internal compositions remain distinct, and compact landscape rules preserve content fit down to short phone viewports.
 - Place section direction favors full-page pacing on portrait while keeping the original landscape feel.
 - Cabins section currently uses a split view: image side plus dark green text panel.
 - Cabins panel uses `assets/anvelia/09-generated-backgrounds/anvelia-botanical-background-dark.png` as an embedded background texture, controlled in code by opacity, crop, blend, and overlays.
@@ -61,9 +61,10 @@ This file is the compact implementation memory for the Anvelia Sanctuary Phase 1
 - Task 9.4 is approved. The Visit chapter integrates only `© Anvelia Sanctuary` over the quiet lower image edge, with no separate footer or repeated closing information.
 - Task 9.5 is approved. `Rhythm` appears in both navigation modes, the homepage passage and complete `/activities` route ship together, and base-aware routing preserves direct `/Anvelia-06/activities/` activation.
 - Task 10.1 visual consistency corrections and Task 10.2 motion consistency are implemented and verified.
-- Task 10.3 is approved. All six homepage chapters and the Activities chapter hold the exact one-viewport contract across the locked and breakpoint-boundary matrix, with no clipped visible content or horizontal overflow.
+- Task 10.3 is approved for all six homepage chapters. The former one-viewport Activities rule was superseded on 2026-08-24 by the approved `Long Veranda` multi-movement page; responsive containment and overflow protections remain mandatory.
 - Task 10.4 and its sixth final-audit correction are approved and committed. The menu is a named, isolated modal with complete focus behavior; contrast, canonical/social/structured metadata, truthful concept-image treatment, crawler artifacts, Latin-only fonts, responsive Hero delivery, deployment CI, exact build identification, and GitHub Pages base-path checks are in place.
 - Task 11 is approved. Phase 1 is complete, with final evidence and the release boundary recorded in `md files/2026-06-30-anvelia-phase-1-handoff.md`. Publication remains a separate explicit action.
+- The 2026-08-24 Rhythm refinement is implemented locally: centralized copy and image roles, three responsive concept-image families, direct `/activities/` routing, route metadata, a functional `Plan your visit` return path, and dedicated component and browser coverage are in place. It has not been deployed in this checkpoint.
 
 ## Verification Baseline
 
@@ -87,9 +88,12 @@ Task 10.4 verification after the sixth final-audit correction: all 82 Vitest che
 
 Task 11 approved final review: fresh desktop, portrait, menu, short-landscape, and dedicated Place, Rhythm, Gatherings, Visit, and Activities captures were compared with the original Option 2 and the canonical design-language checklist. The final verification matrix again passed with 82 Vitest checks, 65 Chromium/WebKit checks, both builds, the GitHub Pages artifact smoke, and a clean browser console. No Phase 1 blocker was found; documentary photography and expanded routes remain Phase 2 work. Evidence is in `assets/anvelia/08-visual-qa-captures/task-11-final/`.
 
+2026-08-24 Long Veranda verification: all 83 Vitest checks passed, both production builds passed, all 63 Chromium checks and all 4 WebKit checks passed, and the page was visually checked at `390x844`, `834x1194`, `844x390`, and `1440x900`. The final page has no horizontal overflow, preserves truthful concept-image treatment, keeps a deliberate stacked rhythm through portrait-tablet widths, and leaves the homepage viewport chapters unchanged. Evidence is in `assets/anvelia/08-visual-qa-captures/task-rhythm-long-veranda/`.
+
 Latest visual QA captures:
 
 - `assets/anvelia/08-visual-qa-captures/task-11-final/`
+- `assets/anvelia/08-visual-qa-captures/task-rhythm-long-veranda/`
 - `assets/anvelia/08-visual-qa-captures/task-10-4/`
 - `assets/anvelia/08-visual-qa-captures/task-10-3-correction/`
 - `assets/anvelia/08-visual-qa-captures/task9-2-gatherings-desktop-1440x900.png`

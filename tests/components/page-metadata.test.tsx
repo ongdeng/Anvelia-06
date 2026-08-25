@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const activitiesTitle = "Activities | Anvelia Sanctuary";
 const activitiesDescription =
-  "Quiet moments at Anvelia Sanctuary, shaped by tea, reading, timber, greenery, and cooler evening air on the hillside.";
+  "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside.";
 const activitiesUrl = "https://ongdeng.github.io/Anvelia-06/activities/";
 
 describe("route metadata startup", () => {

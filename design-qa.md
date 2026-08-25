@@ -212,3 +212,24 @@ final result: passed; approved
 - Independent review note: an earlier reviewer identified five accessibility/SEO/CI defects, all now corrected and test-locked. A fresh final reviewer could not run because the subagent service reached its usage limit.
 
 final result: passed
+
+## Rhythm Long Veranda QA - 2026-08-24
+
+**Source and evidence**
+- Approved source: `assets/anvelia/04-creative-direction-sheets/anvelia-rhythm-long-veranda-approved.png`
+- Same-input comparison: `assets/anvelia/08-visual-qa-captures/task-rhythm-long-veranda/activities-reference-comparison.png`
+- Desktop movements: `activities-desktop-1440x900-*-approved.png` in the same QA directory
+- Portrait opening: `activities-mobile-390x844-opening-final.png`
+- Portrait-tablet opening: `activities-tablet-834x1194-opening-final.png`
+- Short landscape opening: `activities-landscape-844x390-opening-final.png`
+
+**Final comparison**
+- P0/P1/P2 findings: none remain.
+- Visual fidelity: passed. The implementation preserves the source's tall borrowed-light threshold, shallow water interval, deep-green evening field, overlapping veranda still life, paper closing, and restrained asymmetry.
+- Typography and copy: passed. Cormorant Garamond and Inter retain the established hierarchy; every movement uses one eyebrow, one concise heading, and one short line of truthful resort-first copy.
+- Responsive quality: passed. Desktop follows the approved long-scroll proportions; phone and portrait tablet keep airy stacked apertures; short landscape preserves the architectural split. The `820/821/834px` portrait boundary is protected against a premature narrow desktop crop. No reviewed viewport has horizontal overflow or clipped text.
+- Interaction and accessibility: passed. Secondary navigation returns to homepage anchors, `Plan your visit` resolves to `/#visit`, all three concept images have truthful alt text and intrinsic dimensions, and focus behavior remains covered by the shared header tests.
+- Asset delivery: passed. Three source concepts and nine responsive WebP derivatives are registered with provenance, roles, `srcset`, and `conceptOnly: true` treatment.
+- Verification: 83 Vitest checks, 63 Chromium checks, 4 WebKit checks, the normal build, and the GitHub Pages build passed.
+
+final result: passed

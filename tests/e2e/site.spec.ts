@@ -121,7 +121,7 @@ test("Task 10.1 shared phone header separates controls and clears page content",
             ".mobile-menu-toggle"
           );
           const eyebrow = document.querySelector<HTMLElement>(
-            ".activities-chapter__eyebrow"
+            ".rhythm-opening .rhythm-eyebrow"
           );
           const rect = (element: Element | null) =>
             element?.getBoundingClientRect() ?? null;
@@ -3886,7 +3886,7 @@ test("Task 10.3 embeds the Place botanical trace into its paper surface", async 
   }
 });
 
-test("Task 10.3 keeps Activities exact and readable at every locked viewport", async ({
+test("Task 10.3 keeps the Activities promenade restrained and readable at every locked viewport", async ({
   page
 }) => {
   const viewports = [
@@ -3906,12 +3906,15 @@ test("Task 10.3 keeps Activities exact and readable at every locked viewport", a
 
     const state = await page.evaluate(() => {
       const root = document.documentElement;
-      const chapter = document.querySelector<HTMLElement>(
-        ".activities-chapter"
+      const main = document.querySelector<HTMLElement>(".rhythm-page__main");
+      const movements = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-rhythm-movement]")
       );
-      const bounds = chapter?.getBoundingClientRect();
+      const apertures = Array.from(
+        document.querySelectorAll<HTMLElement>(".rhythm-aperture")
+      );
       const visibleContent = Array.from(
-        chapter?.querySelectorAll<HTMLElement>(
+        main?.querySelectorAll<HTMLElement>(
           "h1, h2, h3, p, a, li, dt, dd"
         ) ?? []
       ).filter((element) => {
@@ -3929,27 +3932,36 @@ test("Task 10.3 keeps Activities exact and readable at every locked viewport", a
       return {
         layoutWidth: document.body.clientWidth,
         rootScrollWidth: root.scrollWidth,
-        height: bounds?.height ?? 0,
-        width: bounds?.width ?? 0,
-        clientHeight: chapter?.clientHeight ?? 0,
-        scrollHeight: chapter?.scrollHeight ?? 0,
+        mainHeight: main?.scrollHeight ?? 0,
+        movementCount: movements.length,
+        movementHeights: movements.map(
+          (movement) => movement.getBoundingClientRect().height
+        ),
+        apertureCount: apertures.length,
+        apertureWidths: apertures.map(
+          (aperture) => aperture.getBoundingClientRect().width
+        ),
         hiddenContent: visibleContent.filter((element) => {
           const rect = element.getBoundingClientRect();
 
           return (
             rect.left < -1 ||
-            rect.right > root.clientWidth + 1 ||
-            rect.top < -1 ||
-            rect.bottom > window.innerHeight + 1
+            rect.right > root.clientWidth + 1
           );
         }).length
       };
     });
 
     expect(state.rootScrollWidth).toBeLessThanOrEqual(state.layoutWidth);
-    expect(Math.abs(state.height - viewport.height)).toBeLessThanOrEqual(1);
-    expect(Math.abs(state.width - state.layoutWidth)).toBeLessThanOrEqual(1);
-    expect(state.scrollHeight).toBeLessThanOrEqual(state.clientHeight + 1);
+    expect(state.mainHeight).toBeGreaterThan(viewport.height * 2.2);
+    expect(state.movementCount).toBe(3);
+    expect(state.apertureCount).toBe(3);
+    expect(Math.min(...state.movementHeights)).toBeGreaterThan(
+      viewport.height * 0.55
+    );
+    expect(Math.max(...state.apertureWidths)).toBeLessThanOrEqual(
+      viewport.width * 0.93 + 1
+    );
     expect(state.hiddenContent).toBe(0);
   }
 });

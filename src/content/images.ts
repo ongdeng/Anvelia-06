@@ -15,6 +15,15 @@ import openAirBotanicalBackground640Src from "../assets/images/anvelia-botanical
 import openAirLivingSrc from "../assets/images/anvelia-open-air-living-veranda-concept-1536.webp";
 import openAirLiving640Src from "../assets/images/anvelia-open-air-living-veranda-concept-640.webp";
 import openAirLiving1024Src from "../assets/images/anvelia-open-air-living-veranda-concept-1024.webp";
+import activitiesBorrowedLightSrc from "../assets/images/anvelia-rhythm-borrowed-light-concept-1672.webp";
+import activitiesBorrowedLight640Src from "../assets/images/anvelia-rhythm-borrowed-light-concept-640.webp";
+import activitiesBorrowedLight1024Src from "../assets/images/anvelia-rhythm-borrowed-light-concept-1024.webp";
+import activitiesEveningWarmthSrc from "../assets/images/anvelia-rhythm-evening-warmth-concept-1672.webp";
+import activitiesEveningWarmth640Src from "../assets/images/anvelia-rhythm-evening-warmth-concept-640.webp";
+import activitiesEveningWarmth1024Src from "../assets/images/anvelia-rhythm-evening-warmth-concept-1024.webp";
+import activitiesWaterIntervalSrc from "../assets/images/anvelia-rhythm-water-interval-concept-1672.webp";
+import activitiesWaterInterval640Src from "../assets/images/anvelia-rhythm-water-interval-concept-640.webp";
+import activitiesWaterInterval1024Src from "../assets/images/anvelia-rhythm-water-interval-concept-1024.webp";
 import placeHillsideSettingSrc from "../assets/images/anvelia-place-hillside-setting-1600.webp";
 import placeHillsideSetting640Src from "../assets/images/anvelia-place-hillside-setting-640.webp";
 import placeHillsideSetting1024Src from "../assets/images/anvelia-place-hillside-setting-1024.webp";
@@ -34,6 +43,9 @@ export type SiteImageRole =
   | "mobile-navigation-atmosphere"
   | "open-air-living"
   | "open-air-botanical-background"
+  | "activities-borrowed-light"
+  | "activities-water-interval"
+  | "activities-evening-warmth"
   | "gatherings-shared-table"
   | "gatherings-material-background"
   | "visit-arrival-path"
@@ -141,6 +153,45 @@ export const imagesByRole = {
     sourcePath:
       "assets/anvelia/09-generated-backgrounds/anvelia-botanical-background-light.png"
   },
+  "activities-borrowed-light": {
+    id: "activities-borrowed-light",
+    role: "activities-borrowed-light",
+    src: activitiesBorrowedLightSrc,
+    srcSet: `${activitiesBorrowedLight640Src} 640w, ${activitiesBorrowedLight1024Src} 1024w, ${activitiesBorrowedLightSrc} 1672w`,
+    width: 1672,
+    height: 941,
+    alt: "Concept visual of leaf shadows across warm plaster beside a dark timber post and hillside greenery.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath:
+      "assets/anvelia/01-current-production-candidates/anvelia-rhythm-borrowed-light-concept.png"
+  },
+  "activities-water-interval": {
+    id: "activities-water-interval",
+    role: "activities-water-interval",
+    src: activitiesWaterIntervalSrc,
+    srcSet: `${activitiesWaterInterval640Src} 640w, ${activitiesWaterInterval1024Src} 1024w, ${activitiesWaterIntervalSrc} 1672w`,
+    width: 1672,
+    height: 941,
+    alt: "Concept visual of dark rippling water beside rain-wet stone.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath:
+      "assets/anvelia/01-current-production-candidates/anvelia-rhythm-water-interval-concept.png"
+  },
+  "activities-evening-warmth": {
+    id: "activities-evening-warmth",
+    role: "activities-evening-warmth",
+    src: activitiesEveningWarmthSrc,
+    srcSet: `${activitiesEveningWarmth640Src} 640w, ${activitiesEveningWarmth1024Src} 1024w, ${activitiesEveningWarmthSrc} 1672w`,
+    width: 1672,
+    height: 941,
+    alt: "Concept visual of a rain-darkened timber table with a teapot and cup beside a sheltered green veranda.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath:
+      "assets/anvelia/01-current-production-candidates/anvelia-rhythm-evening-warmth-concept.png"
+  },
   "mobile-navigation-atmosphere": {
     id: "mobile-navigation-atmosphere",
     role: "mobile-navigation-atmosphere",
@@ -213,6 +264,9 @@ export const siteImages = [
   imagesByRole["mobile-navigation-atmosphere"],
   imagesByRole["open-air-living"],
   imagesByRole["open-air-botanical-background"],
+  imagesByRole["activities-borrowed-light"],
+  imagesByRole["activities-water-interval"],
+  imagesByRole["activities-evening-warmth"],
   imagesByRole["gatherings-shared-table"],
   imagesByRole["gatherings-material-background"],
   imagesByRole["visit-arrival-path"],
