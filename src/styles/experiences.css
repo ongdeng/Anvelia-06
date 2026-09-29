@@ -1,0 +1,352 @@
+/* Approved Experiences composition. Keep photo-dependent proportions until real imagery is reviewed. */
+:where(.experiences-page) .ritual-composition {
+  margin-top: 144px;
+  padding: 0 5.9% 0 var(--editorial-image-inset);
+  scroll-margin-top: calc(var(--editorial-header-height) + 32px);
+}
+:where(.experiences-page) .ritual-composition__heading { margin-bottom: 64px; }
+:where(.experiences-page) .ritual-composition h2 {
+  margin: 0;
+  color: var(--color-forest);
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+:where(.experiences-page) .ritual-composition h2 em { font-weight: 400; }
+:where(.experiences-page) .ritual-composition__spreads {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  column-gap: 64px;
+  row-gap: 96px;
+  align-items: start;
+}
+:where(.experiences-page) .ritual-composition__figure { min-width: 0; margin: 0; }
+:where(.experiences-page) .ritual-composition img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+:where(.experiences-page) .ritual-composition__chinese-tea img { aspect-ratio: 4 / 5; object-position: 50% 50%; }
+:where(.experiences-page) .ritual-composition__yoga { padding-top: 112px; }
+:where(.experiences-page) .ritual-composition__sound-healing { padding-top: 40px; }
+:where(.experiences-page) .ritual-composition__sound-healing img { aspect-ratio: 1; object-position: 50% 50%; }
+:where(.experiences-page) .ritual-composition figcaption { margin-top: 18px; }
+:where(.experiences-page) .ritual-composition h3 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 34px;
+  letter-spacing: 0;
+}
+:where(.experiences-page) .ritual-composition figcaption p {
+  max-width: 34ch;
+  margin: 8px 0 0;
+  color: var(--color-forest);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+}
+:where(.experiences-page) .ritual-composition__chinese-tea figcaption p { max-width: none; }
+@media (max-width: 1100px) {
+  :where(.experiences-page) .ritual-composition__spreads { column-gap: 40px; row-gap: 72px; }
+  :where(.experiences-page) .ritual-composition__yoga { padding-top: 80px; }
+}
+@media (orientation: portrait), (max-width: 699px) {
+  :where(.experiences-page) .ritual-composition { margin-top: 96px; padding-right: 24px; }
+  :where(.experiences-page) .ritual-composition__heading { margin-bottom: 40px; }
+  :where(.experiences-page) .ritual-composition h2 { font-size: 40px; line-height: 46px; }
+  :where(.experiences-page) .ritual-composition__spreads { grid-template-columns: minmax(0, 1fr); gap: 56px; }
+  :where(.experiences-page) .ritual-composition__chinese-tea { width: 78%; }
+  :where(.experiences-page) .ritual-composition__chinese-tea img { aspect-ratio: 1; }
+  :where(.experiences-page) .ritual-composition__yoga { padding-top: 0; }
+  :where(.experiences-page) .ritual-composition__sound-healing { width: 78%; padding-top: 0; }
+  :where(.experiences-page) .ritual-composition__thai-massage { padding-top: 0; }
+  :where(.experiences-page) .ritual-composition figcaption { margin-top: 14px; }
+  :where(.experiences-page) .ritual-composition h3 { font-size: 26px; line-height: 32px; }
+  :where(.experiences-page) .ritual-composition figcaption p { margin-top: 6px; }
+}
+@media (orientation: portrait) and (min-width: 600px) {
+  :where(.experiences-page) .ritual-composition { padding-right: 48px; margin-top: 128px; }
+  :where(.experiences-page) .ritual-composition__spreads { gap: 72px; }
+  :where(.experiences-page) .ritual-composition__chinese-tea,
+  :where(.experiences-page) .ritual-composition__sound-healing { width: 62%; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  :where(.experiences-page) .ritual-composition { margin-top: 80px; }
+  :where(.experiences-page) .ritual-composition__heading { margin-bottom: 40px; }
+  :where(.experiences-page) .ritual-composition__yoga { padding-top: 64px; }
+}
+
+.experiences-page {
+  --spatial-inset: 8.333333%;
+  --spatial-secondary: 16.666667%;
+  --spatial-header: 88px;
+  color: var(--color-ink);
+  background: var(--color-paper);
+}
+.experiences-page main { padding-top: var(--spatial-header); }
+.experiences-page main :where(.spatial-movement, .spatial-water) h1,
+.experiences-page main :where(.spatial-movement, .spatial-water) h2,
+.experiences-page main :where(.spatial-movement, .spatial-water) h3 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0; text-shadow: none; color: inherit; }
+.experiences-page main :where(.spatial-movement, .spatial-water) h2 { color: var(--color-forest); }
+.experiences-page :where(.spatial-movement, .spatial-water) figure { margin: 0; min-width: 0; }
+.experiences-page :where(.spatial-movement, .spatial-water) figure img { display: block; width: 100%; height: auto; object-fit: cover; }
+.experiences-page :where(.spatial-movement, .spatial-water) figcaption { padding-top: 18px; }
+.experiences-page :where(.spatial-movement, .spatial-water) figcaption h3 { font-size: 28px; line-height: 34px; }
+.experiences-page main figcaption h3 { font-weight: 500; font-kerning: normal; font-synthesis: none; }
+.experiences-page :where(.spatial-movement, .spatial-water) figcaption p { margin-top: 8px; max-width: 29ch; font-size: 14px; line-height: 22px; color: var(--color-forest); }
+.experiences-page .ritual-composition__thai-massage figcaption p { text-wrap: balance; }
+.spatial-movement,
+.spatial-water { position: relative; scroll-margin-top: calc(var(--spatial-header) + 24px); }
+.spatial-movement { isolation: isolate; }
+.spatial-movement::before { content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: var(--spatial-paper) center / cover no-repeat; opacity: 0.2; }
+/* One material layer crosses both colour fields, below all photographs and copy. */
+.spatial-rest { position: relative; isolation: isolate; background: var(--color-paper); }
+.spatial-rest::before { content: ""; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: var(--spatial-paper) center top / 1024px 1536px repeat; opacity: 0.2; }
+.spatial-water > *,
+.spatial-rituals > .ritual-composition { position: relative; z-index: 2; }
+.spatial-opening { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px 0; padding: 56px var(--spatial-inset) 36px; }
+.spatial-opening #experience-title { font-family: var(--font-display); font-size: 22px; line-height: 28px; font-weight: 500; font-style: normal; font-kerning: normal; font-synthesis: none; color: var(--color-forest); }
+.spatial-opening #movement-title { padding-bottom: 3px; font-size: 48px; line-height: 1.1; font-kerning: normal; font-synthesis: none; }
+.spatial-opening #movement-title em,
+.spatial-water__heading h2 em { font-style: italic; font-weight: 400; font-synthesis: none; }
+.spatial-opening #movement-title .spatial-heading__amp,
+.spatial-water__heading .spatial-heading__amp { margin-inline: 0.025em; font-size: 0.82em; line-height: 1; font-style: italic; font-synthesis: none; }
+.spatial-court { margin-left: var(--spatial-secondary) !important; }
+.spatial-court img { aspect-ratio: 1.7; object-position: 55% 56%; }
+.spatial-court figcaption { display: flex; align-items: baseline; gap: 48px; padding-right: var(--spatial-inset); }
+.spatial-court figcaption p { margin-top: 0; max-width: none; }
+.spatial-outdoors { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 8.333333%; align-items: start; margin: 104px var(--spatial-inset) 0; padding-bottom: 96px; }
+.spatial-atv img { aspect-ratio: 4 / 3; object-position: 50% 50%; }
+.spatial-trek { padding-top: 160px; }
+.spatial-trek img { aspect-ratio: 1; object-position: 35% 50%; }
+.spatial-water { display: grid; grid-template-columns: minmax(0, 1fr); background: #e4e3df; padding-top: 68px; }
+.spatial-water__heading { position: relative; margin: 0 var(--spatial-inset) 44px; }
+.spatial-water__heading::before { content: ""; position: absolute; top: -108px; left: 0; width: 96px; border-top: 1px solid rgb(19 15 12 / 0.23); pointer-events: none; }
+.spatial-water__heading::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: -64px;
+  right: 0;
+  width: 320px;
+  height: 148px;
+  background: url("../assets/images/anvelia-botanical-background-light-1024.webp") right bottom / 520px auto no-repeat;
+  filter: grayscale(1) contrast(1.12) brightness(1.04);
+  mix-blend-mode: multiply;
+  opacity: 0.32;
+  mask-image: linear-gradient(to right, transparent, #000 48%, #000 85%, transparent), linear-gradient(to bottom, transparent, #000 30%, #000 66%, transparent);
+  mask-composite: intersect;
+  pointer-events: none;
+}
+.spatial-water__heading h2 { position: relative; z-index: 1; font-size: 48px; line-height: 1.1; font-kerning: normal; font-synthesis: none; }
+.spatial-water__heading br { display: none; }
+.spatial-pool img { aspect-ratio: 2.35; object-position: 48% 57%; }
+.spatial-pool figcaption { margin-left: var(--spatial-inset); }
+.spatial-warmth { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); align-items: start; gap: 10%; margin: 100px var(--spatial-inset) 0; padding-bottom: 48px; }
+.spatial-sauna { padding-top: 92px; }
+.spatial-sauna img { aspect-ratio: 4 / 3; object-position: 48% 50%; }
+.spatial-spring img { aspect-ratio: 4 / 3; object-position: 50% 58%; }
+/* Preserve the retained RitualComposition's original context without its page-wide styles. */
+.spatial-rituals {
+  --editorial-image-inset: 16.666667%;
+  --editorial-header-height: 88px;
+  display: flow-root;
+  position: relative;
+}
+.spatial-rituals > .ritual-composition { margin-top: 96px; }
+.spatial-threshold {
+  position: absolute;
+  z-index: 2;
+  top: -16px;
+  inset-inline: 0;
+  height: 212px;
+  overflow: clip;
+  pointer-events: none;
+}
+.spatial-threshold::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  inset-inline: 0;
+  border-top: 1px solid rgb(255 255 255 / 0.32);
+}
+.spatial-threshold__contour {
+  position: absolute;
+  top: 28px;
+  left: var(--editorial-image-inset);
+  right: calc(var(--spatial-inset) + 96px);
+  height: 26px;
+  border-bottom: 1px solid rgb(32 58 43 / 0.16);
+  border-radius: 0 0 54% 38%;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+.spatial-threshold__contour::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 -2px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: inherit;
+}
+.spatial-threshold__botanical {
+  position: absolute;
+  top: -76px;
+  right: calc(var(--spatial-inset) - 20px);
+  width: 240px;
+  height: 360px;
+  object-fit: contain;
+  opacity: 0.14;
+  filter: grayscale(1) contrast(1.15);
+  mix-blend-mode: multiply;
+}
+.spatial-return { padding: 44px var(--spatial-inset) 64px; background: var(--color-paper); }
+.spatial-return a { display: inline-flex; min-height: 44px; align-items: center; gap: 14px; color: var(--color-forest); font-family: var(--font-display); font-size: 22px; font-weight: 500; line-height: 28px; font-kerning: normal; font-synthesis: none; text-decoration: none; }
+.spatial-return svg { flex: none; width: 20px; height: 20px; stroke-width: 1.5; }
+.spatial-return a span { padding-bottom: 3px; border-bottom: 1px solid rgb(32 58 43 / 0.24); }
+.spatial-return a:hover span,
+.spatial-return a:focus-visible span { border-bottom-color: currentColor; }
+.spatial-return a:focus-visible { outline: var(--focus-outline); outline-offset: 4px; }
+@media (max-width: 1100px) {
+  .spatial-outdoors { gap: 48px; }
+  .spatial-trek { padding-top: 112px; }
+  .spatial-warmth { gap: 64px; }
+}
+@media (max-width: 820px) {
+  .experiences-page { --spatial-inset: 28px; --spatial-secondary: 56px; --spatial-header: 80px; }
+  .spatial-opening { padding-top: 48px; padding-bottom: 24px; }
+  .spatial-opening #movement-title { padding: 0; margin-top: 0; }
+  .spatial-court { margin-left: var(--spatial-inset) !important; }
+  .spatial-court img { aspect-ratio: 4 / 5; object-position: 55% 63%; }
+  .spatial-court figcaption { display: block; padding-right: var(--spatial-inset); }
+  .experiences-page :where(.spatial-movement, .spatial-water) figcaption { padding-top: 16px; }
+  .experiences-page :where(.spatial-movement, .spatial-water) figcaption h3 { font-size: 26px; line-height: 32px; }
+  .spatial-court figcaption p { margin-top: 6px; max-width: 29ch; }
+  .spatial-outdoors { display: block; margin-top: 72px; padding-bottom: 0; }
+  .spatial-atv img { aspect-ratio: 5 / 4; }
+  .spatial-atv figcaption p { margin-top: 6px; }
+  .spatial-trek { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: center; gap: 22px; padding-top: 0; margin-top: 64px !important; }
+  .spatial-trek img { aspect-ratio: 4 / 5; }
+  .spatial-trek figcaption { padding-top: 0; }
+  .spatial-trek figcaption h3 { font-size: 23px; line-height: 27px; }
+  /* One interval connects the chapters; neither adds a second boundary spacer. */
+  .spatial-water { margin-top: 96px; padding-top: 0; }
+  .spatial-water__heading { background: var(--color-paper); margin: 0; padding: 0 var(--spatial-inset) 36px; }
+  .spatial-water__heading::before { top: -48px; left: var(--spatial-inset); width: 76px; }
+  .spatial-water__heading::after { top: 0; right: 0; width: 54%; height: 108px; background-size: 460px auto; }
+  .spatial-water__heading br { display: initial; }
+  .spatial-pool img { aspect-ratio: 4 / 3; }
+  .spatial-warmth { display: block; margin: 56px 0 0; padding-bottom: 32px; }
+  .spatial-rituals > .ritual-composition { margin-top: 64px; }
+  .spatial-threshold { top: -12px; height: 144px; }
+  .spatial-threshold::before { top: 12px; }
+  .spatial-threshold__contour { top: 14px; right: 72px; height: 20px; transform: rotate(-3deg); }
+  .spatial-threshold__botanical { top: -34px; right: -16px; width: 152px; height: 228px; }
+  .spatial-spring { margin: 64px var(--spatial-inset) 0 !important; }
+  .spatial-spring img { aspect-ratio: 5 / 4; }
+  .spatial-return { padding-top: 36px; padding-bottom: 48px; }
+}
+@media (min-width: 600px) and (max-width: 820px) {
+  .experiences-page { --spatial-inset: 48px; --spatial-secondary: 96px; }
+  .spatial-court img { aspect-ratio: 1.25; }
+  .spatial-atv { max-width: 560px; }
+  .spatial-trek { max-width: 430px; }
+  .spatial-threshold__botanical { top: -60px; right: 24px; width: 200px; height: 300px; }
+}
+@media (max-width: 350px) {
+  .experiences-page { --spatial-inset: 24px; --spatial-secondary: 48px; }
+  .spatial-opening { padding-top: 36px; }
+  .spatial-trek { gap: 18px; }
+  .spatial-trek figcaption h3 { font-size: 21px; line-height: 25px; }
+  .spatial-threshold { height: 68px; }
+  .spatial-threshold__botanical { top: -66px; right: 8px; width: 100px; height: 150px; }
+}
+@media (orientation: portrait) {
+  .spatial-opening #movement-title,
+  .spatial-water__heading h2 { font-size: 40px; line-height: 44px; }
+}
+@media (orientation: portrait) and (max-width: 820px) {
+  /* The compact sauna shares the spring's edges, with a caption beside its image. */
+  .spatial-sauna { display: grid; grid-template-columns: minmax(0, 0.44fr) minmax(0, 0.56fr); gap: 20px; align-items: center; padding-top: 0; margin: 0 var(--spatial-inset) !important; }
+  .spatial-sauna img { grid-column: 2; grid-row: 1; }
+  .spatial-water .spatial-sauna figcaption { grid-column: 1; grid-row: 1; padding-top: 0; }
+  .spatial-water .spatial-sauna figcaption h3 { font-size: 24px; line-height: 28px; }
+  .spatial-sauna figcaption p { margin-top: 6px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .experiences-page { --spatial-header: 64px; }
+  .spatial-rituals { --editorial-header-height: 64px; }
+  .spatial-opening { padding-top: 32px; }
+  .spatial-court img { aspect-ratio: 1.9; }
+}
+@media (orientation: portrait) and (min-width: 821px),
+  (orientation: landscape) and (min-width: 821px) and (max-height: 500px) {
+  .spatial-threshold { height: 184px; }
+}
+@media (orientation: portrait) and (max-width: 960px) {
+  .spatial-rituals { --editorial-image-inset: 24px; --editorial-header-height: 80px; }
+}
+@media (orientation: portrait) and (min-width: 600px) and (max-width: 960px) {
+  .spatial-rituals { --editorial-image-inset: 96px; }
+}
+/* A lighter shared landscape gutter; portrait keeps its own rhythm. */
+@media (orientation: landscape) {
+  .experiences-page { --spatial-reading-inset: 10.5%; }
+  .spatial-rituals { --editorial-image-inset: var(--spatial-reading-inset); }
+  .spatial-opening { padding-left: var(--spatial-reading-inset); }
+  .spatial-opening h1 { grid-column: 1 / -1; }
+  .spatial-opening #movement-title { grid-column: 1 / -1; margin: 0; padding-bottom: 0; }
+  .spatial-opening #movement-title,
+  .spatial-water__heading h2 { font-size: 48px; line-height: 1.1; }
+  .spatial-heading__amp { margin-inline: 0.035em; font-size: 0.82em; font-style: italic; font-synthesis: none; }
+  .spatial-court { margin-left: var(--spatial-reading-inset) !important; }
+  .spatial-outdoors { margin-left: var(--spatial-reading-inset); }
+  .spatial-water { --water-inset: 8.333333%; margin-top: 0; padding-top: 56px; }
+  .spatial-water__heading { margin: 0 var(--water-inset) 36px var(--spatial-reading-inset); padding: 0; background: none; }
+  .spatial-water__heading::before { top: -96px; left: 0; }
+  .spatial-water__heading::after { top: -52px; width: 260px; height: 120px; }
+  .spatial-water__heading br { display: none; }
+  .spatial-pool { margin-inline: var(--spatial-reading-inset) var(--water-inset) !important; }
+  .spatial-pool img { aspect-ratio: 12 / 5; }
+  .spatial-pool figcaption { margin-left: 0; }
+  .spatial-warmth { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 64px; margin: 72px var(--water-inset) 0 var(--spatial-reading-inset); }
+  .spatial-sauna { width: auto; max-width: none; padding-top: 0; margin: 0 !important; }
+  .spatial-sauna img { aspect-ratio: 4 / 3; }
+  .spatial-spring { margin: 0 !important; }
+  .spatial-spring img { aspect-ratio: 2 / 1; }
+  .spatial-water .spatial-warmth figcaption { padding-top: 18px; }
+  .spatial-water .spatial-warmth figcaption h3 { font-size: 28px; line-height: 34px; }
+  .spatial-water .spatial-warmth figcaption p { margin-top: 8px; font-size: 14px; line-height: 22px; }
+  .spatial-return { padding-left: var(--spatial-reading-inset); }
+}
+@media (orientation: landscape) and (max-width: 820px) {
+  .spatial-water { margin-top: 64px; }
+}
+@media (orientation: landscape) and (min-width: 1101px) and (min-height: 501px) {
+  .spatial-court img { aspect-ratio: 2.25; object-position: 55% 59%; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .spatial-opening { padding-bottom: 24px; }
+  .spatial-opening #movement-title,
+  .spatial-water__heading h2 { font-size: 36px; line-height: 1.1; }
+  .spatial-water { padding-top: 32px; }
+  .spatial-water__heading { margin-bottom: 24px; }
+  .spatial-water__heading::before { top: -64px; }
+  .spatial-water__heading::after { top: -30px; width: 208px; height: 96px; }
+  .spatial-pool img { aspect-ratio: 12 / 5; max-height: calc(100svh - 152px); }
+  .spatial-water figcaption { padding-top: 12px; }
+  .spatial-water figcaption h3,
+  .spatial-water .spatial-warmth figcaption h3 { font-size: 24px; line-height: 28px; }
+  .spatial-warmth { gap: 32px; margin-top: 40px; }
+  .spatial-water .spatial-warmth figcaption { padding-top: 12px; }
+  .spatial-water .spatial-warmth figcaption p { margin-top: 6px; line-height: 21px; }
+}
+

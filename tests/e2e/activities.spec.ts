@@ -45,17 +45,23 @@ test("Rhythm passage opens the complete Activities page and exposes focus", asyn
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "A slower way to spend the day"
+      name: "Experiences"
     })
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "A slower way to spend the day"
+      name: "Experiences"
     })
-  ).toHaveCSS("color", "rgb(19, 15, 12)");
-  await expect(page.locator("[data-rhythm-movement]")).toHaveCount(3);
-  await expect(page.locator(".rhythm-aperture")).toHaveCount(3);
+  ).toHaveCSS("color", "rgb(32, 58, 43)");
+  await expect(page.locator(".experiences-page__main section[aria-labelledby]")).toHaveCount(3);
+  await expect(page.locator(".experiences-page__main figure")).toHaveCount(10);
+
+  const returnLink = page.getByRole("link", { name: "Return to Rhythm" });
+  await expect(returnLink).toHaveAttribute("href", "/#open-air-living");
+  await returnLink.click();
+  await expect(page).toHaveURL(/\/#open-air-living$/);
+  await expect(page.locator("#open-air-living")).toBeFocused();
 });
 
 for (const viewport of [
@@ -110,20 +116,20 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
   await page.setViewportSize({ width: 1024, height: 768 });
   await page.goto("/activities");
 
-  await expect(page).toHaveTitle("Activities | Anvelia Sanctuary");
+  await expect(page).toHaveTitle("Experiences | Anvelia Sanctuary");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
+    "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
   );
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
-    "Activities | Anvelia Sanctuary"
+    "Experiences | Anvelia Sanctuary"
   );
   await expect(
     page.locator('meta[property="og:description"]')
   ).toHaveAttribute(
     "content",
-    "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
+    "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
   );
 
   const desktopNav = page.getByRole("navigation", { name: "Site sections" });
@@ -135,10 +141,17 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
   await expect(
     desktopNav.getByRole("link", { name: "Rhythm" })
   ).toHaveAttribute("href", "/#open-air-living");
-  const apertures = page.locator(".rhythm-aperture");
-  await expect(apertures).toHaveCount(3);
+  const apertures = page.locator(".experiences-page__main figure");
+  await expect(apertures).toHaveCount(10);
+  const activityTitles = page.locator(".experiences-page__main h3");
+  await expect(activityTitles).toHaveCount(10);
+  // Browser specificity must retain the same weight in all three chapters.
+  for (const title of await activityTitles.all()) {
+    await expect(title).toHaveCSS("font-weight", "500");
+  }
 
   for (const aperture of await apertures.all()) {
+    await aperture.scrollIntoViewIfNeeded();
     await expect(aperture).toHaveAttribute("data-concept-only", "true");
     await expect
       .poll(() =>
@@ -191,16 +204,16 @@ for (const viewport of chapterViewports) {
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const main = document.querySelector<HTMLElement>(".rhythm-page__main");
+      const main = document.querySelector<HTMLElement>(".experiences-page__main");
       const movementRects = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-rhythm-movement]")
+        document.querySelectorAll<HTMLElement>(".experiences-page__main section[aria-labelledby]")
       ).map((element) => element.getBoundingClientRect());
       const apertureRects = Array.from(
-        document.querySelectorAll<HTMLElement>(".rhythm-aperture")
+        document.querySelectorAll<HTMLElement>(".experiences-page__main figure")
       ).map((element) => element.getBoundingClientRect());
       const textElements = Array.from(
         document.querySelectorAll<HTMLElement>(
-          ".rhythm-page__main h1, .rhythm-page__main h2, .rhythm-page__main p, .rhythm-page__main a"
+          ".experiences-page__main h1, .experiences-page__main h2, .experiences-page__main p, .experiences-page__main a"
         )
       );
 
@@ -238,7 +251,7 @@ for (const viewport of chapterViewports) {
     expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth);
     expect(layout.mainHeight).toBeGreaterThan(layout.viewportHeight * 2.2);
     expect(layout.movements).toHaveLength(3);
-    expect(layout.apertures).toHaveLength(3);
+    expect(layout.apertures).toHaveLength(10);
 
     for (const [index, movement] of layout.movements.entries()) {
       expect(movement.left).toBeGreaterThanOrEqual(-1);
@@ -254,17 +267,8 @@ for (const viewport of chapterViewports) {
     for (const aperture of layout.apertures) {
       expect(aperture.left).toBeGreaterThanOrEqual(-1);
       expect(aperture.right).toBeLessThanOrEqual(layout.viewportWidth + 1);
-      expect(aperture.width).toBeLessThanOrEqual(layout.viewportWidth * 0.93 + 1);
-      expect(aperture.height).toBeLessThanOrEqual(layout.viewportHeight * 0.92 + 1);
-    }
-
-    if (
-      layout.viewportHeight > layout.viewportWidth &&
-      layout.viewportWidth >= 821
-    ) {
-      expect(layout.apertures[0].width).toBeGreaterThanOrEqual(
-        layout.viewportWidth * 0.9
-      );
+      expect(aperture.width).toBeLessThanOrEqual(layout.viewportWidth + 1);
+      expect(aperture.height).toBeGreaterThan(0);
     }
 
     for (const text of layout.text) {

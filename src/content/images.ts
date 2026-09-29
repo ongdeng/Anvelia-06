@@ -24,6 +24,17 @@ import activitiesEveningWarmth1024Src from "../assets/images/anvelia-rhythm-even
 import activitiesWaterIntervalSrc from "../assets/images/anvelia-rhythm-water-interval-concept-1672.webp";
 import activitiesWaterInterval640Src from "../assets/images/anvelia-rhythm-water-interval-concept-640.webp";
 import activitiesWaterInterval1024Src from "../assets/images/anvelia-rhythm-water-interval-concept-1024.webp";
+import activitiesPickleballSrc from "../assets/images/experiences/courtside-concept.png";
+import activitiesAtvSrc from "../assets/images/experiences/atv-concept.png";
+import activitiesJungleTrekkingSrc from "../assets/images/experiences/jungle-concept.png";
+import activitiesSkyedgePoolSrc from "../assets/images/experiences/pool-concept.png";
+import activitiesDrySaunaSrc from "../assets/images/experiences/beige-dry-sauna-concept.png";
+import activitiesHotSpringSrc from "../assets/images/experiences/natural-hot-spring-concept.png";
+import activitiesChineseTeaSrc from "../assets/images/experiences/chinese-tea-concept.png";
+import activitiesYogaSrc from "../assets/images/experiences/yoga-concept.png";
+import activitiesSoundHealingSrc from "../assets/images/experiences/sound-healing-concept.png";
+import activitiesThaiMassageSrc from "../assets/images/experiences/thai-massage-concept.png";
+import activitiesTeaEtchingSrc from "../assets/images/experiences/tea-sprig-etching.png";
 import placeHillsideSettingSrc from "../assets/images/anvelia-place-hillside-setting-1600.webp";
 import placeHillsideSetting640Src from "../assets/images/anvelia-place-hillside-setting-640.webp";
 import placeHillsideSetting1024Src from "../assets/images/anvelia-place-hillside-setting-1024.webp";
@@ -46,6 +57,17 @@ export type SiteImageRole =
   | "activities-borrowed-light"
   | "activities-water-interval"
   | "activities-evening-warmth"
+  | "activities-pickleball"
+  | "activities-atv"
+  | "activities-jungle-trekking"
+  | "activities-skyedge-pool"
+  | "activities-dry-sauna"
+  | "activities-hot-spring"
+  | "activities-chinese-tea"
+  | "activities-yoga"
+  | "activities-sound-healing"
+  | "activities-thai-massage"
+  | "activities-tea-etching"
   | "gatherings-shared-table"
   | "gatherings-material-background"
   | "visit-arrival-path"
@@ -192,6 +214,127 @@ export const imagesByRole = {
     sourcePath:
       "assets/anvelia/01-current-production-candidates/anvelia-rhythm-evening-warmth-concept.png"
   },
+  "activities-pickleball": {
+    id: "activities-pickleball",
+    role: "activities-pickleball",
+    src: activitiesPickleballSrc,
+    width: 1122,
+    height: 1402,
+    alt: "Concept image of a court and pickleball paddles; not the actual facility.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/courtside-concept.png"
+  },
+  "activities-atv": {
+    id: "activities-atv",
+    role: "activities-atv",
+    src: activitiesAtvSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of an ATV beside a forest track; not actual equipment or a route.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/atv-concept.png"
+  },
+  "activities-jungle-trekking": {
+    id: "activities-jungle-trekking",
+    role: "activities-jungle-trekking",
+    src: activitiesJungleTrekkingSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of hikers on a jungle path; not an actual route or guests.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/jungle-concept.png"
+  },
+  "activities-skyedge-pool": {
+    id: "activities-skyedge-pool",
+    role: "activities-skyedge-pool",
+    src: activitiesSkyedgePoolSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of an infinity pool overlooking forested hills; not the actual facility or a verified outlook.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/pool-concept.png"
+  },
+  "activities-dry-sauna": {
+    id: "activities-dry-sauna",
+    role: "activities-dry-sauna",
+    src: activitiesDrySaunaSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of a compact beige dry-sauna room; not the actual facility.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/beige-dry-sauna-concept.png"
+  },
+  "activities-hot-spring": {
+    id: "activities-hot-spring",
+    role: "activities-hot-spring",
+    src: activitiesHotSpringSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of an outdoor natural hot spring; not the actual facility.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/natural-hot-spring-concept.png"
+  },
+  "activities-chinese-tea": {
+    id: "activities-chinese-tea",
+    role: "activities-chinese-tea",
+    src: activitiesChineseTeaSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of Chinese tea being poured into celadon cups beside tropical greenery; not an actual session or facility.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/chinese-tea-concept.png"
+  },
+  "activities-yoga": {
+    id: "activities-yoga",
+    role: "activities-yoga",
+    src: activitiesYogaSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of an adult practising a seated yoga stretch on a shaded timber veranda; not an actual guest or facility.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/yoga-concept.png"
+  },
+  "activities-sound-healing": {
+    id: "activities-sound-healing",
+    role: "activities-sound-healing",
+    src: activitiesSoundHealingSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of a seated practitioner holding a mallet beside bronze singing bowls; not actual equipment or staff.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/sound-healing-concept.png"
+  },
+  "activities-thai-massage": {
+    id: "activities-thai-massage",
+    role: "activities-thai-massage",
+    src: activitiesThaiMassageSrc,
+    width: 1536,
+    height: 1024,
+    alt: "Concept image of a fully clothed Thai bodywork session on a floor mat; not actual staff, guests or facilities.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/thai-massage-concept.png"
+  },
+  "activities-tea-etching": {
+    id: "activities-tea-etching",
+    role: "activities-tea-etching",
+    src: activitiesTeaEtchingSrc,
+    width: 1024,
+    height: 1536,
+    alt: "Concept botanical etching of a tea sprig on a transparent background; decorative artwork, not a real plant or site.",
+    conceptOnly: true,
+    publicationStatus: "phase-1-runtime-concept",
+    sourcePath: "src/assets/images/experiences/tea-sprig-etching.png"
+  },
   "mobile-navigation-atmosphere": {
     id: "mobile-navigation-atmosphere",
     role: "mobile-navigation-atmosphere",
@@ -267,6 +410,17 @@ export const siteImages = [
   imagesByRole["activities-borrowed-light"],
   imagesByRole["activities-water-interval"],
   imagesByRole["activities-evening-warmth"],
+  imagesByRole["activities-pickleball"],
+  imagesByRole["activities-atv"],
+  imagesByRole["activities-jungle-trekking"],
+  imagesByRole["activities-skyedge-pool"],
+  imagesByRole["activities-dry-sauna"],
+  imagesByRole["activities-hot-spring"],
+  imagesByRole["activities-chinese-tea"],
+  imagesByRole["activities-yoga"],
+  imagesByRole["activities-sound-healing"],
+  imagesByRole["activities-thai-massage"],
+  imagesByRole["activities-tea-etching"],
   imagesByRole["gatherings-shared-table"],
   imagesByRole["gatherings-material-background"],
   imagesByRole["visit-arrival-path"],

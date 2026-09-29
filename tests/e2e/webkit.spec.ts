@@ -12,7 +12,7 @@ const waitForHome = async (page: Page) => {
 };
 
 const waitForActivities = async (page: Page) => {
-  await expect(page.locator(".rhythm-page__main")).toBeVisible();
+  await expect(page.locator(".experiences-page__main")).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
 };
 
@@ -152,8 +152,8 @@ test("WebKit navigates between Rhythm and the Activities route", async ({
   await page.getByRole("link", { name: "See activities" }).click();
   await expect(page).toHaveURL(/\/activities\/?$/);
   await waitForActivities(page);
-  await expect(page.locator(".rhythm-aperture")).toHaveCount(3);
-  for (const aperture of await page.locator(".rhythm-aperture").all()) {
+  await expect(page.locator(".experiences-page__main figure")).toHaveCount(10);
+  for (const aperture of await page.locator(".experiences-page__main figure").all()) {
     await expect(aperture).toHaveAttribute("data-concept-only", "true");
   }
 

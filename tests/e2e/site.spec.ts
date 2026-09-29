@@ -114,19 +114,19 @@ test("Task 10.1 shared phone header separates controls and clears page content",
       const readGeometry = () =>
         page.evaluate(() => {
           const header = document.querySelector<HTMLElement>(".site-header");
-          const whatsapp = document.querySelector<HTMLElement>(
-            ".site-header > .header-whatsapp"
+          const brand = document.querySelector<HTMLElement>(
+            ".site-header .brand-link"
           );
           const menu = document.querySelector<HTMLElement>(
             ".mobile-menu-toggle"
           );
           const eyebrow = document.querySelector<HTMLElement>(
-            ".rhythm-opening .rhythm-eyebrow"
+            ".spatial-opening #experience-title"
           );
           const rect = (element: Element | null) =>
             element?.getBoundingClientRect() ?? null;
           const headerRect = rect(header);
-          const whatsappRect = rect(whatsapp);
+          const brandRect = rect(brand);
           const menuRect = rect(menu);
           const eyebrowRect = rect(eyebrow);
           const headerStyles = header
@@ -141,15 +141,15 @@ test("Task 10.1 shared phone header separates controls and clears page content",
             headerBackdropFilter: headerStyles?.backdropFilter,
             headerSurfaceBackdropFilter:
               headerSurfaceStyles?.backdropFilter,
-            whatsappMenuGap:
-              whatsappRect && menuRect
-                ? menuRect.left - whatsappRect.right
+            brandMenuGap:
+              brandRect && menuRect
+                ? menuRect.left - brandRect.right
                 : null,
-            whatsappMenuCenterDelta:
-              whatsappRect && menuRect
+            brandMenuCenterDelta:
+              brandRect && menuRect
                 ? Math.abs(
-                    whatsappRect.top +
-                      whatsappRect.height / 2 -
+                    brandRect.top +
+                      brandRect.height / 2 -
                       (menuRect.top + menuRect.height / 2)
                   )
                 : null,
@@ -168,10 +168,11 @@ test("Task 10.1 shared phone header separates controls and clears page content",
           };
         });
 
+      await expect(page.locator(".site-header > .header-whatsapp")).toBeHidden();
       const topGeometry = await readGeometry();
 
-      expect(Number(topGeometry.whatsappMenuGap)).toBeGreaterThanOrEqual(9);
-      expect(Number(topGeometry.whatsappMenuCenterDelta)).toBeLessThanOrEqual(
+      expect(Number(topGeometry.brandMenuGap)).toBeGreaterThanOrEqual(9);
+      expect(Number(topGeometry.brandMenuCenterDelta)).toBeLessThanOrEqual(
         2
       );
       expect(topGeometry.menu).toMatchObject({ width: 44, height: 44 });
@@ -179,7 +180,7 @@ test("Task 10.1 shared phone header separates controls and clears page content",
       if (path === "/activities/") {
         expect(Number(topGeometry.eyebrowClearance)).toBeGreaterThanOrEqual(16);
         expect(topGeometry.headerBackdropFilter).toBe("none");
-        expect(topGeometry.headerSurfaceBackdropFilter).toContain("blur");
+        expect(topGeometry.headerSurfaceBackdropFilter).toBe("none");
       }
 
       await page.getByRole("button", { name: "Open menu" }).click();
@@ -2482,329 +2483,109 @@ test("Task 6 desktop header keeps approved nav and restrained WhatsApp action", 
   await expect(page.getByRole("button", { name: "Open menu" })).toBeHidden();
 });
 
-test("fixed header stays elegant and readable after scroll", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
+test("approved header keeps a full-width paper surface and stable desktop controls", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
 
   const header = page.locator(".site-header");
+  const brand = page.locator(".brand-link");
+  const nav = page.locator(".primary-nav--desktop");
+  const whatsapp = page.locator(".site-header > .header-whatsapp");
+  const positions = await Promise.all([brand.boundingBox(), nav.boundingBox(), whatsapp.boundingBox()]);
 
-  const topState = await header.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    const styles = window.getComputedStyle(element);
-    const surfaceStyles = window.getComputedStyle(element, "::after");
+  await expect(header).toHaveCSS("height", "88px");
+  await expect(header).toHaveCSS("border-radius", "0px");
+  await expect(brand).toHaveCSS("color", "rgb(247, 243, 233)");
+  await expect(page.locator(".brand-line--anvelia")).toHaveCSS("font-size", "31px");
+  await expect(whatsapp).toHaveCSS("border-top-width", "0px");
+  await expect(whatsapp).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
 
-    return {
-      dataScrolled: element.getAttribute("data-scrolled"),
-      position: styles.position,
-      top: Math.round(rect.top),
-      backgroundColor: styles.backgroundColor,
-      surfaceOpacity: surfaceStyles.opacity
-    };
-  });
-
-  expect(topState).toMatchObject({
-    dataScrolled: null,
-    position: "fixed"
-  });
-  expect(topState.top).toBeGreaterThanOrEqual(0);
-  expect(topState.top).toBeLessThanOrEqual(26);
-  expect(topState.surfaceOpacity).toBe("0");
-
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight + 120));
+  await nav.getByRole("link", { name: "Place", exact: true }).click();
   await expect(header).toHaveAttribute("data-scrolled", "true");
-  await header.evaluate(async (element) => {
-    await Promise.all(
-      element
-        .getAnimations({ subtree: true })
-        .map((animation) => animation.finished)
-    );
-  });
+  await expect(brand).toHaveCSS("color", "rgb(40, 53, 45)");
+  await expect(whatsapp).toHaveCSS("color", "rgb(40, 53, 45)");
+  await expect.poll(() => header.evaluate((element) => getComputedStyle(element, "::after").opacity)).toBe("1");
 
-  const scrolledState = await header.evaluate((element) => {
+  const surface = await header.evaluate((element) => {
+    const styles = getComputedStyle(element, "::after");
     const rect = element.getBoundingClientRect();
-    const styles = window.getComputedStyle(element);
-    const surfaceStyles = window.getComputedStyle(element, "::after");
-    const brandStyles = window.getComputedStyle(
-      element.querySelector(".brand-link") as Element
-    );
-    const navStyles = window.getComputedStyle(
-      element.querySelector(".primary-nav a") as Element
-    );
-    const whatsappStyles = window.getComputedStyle(
-      element.querySelector(".header-whatsapp") as Element
-    );
-
     return {
-      top: Math.round(rect.top),
-      bottom: Math.round(rect.bottom),
-      height: Math.round(rect.height),
-      backgroundColor: styles.backgroundColor,
-      surfaceOpacity: surfaceStyles.opacity,
-      surfaceBackgroundImage: surfaceStyles.backgroundImage,
-      surfaceBackdropFilter: surfaceStyles.backdropFilter,
-      surfaceBorderColor: surfaceStyles.borderTopColor,
-      surfaceTransitionDuration: surfaceStyles.transitionDuration,
-      brandColor: brandStyles.color,
-      navColor: navStyles.color,
-      whatsappBackground: whatsappStyles.backgroundColor,
-      whatsappColor: whatsappStyles.color
+      left: rect.left,
+      top: rect.top,
+      width: Math.round(rect.width),
+      layoutWidth: document.body.clientWidth,
+      background: styles.backgroundColor,
+      image: styles.backgroundImage,
+      shadow: styles.boxShadow,
+      blur: styles.backdropFilter
     };
   });
-
-  expect(scrolledState.top).toBe(topState.top);
-  expect(scrolledState.bottom).toBeGreaterThan(54);
-  expect(scrolledState.height).toBeLessThanOrEqual(58);
-  expect(scrolledState.backgroundColor).toBe(topState.backgroundColor);
-  expect(scrolledState.surfaceOpacity).toBe("1");
-  expect(scrolledState.surfaceBackgroundImage).toContain("linear-gradient");
-  expect(scrolledState.surfaceBackdropFilter).toContain("blur");
-  expect(scrolledState.surfaceBorderColor).not.toBe("rgba(0, 0, 0, 0)");
-  expect(scrolledState.surfaceTransitionDuration).toBe("0.2s");
-  expect(scrolledState.brandColor).toBe(scrolledState.navColor);
-  expect(scrolledState.brandColor).toMatch(
-    /rgba\((?:19|20), (?:15|16), (?:12|13), 0\.8\)/
-  );
-  expect(scrolledState.whatsappBackground).toContain("10, 8, 6");
-  expect(scrolledState.whatsappColor).toContain("255, 250, 240");
+  expect(surface).toMatchObject({
+    left: 0, top: 0, width: surface.layoutWidth,
+    background: "rgb(243, 239, 230)", image: "none", shadow: "none", blur: "none"
+  });
+  expect(await Promise.all([brand.boundingBox(), nav.boundingBox(), whatsapp.boundingBox()])).toEqual(positions);
 });
 
-test("phone portrait header aligns and keeps one frosted menu widget", async ({
-  page
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+test("approved mobile header retains its wordmark and unboxed menu across states", async ({ page }) => {
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 808, height: 1077 },
+    { width: 568, height: 320 }
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const header = page.locator(".site-header");
+    const brand = page.locator(".brand-link");
+    const toggle = page.locator(".mobile-menu-toggle");
+    const whatsapp = page.locator(".site-header > .header-whatsapp");
+    const before = await toggle.boundingBox();
+    const brandBefore = await brand.boundingBox();
 
-  const topState = await page.evaluate(() => {
-    const brand = document.querySelector(".brand-link");
-    const whatsapp = document.querySelector(".site-header > .header-whatsapp");
-    const menuButton = document.querySelector(".mobile-menu-toggle");
-    const brandRect = brand?.getBoundingClientRect();
-    const whatsappRect = whatsapp?.getBoundingClientRect();
-    const menuRect = menuButton?.getBoundingClientRect();
-    const menuStyles = menuButton ? window.getComputedStyle(menuButton) : null;
+    await expect(whatsapp).toBeHidden();
+    await expect(brand).toBeVisible();
+    await expect(toggle).toHaveCSS("width", "44px");
+    await expect(toggle).toHaveCSS("height", "44px");
+    await expect(toggle).toHaveCSS("border-top-width", "0px");
+    await expect(toggle).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(toggle).toHaveCSS("backdrop-filter", "none");
 
-    return {
-      brandCenter: brandRect ? brandRect.top + brandRect.height / 2 : null,
-      whatsappCenter: whatsappRect
-        ? whatsappRect.top + whatsappRect.height / 2
-        : null,
-      menuCenter: menuRect ? menuRect.top + menuRect.height / 2 : null,
-      menuTop: menuRect?.top,
-      menuRight: menuRect ? window.innerWidth - menuRect.right : null,
-      menuWidth: menuRect?.width,
-      menuHeight: menuRect?.height,
-      menuBackgroundColor: menuStyles?.backgroundColor,
-      menuBorderColor: menuStyles?.borderTopColor,
-      menuColor: menuStyles?.color,
-      menuBackdropFilter: menuStyles?.backdropFilter,
-      iconWidth: menuButton
-        ?.querySelector("svg")
-        ?.getBoundingClientRect().width,
-      iconHeight: menuButton
-        ?.querySelector("svg")
-        ?.getBoundingClientRect().height,
-      brandVisibility: brand ? window.getComputedStyle(brand).visibility : null,
-      whatsappVisibility: whatsapp
-        ? window.getComputedStyle(whatsapp).visibility
-        : null
-    };
-  });
+    await page.evaluate(() => window.scrollTo(0, window.innerHeight + 120));
+    await expect(header).toHaveAttribute("data-scrolled", "true");
+    await expect(brand).toBeVisible();
+    await expect(brand).toHaveCSS("color", "rgb(40, 53, 45)");
+    await expect(toggle).toHaveCSS("color", "rgb(40, 53, 45)");
+    expect(await toggle.boundingBox()).toEqual(before);
+    expect(await brand.boundingBox()).toEqual(brandBefore);
 
-  expect(topState.brandVisibility).toBe("visible");
-  expect(topState.whatsappVisibility).toBe("visible");
-  expect(
-    Math.abs(Number(topState.brandCenter) - Number(topState.menuCenter))
-  ).toBeLessThanOrEqual(2);
-  expect(
-    Math.abs(Number(topState.whatsappCenter) - Number(topState.menuCenter))
-  ).toBeLessThanOrEqual(2);
-  expect(topState.menuWidth).toBe(44);
-  expect(topState.menuHeight).toBe(44);
-  expect(topState.menuBackgroundColor).toContain("10, 8, 6");
-  expect(topState.menuBorderColor).toContain("246, 240, 230");
-  expect(topState.menuColor).toContain("246, 240, 230");
-  expect(topState.menuBackdropFilter).toContain("blur");
-  expect(topState.iconWidth).toBe(20);
-  expect(topState.iconHeight).toBe(20);
-
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight + 120));
-  await expect(page.locator(".site-header")).toHaveAttribute(
-    "data-scrolled",
-    "true"
-  );
-  await page.waitForTimeout(220);
-
-  const scrolledState = await page.evaluate(() => {
-    const header = document.querySelector(".site-header");
-    const brand = document.querySelector(".brand-link");
-    const whatsapp = document.querySelector(".site-header > .header-whatsapp");
-    const menuButton = document.querySelector(".mobile-menu-toggle");
-    const menuIcon = menuButton?.querySelector("svg");
-    const headerStyles = header ? window.getComputedStyle(header) : null;
-    const brandStyles = brand ? window.getComputedStyle(brand) : null;
-    const whatsappStyles = whatsapp
-      ? window.getComputedStyle(whatsapp)
-      : null;
-    const menuStyles = menuButton ? window.getComputedStyle(menuButton) : null;
-    const menuRect = menuButton?.getBoundingClientRect();
-    const iconRect = menuIcon?.getBoundingClientRect();
-
-    return {
-      headerBackground: headerStyles?.backgroundColor,
-      headerPointerEvents: headerStyles?.pointerEvents,
-      brandVisibility: brandStyles?.visibility,
-      brandOpacity: brandStyles?.opacity,
-      whatsappVisibility: whatsappStyles?.visibility,
-      whatsappOpacity: whatsappStyles?.opacity,
-      menuPointerEvents: menuStyles?.pointerEvents,
-      menuBackgroundColor: menuStyles?.backgroundColor,
-      menuBorderColor: menuStyles?.borderTopColor,
-      menuBackdropFilter: menuStyles?.backdropFilter,
-      menuTop: menuRect?.top,
-      menuRight: menuRect ? window.innerWidth - menuRect.right : null,
-      menuWidth: menuRect?.width,
-      menuHeight: menuRect?.height,
-      iconWidth: iconRect?.width,
-      iconHeight: iconRect?.height
-    };
-  });
-
-  expect(scrolledState.headerBackground).toBe("rgba(0, 0, 0, 0)");
-  expect(scrolledState.headerPointerEvents).toBe("none");
-  expect(scrolledState.brandVisibility).toBe("hidden");
-  expect(scrolledState.brandOpacity).toBe("0");
-  expect(scrolledState.whatsappVisibility).toBe("hidden");
-  expect(scrolledState.whatsappOpacity).toBe("0");
-  expect(scrolledState.menuPointerEvents).toBe("auto");
-  expect(scrolledState.menuBackgroundColor).toBe(
-    topState.menuBackgroundColor
-  );
-  expect(scrolledState.menuBorderColor).toBe(topState.menuBorderColor);
-  expect(scrolledState.menuBackdropFilter).toBe(
-    topState.menuBackdropFilter
-  );
-  expect(
-    Math.abs(Number(scrolledState.menuTop) - Number(topState.menuTop))
-  ).toBeLessThanOrEqual(1);
-  expect(
-    Math.abs(Number(scrolledState.menuRight) - Number(topState.menuRight))
-  ).toBeLessThanOrEqual(1);
-  expect(scrolledState.menuWidth).toBe(44);
-  expect(scrolledState.menuHeight).toBe(44);
-  expect(scrolledState.iconWidth).toBe(20);
-  expect(scrolledState.iconHeight).toBe(20);
-
-  await page.getByRole("button", { name: "Open menu" }).click();
-  await expect(page.getByRole("button", { name: "Close menu" })).toBeVisible();
-  await expect(page.locator(".mobile-nav-panel")).toBeVisible();
-
-  const openState = await page.evaluate(() => {
-    const menuButton = document.querySelector(".mobile-menu-toggle");
-    const menuIcon = menuButton?.querySelector("svg");
-    const menuStyles = menuButton ? window.getComputedStyle(menuButton) : null;
-    const menuRect = menuButton?.getBoundingClientRect();
-    const iconRect = menuIcon?.getBoundingClientRect();
-
-    return {
-      menuBackgroundColor: menuStyles?.backgroundColor,
-      menuBorderColor: menuStyles?.borderTopColor,
-      menuColor: menuStyles?.color,
-      menuBackdropFilter: menuStyles?.backdropFilter,
-      menuTop: menuRect?.top,
-      menuRight: menuRect ? window.innerWidth - menuRect.right : null,
-      menuWidth: menuRect?.width,
-      menuHeight: menuRect?.height,
-      iconWidth: iconRect?.width,
-      iconHeight: iconRect?.height
-    };
-  });
-
-  expect(openState.menuBackgroundColor).toBe(scrolledState.menuBackgroundColor);
-  expect(openState.menuBorderColor).toBe(scrolledState.menuBorderColor);
-  expect(openState.menuBackdropFilter).toBe(scrolledState.menuBackdropFilter);
-  expect(openState.menuColor).toBe(topState.menuColor);
-  expect(
-    Math.abs(Number(openState.menuTop) - Number(scrolledState.menuTop))
-  ).toBeLessThanOrEqual(1);
-  expect(
-    Math.abs(Number(openState.menuRight) - Number(scrolledState.menuRight))
-  ).toBeLessThanOrEqual(1);
-  expect(openState.menuWidth).toBe(scrolledState.menuWidth);
-  expect(openState.menuHeight).toBe(scrolledState.menuHeight);
-  expect(openState.iconWidth).toBe(scrolledState.iconWidth);
-  expect(openState.iconHeight).toBe(scrolledState.iconHeight);
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await expect(toggle).toHaveCSS("color", "rgb(247, 243, 233)");
+    expect(await toggle.boundingBox()).toEqual(before);
+    await expect(page.locator(".mobile-nav__whatsapp")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(toggle).toBeFocused();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  }
 });
 
-test("tablet paper header keeps the menu button inside the header row", async ({
-  page
-}) => {
-  await page.setViewportSize({ width: 808, height: 1077 });
-  await page.goto("/");
-
-  await page.evaluate(() => window.scrollTo(0, 120));
-  await expect(page.locator(".site-header")).toHaveAttribute(
-    "data-scrolled",
-    "true"
-  );
-  await page.waitForTimeout(220);
-
-  const closedState = await page.evaluate(() => {
-    const header = document.querySelector(".site-header");
-    const whatsapp = document.querySelector(".site-header > .header-whatsapp");
-    const menuButton = document.querySelector(".mobile-menu-toggle");
-    const headerRect = header?.getBoundingClientRect();
-    const whatsappRect = whatsapp?.getBoundingClientRect();
-    const menuRect = menuButton?.getBoundingClientRect();
-    const menuStyles = menuButton ? window.getComputedStyle(menuButton) : null;
-
-    return {
-      headerRight: headerRect ? window.innerWidth - headerRect.right : null,
-      whatsappCenter: whatsappRect
-        ? whatsappRect.top + whatsappRect.height / 2
-        : null,
-      menuCenter: menuRect ? menuRect.top + menuRect.height / 2 : null,
-      menuPosition: menuStyles?.position,
-      menuTop: menuRect?.top,
-      menuRight: menuRect ? window.innerWidth - menuRect.right : null,
-      menuWidth: menuRect?.width,
-      menuHeight: menuRect?.height,
-      gapFromWhatsapp:
-        whatsappRect && menuRect ? menuRect.left - whatsappRect.right : null
-    };
-  });
-
-  expect(closedState.menuPosition).toBe("static");
-  expect(closedState.menuWidth).toBe(44);
-  expect(closedState.menuHeight).toBe(44);
-  expect(Number(closedState.gapFromWhatsapp)).toBeGreaterThanOrEqual(8);
-  expect(
-    Math.abs(Number(closedState.whatsappCenter) - Number(closedState.menuCenter))
-  ).toBeLessThanOrEqual(2);
-  expect(Number(closedState.menuRight)).toBeGreaterThan(
-    Number(closedState.headerRight)
-  );
-
-  await page.getByRole("button", { name: "Open menu" }).click();
-  await expect(page.getByRole("button", { name: "Close menu" })).toBeVisible();
-
-  const openState = await page.evaluate(() => {
-    const menuButton = document.querySelector(".mobile-menu-toggle");
-    const menuRect = menuButton?.getBoundingClientRect();
-
-    return {
-      menuTop: menuRect?.top,
-      menuRight: menuRect ? window.innerWidth - menuRect.right : null,
-      menuWidth: menuRect?.width,
-      menuHeight: menuRect?.height
-    };
-  });
-
-  expect(Math.abs(Number(openState.menuTop) - Number(closedState.menuTop))).toBeLessThanOrEqual(1);
-  expect(
-    Math.abs(Number(openState.menuRight) - Number(closedState.menuRight))
-  ).toBeLessThanOrEqual(1);
-  expect(openState.menuWidth).toBe(closedState.menuWidth);
-  expect(openState.menuHeight).toBe(closedState.menuHeight);
+test("approved header stays readable on the Activities paper background", async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/activities/");
+    await expect(page.locator(".brand-link")).toHaveCSS("color", "rgb(40, 53, 45)");
+    if (width < 821) {
+      await expect(page.locator(".mobile-menu-toggle")).toHaveCSS("color", "rgb(40, 53, 45)");
+      await page.getByRole("button", { name: "Open menu" }).click();
+      await expect(page.getByRole("button", { name: "Close menu" })).toHaveCSS("color", "rgb(247, 243, 233)");
+      await page.keyboard.press("Escape");
+    } else {
+      await expect(page.locator(".site-header > .header-whatsapp")).toHaveCSS("color", "rgb(40, 53, 45)");
+    }
+  }
 });
 
 test("fixed header leaves room when desktop nav jumps to Place", async ({
@@ -3291,7 +3072,7 @@ test("Task 10.2 uses one restrained motion vocabulary without layout shift", asy
   expect(initialState.headerTransition).toBe("0s");
   expect(initialState.headerSurface).toEqual({
     opacity: "0",
-    transitionDuration: "0.2s",
+    transitionDuration: "0.18s",
     transitionProperty: "opacity"
   });
   expect(initialState.passageRule?.transitionProperty).toContain("transform");
@@ -3906,12 +3687,12 @@ test("Task 10.3 keeps the Activities promenade restrained and readable at every 
 
     const state = await page.evaluate(() => {
       const root = document.documentElement;
-      const main = document.querySelector<HTMLElement>(".rhythm-page__main");
+      const main = document.querySelector<HTMLElement>(".experiences-page__main");
       const movements = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-rhythm-movement]")
+        document.querySelectorAll<HTMLElement>(".experiences-page__main section[aria-labelledby]")
       );
       const apertures = Array.from(
-        document.querySelectorAll<HTMLElement>(".rhythm-aperture")
+        document.querySelectorAll<HTMLElement>(".experiences-page__main figure")
       );
       const visibleContent = Array.from(
         main?.querySelectorAll<HTMLElement>(
@@ -3955,12 +3736,12 @@ test("Task 10.3 keeps the Activities promenade restrained and readable at every 
     expect(state.rootScrollWidth).toBeLessThanOrEqual(state.layoutWidth);
     expect(state.mainHeight).toBeGreaterThan(viewport.height * 2.2);
     expect(state.movementCount).toBe(3);
-    expect(state.apertureCount).toBe(3);
+    expect(state.apertureCount).toBe(10);
     expect(Math.min(...state.movementHeights)).toBeGreaterThan(
       viewport.height * 0.55
     );
     expect(Math.max(...state.apertureWidths)).toBeLessThanOrEqual(
-      viewport.width * 0.93 + 1
+      viewport.width + 1
     );
     expect(state.hiddenContent).toBe(0);
   }

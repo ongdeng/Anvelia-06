@@ -113,15 +113,16 @@ describe("Phase 1 asset manifest", () => {
     }
   });
 
-  it("records every bundled runtime image as an active concept derivative", () => {
+  it("records every bundled runtime image as a concept source or derivative", () => {
     for (const image of activeImages) {
       for (const assetUrl of new Set(runtimeUrlsFor(image))) {
-        const row = findRuntimeRow(assetUrl);
+        const usesOriginalSource = normalizePath(assetUrl.split("?")[0]).replace(/^\//, "") === normalizePath(image.sourcePath);
+        const row = usesOriginalSource ? findLibraryRow(image.sourcePath) : findRuntimeRow(assetUrl);
         const filename = filenameFromPath(assetUrl);
 
         expect(row, filename).toBeDefined();
         expect(row?.publication_status, filename).toBe(
-          runtimeDerivativeStatus
+          usesOriginalSource ? runtimeSourceStatus : runtimeDerivativeStatus
         );
         expect(filenameFromPath(row?.library_path ?? ""), filename).toBe(
           filename

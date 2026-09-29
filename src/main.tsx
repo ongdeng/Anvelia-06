@@ -13,6 +13,8 @@ import "./styles/base.css";
 import "./styles/components.css";
 import "./styles/layout.css";
 import "./styles/activities.css";
+import "./styles/header.css";
+import "./styles/experiences.css";
 
 document.documentElement.lang = siteContent.locale;
 const routePath = stripBasePath(window.location.pathname);

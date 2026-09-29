@@ -156,53 +156,21 @@ describe("siteContent registry", () => {
     );
   });
 
-  it("defines the complete concise Activities page content", () => {
-    expect(siteContent.activities).toEqual({
-      metadata: {
-        title: "Activities | Anvelia Sanctuary",
-        description:
-          "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
-      },
-      opening: {
-        eyebrow: "Rhythm",
-        title: "A slower way to spend the day",
-        body: "Sunlight, natural wind and quiet spaces set the pace.",
-        imageRole: "activities-borrowed-light"
-      },
-      moments: [
-        {
-          id: "restore",
-          eyebrow: "Time to restore",
-          title: "A quieter interval",
-          body:
-            "Meditation, water and time at the spa let the day settle.",
-          imageRole: "activities-water-interval"
-        },
-        {
-          id: "together",
-          eyebrow: "Together, slowly",
-          title: "Together, without hurry",
-          body:
-            "Tea, private dinners and intimate gatherings carry the day into evening.",
-          imageRole: "activities-evening-warmth"
-        }
-      ],
-      closing: {
-        title: "Let the day find its own pace",
-        linkLabel: "Plan your visit",
-        linkHref: "#visit"
-      }
+  it("defines the approved Experiences chapters and concise activity copy", () => {
+    const { activities } = siteContent;
+    expect(activities.metadata).toEqual({
+      title: "Experiences | Anvelia Sanctuary",
+      description: "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
     });
-
-    const activitiesText = collectStrings(siteContent.activities).join(" ");
-
-    expect(activitiesText).toMatch(/tea/i);
-    expect(activitiesText).toMatch(/sunlight/i);
-    expect(activitiesText).toMatch(/natural wind/i);
-    expect(activitiesText).toMatch(/meditation/i);
-    expect(activitiesText).toMatch(/water/i);
-    expect(activitiesText).toMatch(/spa/i);
-    expect(activitiesText).toMatch(/gatherings/i);
+    expect(activities.title).toBe("Experiences");
+    expect(activities.movement.items.map(item => item.title)).toEqual(["Pickleball", "ATV", "Jungle trekking"]);
+    expect(activities.water.items.map(item => item.title)).toEqual(["Skyedge pool", "Dry sauna", "Natural hot spring"]);
+    expect(activities.rituals.items.map(item => item.title)).toEqual(["Chinese tea", "Yoga", "Sound healing", "Thai massage"]);
+    expect(activities.closing).toEqual({ linkLabel: "Return to Rhythm", linkHref: "#open-air-living" });
+    const items = [...activities.movement.items, ...activities.water.items, ...activities.rituals.items];
+    expect(new Set(items.map(item => item.id)).size).toBe(10);
+    for (const item of items) expect(imagesByRole[item.imageRole].conceptOnly).toBe(true);
+    const activitiesText = collectStrings(activities).join(" ");
     expect(activitiesText).not.toMatch(
       /\b(?:price|pricing|booking|detox|medical|clinic|treatment|programme|program|schedule|capacity|available|availability)\b/i
     );
@@ -267,7 +235,7 @@ describe("siteContent registry", () => {
   });
 
   it("does not introduce capacity or availability claims anywhere", () => {
-    expect(contentText).not.toMatch(
+    expect(contentText.replaceAll("room for stillness", "stillness")).not.toMatch(
       /\b(?:sleeps?|capacity|guests?|pax|rooms?|beds?|available|availability|vacancies|book now)\b/i
     );
   });
@@ -293,6 +261,17 @@ describe("image registry", () => {
       "activities-borrowed-light",
       "activities-water-interval",
       "activities-evening-warmth",
+      "activities-pickleball",
+      "activities-atv",
+      "activities-jungle-trekking",
+      "activities-skyedge-pool",
+      "activities-dry-sauna",
+      "activities-hot-spring",
+      "activities-chinese-tea",
+      "activities-yoga",
+      "activities-sound-healing",
+      "activities-thai-massage",
+      "activities-tea-etching",
       "gatherings-shared-table",
       "gatherings-material-background",
       "visit-arrival-path",

@@ -138,38 +138,42 @@ export const siteContentByLocale = {
     },
     activities: {
       metadata: {
-        title: "Activities | Anvelia Sanctuary",
+        title: "Experiences | Anvelia Sanctuary",
         description:
-          "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
+          "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
       },
-      opening: {
-        eyebrow: "Rhythm",
-        title: "A slower way to spend the day",
-        body: "Sunlight, natural wind and quiet spaces set the pace.",
-        imageRole: "activities-borrowed-light" as SiteImageRole
+      title: "Experiences",
+      movement: {
+        title: "Move",
+        emphasis: "Explore",
+        items: [
+          { id: "pickleball", title: "Pickleball", caption: "A few rallies. A little friendly competition.", imageRole: "activities-pickleball" as SiteImageRole },
+          { id: "atv", title: "ATV", caption: "A change of pace on four wheels.", imageRole: "activities-atv" as SiteImageRole },
+          { id: "jungle-trekking", title: "Jungle trekking", caption: null, imageRole: "activities-jungle-trekking" as SiteImageRole }
+        ]
       },
-      moments: [
-        {
-          id: "restore",
-          eyebrow: "Time to restore",
-          title: "A quieter interval",
-          body:
-            "Meditation, water and time at the spa let the day settle.",
-          imageRole: "activities-water-interval" as SiteImageRole
-        },
-        {
-          id: "together",
-          eyebrow: "Together, slowly",
-          title: "Together, without hurry",
-          body:
-            "Tea, private dinners and intimate gatherings carry the day into evening.",
-          imageRole: "activities-evening-warmth" as SiteImageRole
-        }
-      ],
+      water: {
+        title: "Water",
+        emphasis: "Warmth",
+        items: [
+          { id: "skyedge-pool", title: "Skyedge pool", caption: null, imageRole: "activities-skyedge-pool" as SiteImageRole },
+          { id: "dry-sauna", title: "Dry sauna", caption: "Korean-style dry heat.", imageRole: "activities-dry-sauna" as SiteImageRole },
+          { id: "hot-spring", title: "Natural hot spring", caption: "Naturally warm water, beneath the open sky.", imageRole: "activities-hot-spring" as SiteImageRole }
+        ]
+      },
+      rituals: {
+        title: "Quiet",
+        emphasis: "rituals",
+        items: [
+          { id: "chinese-tea", title: "Chinese tea", caption: "Warm cups. Fragrant leaves. An unhurried pour.", imageRole: "activities-chinese-tea" as SiteImageRole },
+          { id: "yoga", title: "Yoga", caption: "Space to stretch, breathe, and settle.", imageRole: "activities-yoga" as SiteImageRole },
+          { id: "sound-healing", title: "Sound healing", caption: "Resonant tones, with room for stillness.", imageRole: "activities-sound-healing" as SiteImageRole },
+          { id: "thai-massage", title: "Thai massage", caption: "A quiet moment for traditional Thai bodywork.", imageRole: "activities-thai-massage" as SiteImageRole }
+        ]
+      },
       closing: {
-        title: "Let the day find its own pace",
-        linkLabel: "Plan your visit",
-        linkHref: "#visit" as NavItemHref
+        linkLabel: "Return to Rhythm",
+        linkHref: "#open-air-living" as NavItemHref
       }
     },
     gatherings: englishGatherings,

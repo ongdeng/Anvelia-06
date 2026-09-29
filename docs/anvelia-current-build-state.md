@@ -1,10 +1,31 @@
 # Anvelia Current Build State
 
-Updated: 2026-08-24
+Updated: 2026-09-29
 
 ## Purpose
 
 This file is the compact implementation memory for the Anvelia Sanctuary Phase 1 website. Use it with `AGENTS.md` and `docs/anvelia-design-language.md` before continuing work.
+
+## Approved Experiences Integration
+
+- The approved spatial study (r18 typography and r19 usability) now replaces the old Long Veranda content on the real `/activities/` route. The private `outputs/experiences-spatial-study/` preview is retained locally for comparison. The user authorised uploading the approved header and Experiences changes to `ongdeng/Anvelia-06` on September 29. The `main` push triggers the existing gated GitHub Pages workflow; inspect its result before claiming a live release.
+- The page title is `Experiences`; homepage navigation remains `Rhythm`, and its existing `See activities` passage is unchanged. The three natural-height chapters are Move & Explore (pickleball, ATV, jungle trekking), Water & Warmth (Skyedge pool, dry sauna, natural hot spring), and Quiet rituals (Chinese tea, yoga, sound healing, Thai massage).
+- Runtime content lives in `src/content/siteContent.ts`, the sequence in `src/components/pages/ExperiencesSequence.tsx`, and scoped styles in `src/styles/experiences.css`. Genuine Cormorant 400 italic and 500 upright preserve the approved typographic hierarchy. All ten activity titles use 500; Thai bodywork copy retains balanced wrapping.
+- Preserve the approved paper, transitions, crops, 10.5% wide-landscape inset and intentional return-link alignment offset. Homepage chapters and the approved header were not redesigned. The single ending action is `Return to Rhythm`, targeting the base-aware `/#open-air-living` anchor. No booking copy or additional contact action was added.
+- Eleven PNG originals were copied byte-for-byte into `src/assets/images/experiences/`, registered with truthful concept provenance and bundled independently of `outputs/`. Real photographs are still pending. Do not replace, crop, convert or optimise this provisional imagery without approval; the retained originals total about 30.5 MB, so final delivery optimisation remains unfinished.
+- Current verification: 113 component tests in 22 files pass; normal and GitHub Pages builds pass. In-app Chromium comparison at 320x740, 390x844, 768x1024, 844x390 and 1440x900 found identical geometry and typography to the approved study, with no horizontal or text overflow. The built `/Anvelia-06/activities/` route loads all ten images, preserves medium-weight titles, and returns to/focuses the Rhythm chapter. Homepage onward navigation and mobile-menu Escape restoration also work.
+- E2E definitions were updated and all 67 tests enumerate successfully; the full Chromium/WebKit suite was not rerun for this integration. An independent final review was unavailable due to the reviewer usage limit; parent-agent source and browser checks were completed. Evidence: `outputs/experiences-spatial-study/applied-parity-r20.json`, `applied-navigation-r20.json` and `applied-*-r20.png`.
+- Upload preflight: all 85 production component tests across 13 files pass, the Pages build passes, and `git diff --check` is clean. The earlier 113-test count includes 28 local study tests that are not release files. Experimental `outputs/`, local screenshots and historical study notes are excluded from this upload; the runtime assets, production styles and tests are included. CI must run the complete browser suite before deployment.
+
+## Approved Header Refinement
+
+- The 2026-09-18 header-only preview is approved and applied locally in `src/styles/header.css`, loaded after the existing page styles. No hero, chapter, imagery, copy, or menu behavior was changed.
+- Preserve the existing Cormorant Garamond wordmark: larger Anvelia, smaller Sanctuary, centered alignment, and natural tracking. Desktop navigation and WhatsApp are unboxed.
+- The header is transparent over the homepage arrival image, then becomes a full-width warm-paper surface with forest-colored text and a faint bottom border. It has no floating frame, blur, or shadow.
+- Mobile retains the wordmark and an unboxed two-line menu control with a 44px target. Header WhatsApp appears inside the existing menu instead of beside the toggle. Control positions remain stable across scroll and menu states.
+- Activities uses the paper header and dark text from initial load. Reduced-motion preferences suppress the header transitions.
+- Verification: 84 component tests and all 67 Chromium/WebKit browser tests pass, including updated header contracts, menu focus, section anchors, and responsive chapter containment. Desktop and mobile screenshots are under `outputs/header-preview/applied-*.png`.
+- This refinement is included in the September 29 authorised upload. Earlier release notes below describe their respective checkpoints.
 
 ## Approved Direction
 
@@ -29,10 +50,10 @@ This file is the compact implementation memory for the Anvelia Sanctuary Phase 1
 ## Current Visual State
 
 - Hero keeps the name-led threshold direction and uses the approved entrance/hillside visual.
-- Header/navigation has a sticky premium treatment. On smaller portrait screens, the menu control is minimal and should remain consistent in position and widget size between closed, scrolled, and open states.
+- Header/navigation uses the approved full-width treatment described above. Preserve the wordmark and menu control positions between closed, scrolled, and open states.
 - Mobile navigation uses a full-screen panel with calm material imagery and quiet links.
 - The former Open-Air Living chapter now appears in navigation as `Rhythm` while retaining the `#open-air-living` anchor, selected veranda concept, `Living with the hillside` title, 38/62 landscape split, and one-viewport 58/42 portrait rhythm. Its only onward path is the restrained `See activities` editorial passage.
-- `/activities` is a complete multi-movement editorial page in the approved `Long Veranda` direction. It moves through borrowed light, a water interval, evening warmth, and a quiet closing passage using three concept-only image apertures, restrained paper fields, deep green, and concise resort-first copy. Secondary-page navigation returns to the homepage anchors, while `/stays` remains disabled.
+- `/activities/` uses the approved Experiences spatial composition described above: three distinct chapters, ten activities and one quiet return to Rhythm. It supersedes the Long Veranda design. Secondary-page navigation returns to homepage anchors, while `/stays` remains disabled.
 - Gatherings now uses the approved people-free quiet-readiness concept with a 58/42 image-left/paper-right landscape split and image-first portrait order. Its copy is limited to the approved introduction and one semantic occasions list, with no CTA or operational claims. The text panel carries a bespoke handmade-paper material layer derived from the photograph's timber grain, glass reflection, linen, and abstract cup rhythm; it remains decorative, low contrast, and excluded from accessibility output.
 - Visit uses the people-free arrival-path concept with rain-darkened stone, dense hillside planting, a restrained lantern, and a timber threshold edge. A generated warm-ivory paper field blends broadly over the full-bleed image: paper-left/image-right in landscape and paper-above/image-below in portrait. It presents one concise invitation, the exact address, visible WhatsApp number, one `Plan your visit` WhatsApp action, and the timeless `© Anvelia Sanctuary` end note over the quiet lower image edge. It contains no map, form, pricing, social links, separate footer, or repeated closing information.
 - The homepage Open-Air Living, Gatherings, and Visit sections use the shared `ViewportChapter` primitive and occupy exactly one `100svh` chapter in portrait and landscape. Their internal compositions remain distinct, and compact landscape rules preserve content fit down to short phone viewports.
@@ -61,14 +82,16 @@ This file is the compact implementation memory for the Anvelia Sanctuary Phase 1
 - Task 9.4 is approved. The Visit chapter integrates only `© Anvelia Sanctuary` over the quiet lower image edge, with no separate footer or repeated closing information.
 - Task 9.5 is approved. `Rhythm` appears in both navigation modes, the homepage passage and complete `/activities` route ship together, and base-aware routing preserves direct `/Anvelia-06/activities/` activation.
 - Task 10.1 visual consistency corrections and Task 10.2 motion consistency are implemented and verified.
-- Task 10.3 is approved for all six homepage chapters. The former one-viewport Activities rule was superseded on 2026-08-24 by the approved `Long Veranda` multi-movement page; responsive containment and overflow protections remain mandatory.
+- Task 10.3 is approved for all six homepage chapters. Activities has used a natural-height editorial exception since 2026-08-24, now retained by the September 29 Experiences composition; responsive containment and overflow protections remain mandatory.
 - Task 10.4 and its sixth final-audit correction are approved and committed. The menu is a named, isolated modal with complete focus behavior; contrast, canonical/social/structured metadata, truthful concept-image treatment, crawler artifacts, Latin-only fonts, responsive Hero delivery, deployment CI, exact build identification, and GitHub Pages base-path checks are in place.
 - Task 11 is approved. Phase 1 is complete, with final evidence and the release boundary recorded in `md files/2026-06-30-anvelia-phase-1-handoff.md`. Publication remains a separate explicit action.
-- The 2026-08-24 Rhythm refinement is implemented locally: centralized copy and image roles, three responsive concept-image families, direct `/activities/` routing, route metadata, a functional `Plan your visit` return path, and dedicated component and browser coverage are in place. It has not been deployed in this checkpoint.
+- The 2026-08-24 Long Veranda content and `Plan your visit` ending are superseded by the September 29 Experiences integration. Remaining work is real photography and delivery optimisation, a full cross-browser regression run, and separately authorised publication.
 
 ## Verification Baseline
 
-Latest known passing checks:
+The September 29 integration verification is recorded above. The checkpoints below are historical, including their browser-test counts.
+
+Earlier release verification commands:
 
 ```powershell
 rtk npm.cmd run test

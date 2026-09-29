@@ -20,15 +20,15 @@ describe("Activities production entry", () => {
       "\n"
     );
 
-    expect(html).toContain("<title>Activities | Anvelia Sanctuary</title>");
+    expect(html).toContain("<title>Experiences | Anvelia Sanctuary</title>");
     expect(html).toContain(
-      'name="description"\n      content="Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."'
+      'name="description"\n      content="Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."'
     );
     expect(html).toContain(
-      '<meta property="og:title" content="Activities | Anvelia Sanctuary" />'
+      '<meta property="og:title" content="Experiences | Anvelia Sanctuary" />'
     );
     expect(html).toContain(
-      'property="og:description"\n      content="Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."'
+      'property="og:description"\n      content="Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."'
     );
     expect(html).toContain(
       '<link rel="canonical" href="https://ongdeng.github.io/Anvelia-06/activities/" />'

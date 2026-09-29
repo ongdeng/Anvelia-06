@@ -16,11 +16,11 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
   await page.goto("/Anvelia-06/activities/");
 
   await expect(page).toHaveURL(/\/Anvelia-06\/activities\/$/);
-  await expect(page).toHaveTitle("Activities | Anvelia Sanctuary");
+  await expect(page).toHaveTitle("Experiences | Anvelia Sanctuary");
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "A slower way to spend the day"
+      name: "Experiences"
     })
   ).toBeVisible();
   await expect(
@@ -33,7 +33,7 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
   ).toHaveAttribute("href", "/Anvelia-06/#open-air-living");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
+    "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
@@ -101,7 +101,7 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "A slower way to spend the day"
+      name: "Experiences"
     })
   ).toBeVisible();
 

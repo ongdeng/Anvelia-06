@@ -13,9 +13,9 @@ export const releasePages = [
   },
   {
     path: "activities/",
-    title: "Activities | Anvelia Sanctuary",
+    title: "Experiences | Anvelia Sanctuary",
     description:
-      "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside."
+      "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
   }
 ];
 

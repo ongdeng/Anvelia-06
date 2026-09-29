@@ -1,9 +1,9 @@
 import { act, cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-const activitiesTitle = "Activities | Anvelia Sanctuary";
+const activitiesTitle = "Experiences | Anvelia Sanctuary";
 const activitiesDescription =
-  "Rhythm at Anvelia Sanctuary, shaped by sunlight, natural wind, meditation, water, tea, and quiet gatherings on the hillside.";
+  "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest.";
 const activitiesUrl = "https://ongdeng.github.io/Anvelia-06/activities/";
 
 describe("route metadata startup", () => {
