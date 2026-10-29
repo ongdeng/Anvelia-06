@@ -185,14 +185,17 @@ export function SiteHeader({ homeRooted = false }: SiteHeaderProps) {
   }, [isMenuOpen]);
 
   const navLinks = nav.map((item) => (
-    <a href={homeRooted ? withBasePath(item.href) : item.href} key={item.href}>
+    <a
+      href={homeRooted || !item.href.startsWith("#") ? withBasePath(item.href) : item.href}
+      key={item.href}
+    >
       {item.label}
     </a>
   ));
 
   const mobileNavLinks = nav.map((item) => (
     <a
-      href={homeRooted ? withBasePath(item.href) : item.href}
+      href={homeRooted || !item.href.startsWith("#") ? withBasePath(item.href) : item.href}
       key={item.href}
       onClick={() => {
         closeMenu();

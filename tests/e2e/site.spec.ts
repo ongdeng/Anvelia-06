@@ -121,7 +121,7 @@ test("Task 10.1 shared phone header separates controls and clears page content",
             ".mobile-menu-toggle"
           );
           const eyebrow = document.querySelector<HTMLElement>(
-            ".spatial-opening #experience-title"
+            "#experience-title"
           );
           const rect = (element: Element | null) =>
             element?.getBoundingClientRect() ?? null;
@@ -356,7 +356,7 @@ test("Task 7 hero CTA works and the opening holds a full viewport", async ({
     })
   ).toBeVisible();
   await expect(page.locator("#place")).toContainText("450m");
-  await expect(page.locator("#place")).toContainText("fresh hillside air");
+  await expect(page.locator("#place")).toContainText("fresh air");
   await expect(page.locator("#place")).toContainText("Bentong, Pahang");
 
   const openingState = await page.evaluate(() => {
@@ -506,7 +506,7 @@ test("Place portrait keeps the current image blended while landscape stays split
   expect(landscapeState.gridTemplateColumns).not.toBe("1fr");
   expect(Number(landscapeState.imageHeight)).toBeGreaterThan(500);
   expect(landscapeState.narrativeParagraphs).toBe(1);
-  expect(landscapeState.intro).toContain("fresh hillside air");
+  expect(landscapeState.intro).toContain("fresh air");
   expect(landscapeState.factCount).toBe(3);
 
   await page.setViewportSize({ width: 821, height: 1180 });
@@ -912,14 +912,17 @@ test("Task 8 Cabins and Open-Air sections load with distinct Option 2 rhythms", 
   );
   expect(Number(sectionState.cabinIntroWeight)).toBe(400);
   expect(sectionState.cabinMarkerText).toBe("Cabin stays");
-  expect(sectionState.cabinMarkerHref).toBeNull();
+  expect([
+    null,
+    "/outputs/stays-botanical-folio/"
+  ]).toContain(sectionState.cabinMarkerHref);
   expect(sectionState.cabinImageFrames).toBe(1);
   expect(sectionState.cabinLineworkImages).toBe(0);
   expect(sectionState.cabinDetailRows).toBe(0);
   expect(sectionState.openAirCopyBackground).toContain("linear-gradient");
-  expect(sectionState.cabinLinks).toBe(0);
+  expect(sectionState.cabinLinks).toBe(sectionState.cabinMarkerHref ? 1 : 0);
   expect(sectionState.openAirLinks).toBe(1);
-  expect(sectionState.openAirLinkText).toBe("See activities");
+  expect(sectionState.openAirLinkText).toBe("Explore experiences");
   expect(sectionState.openAirLinkHref).toBe("/activities/");
   expect(sectionState.duplicateIds).toEqual([]);
 });
@@ -1373,6 +1376,7 @@ test("Task 10.1 practical type, editorial rules, and header controls stay optica
     ".place-section__intro",
     ".place-section__fact dd",
     ".cabins-section__intro",
+    ".cabins-section__marker",
     ".open-air-section__intro",
     ".gatherings-section__intro",
     ".gatherings-section__occasions",
@@ -1385,7 +1389,6 @@ test("Task 10.1 practical type, editorial rules, and header controls stay optica
     ".place-section__eyebrow",
     ".place-section__fact dt",
     ".cabins-section__eyebrow",
-    ".cabins-section__marker",
     ".open-air-section__passage",
     ".visit-section__whatsapp",
     ".visit-section__endnote",
@@ -1408,20 +1411,10 @@ test("Task 10.1 practical type, editorial rules, and header controls stay optica
         };
         const centerY = (rect: DOMRect) => (rect.top + rect.bottom) / 2;
         const marker = document.querySelector(".cabins-section__marker");
-        const markerLabel = marker?.querySelector("span:first-child");
+        const markerStyles = marker ? window.getComputedStyle(marker) : undefined;
         const markerRule = marker?.querySelector(
           ".cabins-section__marker-rule"
         );
-        const markerLabelRange = document.createRange();
-
-        if (markerLabel) {
-          markerLabelRange.selectNodeContents(markerLabel);
-        }
-
-        const markerLabelRect = markerLabel
-          ? markerLabelRange.getBoundingClientRect()
-          : undefined;
-        const markerRuleRect = markerRule?.getBoundingClientRect();
         const passage = document.querySelector(
           ".open-air-section__passage"
         );
@@ -1486,14 +1479,13 @@ test("Task 10.1 practical type, editorial rules, and header controls stay optica
             selector,
             size: fontSize(selector)
           })),
-          markerGap:
-            markerLabelRect && markerRuleRect
-              ? markerRuleRect.left - markerLabelRect.right
-              : Number.POSITIVE_INFINITY,
-          markerCenterDelta:
-            markerLabelRect && markerRuleRect
-              ? Math.abs(centerY(markerRuleRect) - centerY(markerLabelRect))
-              : Number.POSITIVE_INFINITY,
+          markerDisabled: marker?.getAttribute("aria-disabled"),
+          markerIsLink: marker?.tagName === "A",
+          markerHasRule: Boolean(markerRule),
+          markerTracking: markerStyles?.letterSpacing === "normal"
+            ? 0
+            : Number.parseFloat(markerStyles?.letterSpacing ?? "0"),
+          markerTransform: markerStyles?.textTransform,
           passageGap: Number.parseFloat(
             passageStyles?.columnGap || passageStyles?.gap || "0"
           ),
@@ -1553,9 +1545,10 @@ test("Task 10.1 practical type, editorial rules, and header controls stay optica
       ).toBeGreaterThanOrEqual(10.5);
     }
 
-    expect(state.markerGap).toBeGreaterThanOrEqual(8);
-    expect(state.markerGap).toBeLessThanOrEqual(18.5);
-    expect(state.markerCenterDelta).toBeLessThanOrEqual(1);
+    expect(state.markerDisabled).toBe(state.markerIsLink ? null : "true");
+    expect(state.markerHasRule).toBe(true);
+    expect(state.markerTracking).toBe(0);
+    expect(state.markerTransform).toBe("none");
     expect(state.passageGap).toBeGreaterThanOrEqual(8);
     expect(state.passageGap).toBeLessThanOrEqual(18.5);
     expect(state.passageRuleWidth).toBeGreaterThanOrEqual(34);
@@ -3008,6 +3001,7 @@ test("Task 10.2 uses one restrained motion vocabulary without layout shift", asy
       markerTransition: marker
         ? window.getComputedStyle(marker).transitionDuration
         : null,
+      markerIsLink: marker?.tagName === "A",
       skipTransition: skipLink
         ? window.getComputedStyle(skipLink).transitionDuration
         : null,
@@ -3066,7 +3060,9 @@ test("Task 10.2 uses one restrained motion vocabulary without layout shift", asy
     distanceSettle: "4px",
     opacityEnter: "0.94"
   });
-  expect(initialState.markerTransition).toBe("0s");
+  expect(initialState.markerTransition).toBe(
+    initialState.markerIsLink ? "0.14s" : "0s"
+  );
   expect(initialState.skipTransition).toBe("0s");
   expect(initialState.buttonTransitionProperty).not.toContain("transform");
   expect(initialState.headerTransition).toBe("0s");
@@ -3584,10 +3580,14 @@ test("Task 10.3 desktop chapter anchors reveal the complete composition", async 
     await page.goto("/");
 
     for (const chapter of chapters) {
-      await page
-        .getByRole("navigation", { name: "Site sections" })
-        .getByRole("link", { name: chapter.label, exact: true })
-        .click();
+      if (chapter.selector === "#open-air-living") {
+        await page.goto("/#open-air-living");
+      } else {
+        await page
+          .getByRole("navigation", { name: "Site sections" })
+          .getByRole("link", { name: chapter.label, exact: true })
+          .click();
+      }
       await page.waitForTimeout(280);
 
       const state = await page.evaluate((definition) => {

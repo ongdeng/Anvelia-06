@@ -8,7 +8,7 @@ export type Locale = "en";
 export type NavItemId =
   | "place"
   | "cabins"
-  | "rhythm"
+  | "experiences"
   | "gatherings"
   | "visit";
 
@@ -16,6 +16,7 @@ export type NavItemHref =
   | "#place"
   | "#cabins"
   | "#open-air-living"
+  | "/activities"
   | "#gatherings"
   | "#visit";
 
@@ -44,8 +45,9 @@ const englishGatherings = {
   id: "gatherings" as PlannedSectionId,
   eyebrow: "Gatherings",
   title: "A quieter way to gather",
+  titleLines: ["A quieter way", "to gather"],
   body:
-    "Time together takes on a gentler rhythm here, shaped by timber, greenery and the hillside.",
+    "Good company, a shared table and time set aside for one another.",
   occasions: [
     "Private dinners",
     "Small corporate retreats",
@@ -70,7 +72,7 @@ export const siteContentByLocale = {
     nav: [
       { id: "place", label: "Place", href: "#place" },
       { id: "cabins", label: "Cabins", href: "#cabins" },
-      { id: "rhythm", label: "Rhythm", href: "#open-air-living" },
+      { id: "experiences", label: "Experiences", href: "/activities" },
       { id: "gatherings", label: "Gatherings", href: "#gatherings" },
       { id: "visit", label: "Visit", href: "#visit" }
     ] satisfies NavItem[],
@@ -99,7 +101,7 @@ export const siteContentByLocale = {
       eyebrow: "Place",
       title: "A place of quiet elevation",
       intro:
-        "Timber and layered greenery open to fresh hillside air, while sunny days and cooler evenings shape a slower rhythm away from the city.",
+        "Timber and layered greenery frame open views, with fresh air and a sense of distance from the city.",
       facts: [
         {
           label: "Elevation",
@@ -121,7 +123,7 @@ export const siteContentByLocale = {
       title: "Cabins in nature's embrace",
       titleLines: ["Cabins in", "nature's embrace"],
       intro:
-        "Timber cabins settle into the hillside, where warm interiors, natural materials, and thoughtful details create a quieter rhythm for rest.",
+        "Warm timber, soft light and greenery beyond the door. The cabins offer a place to settle in and rest.",
       markerLabel: "Cabin stays",
       markerHref: "/stays",
       markerEnabled: false,
@@ -132,8 +134,8 @@ export const siteContentByLocale = {
       eyebrow: "Rhythm",
       title: "Living with the hillside",
       body:
-        "Sheltered by timber and greenery, open-air spaces invite slow mornings, afternoon tea and quiet conversation as cooler evening air settles across the hillside.",
-      markerLabel: "See activities",
+        "From pickleball and forest trails to warm water and tea.",
+      markerLabel: "Explore experiences",
       markerHref: "/activities"
     },
     activities: {
@@ -143,6 +145,14 @@ export const siteContentByLocale = {
           "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
       },
       title: "Experiences",
+      chapterIndex: {
+        label: "Experience chapters",
+        items: [
+          { label: "Move", href: "#move-explore" },
+          { label: "Water", href: "#water-warmth" },
+          { label: "Rituals", href: "#quiet-rituals" }
+        ]
+      },
       movement: {
         title: "Move",
         emphasis: "Explore",

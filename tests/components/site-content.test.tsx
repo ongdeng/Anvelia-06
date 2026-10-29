@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
 import { imagesByRole, siteImages } from "../../src/content/images";
 import {
@@ -61,8 +61,8 @@ describe("siteContent registry", () => {
     expect(siteContent.hero.detailLine).toBe("Bentong, Pahang, Malaysia.");
     expect(siteContent.place.title).toBe("A place of quiet elevation");
     expect(siteContent.place.intro).toMatch(/timber/i);
-    expect(siteContent.place.intro).toMatch(/cooler evenings/i);
-    expect(siteContent.place.intro).toMatch(/fresh hillside air/i);
+    expect(siteContent.place.intro).toMatch(/open views/i);
+    expect(siteContent.place.intro).toMatch(/fresh air/i);
     expect("body" in siteContent.place).toBe(false);
     expect(siteContent.place.facts.map((fact) => fact.label)).toEqual([
       "Elevation",
@@ -75,19 +75,19 @@ describe("siteContent registry", () => {
     expect(siteContent.nav.map((item) => item.id)).toEqual([
       "place",
       "cabins",
-      "rhythm",
+      "experiences",
       "gatherings",
       "visit"
     ]);
     expect(siteContent.nav.map((item) => item.label)).toEqual([
       "Place",
       "Cabins",
-      "Rhythm",
+      "Experiences",
       "Gatherings",
       "Visit"
     ]);
-    expect(siteContent.nav.find((item) => item.id === "rhythm")?.href).toBe(
-      "#open-air-living"
+    expect(siteContent.nav.find((item) => item.id === "experiences")?.href).toBe(
+      "/activities"
     );
   });
 
@@ -134,23 +134,23 @@ describe("siteContent registry", () => {
     expect(cabinText).not.toMatch(/\b\d+\s*(?:cabins?|guests?|pax|rooms?)\b/i);
   });
 
-  it("keeps open-air living copy material-led and resort-first", () => {
+  it("keeps Rhythm as the homepage chapter while revealing the Experiences destination", () => {
     expect(siteContent.openAirLiving.eyebrow).toBe("Rhythm");
     expect(siteContent.openAirLiving.title).toBe(
       "Living with the hillside"
     );
     expect(siteContent.openAirLiving.body).toBe(
-      "Sheltered by timber and greenery, open-air spaces invite slow mornings, afternoon tea and quiet conversation as cooler evening air settles across the hillside."
+      "From pickleball and forest trails to warm water and tea."
     );
-    expect(siteContent.openAirLiving.markerLabel).toBe("See activities");
+    expect(siteContent.openAirLiving.markerLabel).toBe("Explore experiences");
     expect(siteContent.openAirLiving.markerHref).toBe("/activities");
 
     const openAirText = collectStrings(siteContent.openAirLiving).join(" ");
 
-    expect(openAirText).toMatch(/timber|wood/i);
-    expect(openAirText).toMatch(/greenery|planted/i);
+    expect(openAirText).toMatch(/pickleball/i);
+    expect(openAirText).toMatch(/forest trails/i);
     expect(openAirText).toMatch(/tea/i);
-    expect(openAirText).toMatch(/sheltered/i);
+    expect(openAirText).toMatch(/warm water/i);
     expect(openAirText).not.toMatch(
       /\b(?:detox|medical|clinic|clinical|doctor|treatment|therapy|therapies|hot spring|liver|nutrition coaching)\b/i
     );
@@ -180,7 +180,7 @@ describe("siteContent registry", () => {
     expect(siteContent.gatherings.eyebrow).toBe("Gatherings");
     expect(siteContent.gatherings.title).toBe("A quieter way to gather");
     expect(siteContent.gatherings.body).toBe(
-      "Time together takes on a gentler rhythm here, shaped by timber, greenery and the hillside."
+      "Good company, a shared table and time set aside for one another."
     );
     expect(siteContent.gatherings.occasions).toEqual([
       "Private dinners",
@@ -358,7 +358,7 @@ describe("App registry wiring", () => {
   it("renders current targets for registry nav links", () => {
     const { container } = render(<App />);
 
-    for (const item of siteContent.nav) {
+    for (const item of siteContent.nav.filter((item) => item.href.startsWith("#"))) {
       const id = item.href.replace("#", "");
 
       expect(container.querySelector(`#${id}`)).toBeTruthy();
@@ -540,14 +540,21 @@ describe("App registry wiring", () => {
     );
   });
 
-  it("keeps the future Cabin stays destination visible but unavailable", () => {
-    const { container } = render(<App />);
-    const marker = container.querySelector(".cabins-section__marker");
-
-    expect(marker).toHaveTextContent("Cabin stays");
-    expect(marker).toHaveAttribute("aria-disabled", "true");
-    expect(marker?.tagName.toLowerCase()).toBe("span");
-    expect(container.querySelector('a[href="/stays"]')).toBeNull();
+  it("opens the local cabin preview from the main page within its configured base", () => {
+    try {
+      for (const base of ["/", "/Anvelia-06/"]) {
+        vi.stubEnv("BASE_URL", base);
+        const { container, unmount } = render(<App />);
+        const marker = container.querySelector(".cabins-section__marker");
+        expect(marker).toHaveTextContent("Cabin stays");
+        expect(marker).not.toHaveAttribute("aria-disabled");
+        expect(marker).toHaveAttribute("href", `${base}outputs/stays-botanical-folio/`);
+        expect(container.querySelector('a[href="/stays"]')).toBeNull();
+        unmount();
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("keeps only the hero eager and gives primary below-fold images responsive delivery", () => {

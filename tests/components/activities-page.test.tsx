@@ -43,6 +43,28 @@ describe("ActivitiesPage", () => {
     }
   });
 
+  it("offers local chapter links with keyboard-focusable destinations", () => {
+    render(<App />);
+    const index = screen.getByRole("navigation", { name: "Experience chapters" });
+    const links = within(index).getAllByRole("link");
+    expect(links.map(link => link.textContent)).toEqual(["Move", "Water", "Rituals"]);
+    expect(links.map(link => link.getAttribute("href")))
+      .toEqual(["#move-explore", "#water-warmth", "#quiet-rituals"]);
+    for (const link of links) {
+      const destination = document.querySelector(link.getAttribute("href")!);
+      expect(destination).toHaveAttribute("tabindex", "-1");
+      expect(destination).toHaveAttribute("aria-labelledby");
+    }
+  });
+
+  it("keeps the page introduction outside the Move chapter destination", () => {
+    render(<App />);
+    const movement = screen.getByRole("region", { name: "Move & Explore" });
+    expect(movement).not.toContainElement(screen.getByRole("heading", { level: 1, name: "Experiences" }));
+    expect(movement).not.toContainElement(screen.getByRole("navigation", { name: "Experience chapters" }));
+    expect(within(movement).getByRole("heading", { level: 2, name: "Move & Explore" })).toBeVisible();
+  });
+
   it("retains the approved captions and a single quiet return to Rhythm", () => {
     render(<App />);
     const main = screen.getByRole("main");
@@ -50,7 +72,7 @@ describe("ActivitiesPage", () => {
     expect(within(main).getByText("Naturally warm water, beneath the open sky.")).toBeVisible();
     expect(within(main).getByText("A quiet moment for traditional Thai bodywork.")).toBeVisible();
     const link = within(main).getByRole("link", { name: "Return to Rhythm" });
-    expect(within(main).getAllByRole("link")).toEqual([link]);
+    expect(within(link.closest("footer")!).getAllByRole("link")).toEqual([link]);
     expect(link).toHaveAttribute("href", "/#open-air-living");
     expect(main.querySelector("button, form")).toBeNull();
     expect(main).not.toHaveTextContent(/\b(?:pricing|booking|whatsapp|detox|medical|clinic|treatment|availability)\b/i);
@@ -74,11 +96,11 @@ describe("ActivitiesPage", () => {
       .toHaveAttribute("href", "/Anvelia-06/#open-air-living");
   });
 
-  it("keeps the existing homepage passage and route unchanged", () => {
+  it("keeps the renamed homepage passage inside the Pages base", () => {
     vi.stubEnv("BASE_URL", "/Anvelia-06/");
     window.history.pushState(null, "", "/Anvelia-06/");
     render(<App />);
-    expect(screen.getByRole("link", { name: "See activities" }))
+    expect(screen.getByRole("link", { name: "Explore experiences" }))
       .toHaveAttribute("href", "/Anvelia-06/activities/");
   });
 });

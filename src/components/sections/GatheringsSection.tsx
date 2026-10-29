@@ -43,7 +43,12 @@ export function GatheringsSection() {
         />
         <p className="gatherings-section__eyebrow">{gatherings.eyebrow}</p>
         <h2 className="gatherings-section__title" id="gatherings-title">
-          {gatherings.title}
+          {gatherings.titleLines.map((line, index) => (
+            <span className="gatherings-section__title-line" key={line}>
+              {line}
+              {index < gatherings.titleLines.length - 1 ? " " : ""}
+            </span>
+          ))}
         </h2>
         <p className="gatherings-section__intro">{gatherings.body}</p>
         <ul className="gatherings-section__occasions">

@@ -361,7 +361,16 @@
   background: linear-gradient(90deg, rgb(var(--rgb-ivory) / 0.5), rgb(var(--rgb-ivory) / 0.2));
 }
 
+.cabins-section .cabins-section__marker {
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-transform: none;
+}
+
 a.cabins-section__marker {
+  min-height: 44px;
   transition: color var(--motion-duration-fast) var(--motion-ease-standard)
     var(--motion-delay-none);
 }
@@ -464,25 +473,24 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
 .open-air-section__intro {
   margin: var(--space-5) 0 0;
   color: rgb(var(--rgb-ink) / 0.72);
+  text-wrap: balance;
 }
 
 .open-air-section__copy > .open-air-section__passage {
-  position: absolute;
-  left: var(--open-air-copy-inline);
-  bottom: clamp(54px, 8svh, 76px);
   display: inline-flex;
   width: fit-content;
   min-height: 44px;
   align-items: center;
+  flex-shrink: 0;
   gap: var(--editorial-rule-gap);
-  margin: 0;
-  color: rgb(var(--rgb-ink) / 0.82);
-  font-size: var(--type-label-size);
+  margin: 24px 0 0;
+  color: rgb(var(--rgb-ink) / 0.88);
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: var(--type-label-tracking);
-  line-height: 1;
+  letter-spacing: 0;
+  line-height: 1.4;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .open-air-section__passage::after {
@@ -614,7 +622,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
 }
 
 .gatherings-section__title {
-  max-width: 9ch;
+  max-width: 14ch;
   margin: 0;
   color: var(--color-ink);
   font-family: var(--font-display);
@@ -622,7 +630,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   font-weight: 400;
   letter-spacing: 0;
   line-height: 0.96;
-  text-wrap: balance;
+  text-wrap: wrap;
 }
 
 .gatherings-section__intro {
@@ -633,19 +641,24 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   line-height: 1.72;
 }
 
+.gatherings-section__title-line {
+  display: block;
+}
+
 .gatherings-section__occasions {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   max-width: 31ch;
-  margin: clamp(34px, 5vw, 54px) 0 0;
-  padding-left: 1.15rem;
+  margin: clamp(28px, 4svh, 40px) 0 0;
+  padding-left: 0.95rem;
   color: rgb(var(--rgb-ink) / 0.86);
   font-size: clamp(0.86rem, 0.9vw, 0.96rem);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .gatherings-section__occasions li::marker {
   color: var(--color-brass);
+  font-size: 0.65em;
 }
 
 .visit-section {
@@ -690,6 +703,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  filter: contrast(0.94) brightness(1.025);
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
     90deg,
@@ -1400,6 +1414,10 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
     padding: clamp(62px, 14vw, 88px) 28px clamp(50px, 12vw, 74px);
   }
 
+  .open-air-section__copy > .open-air-section__passage {
+    margin-top: 16px;
+  }
+
   .open-air-section__image {
     min-height: clamp(340px, 46svh, 500px);
   }
@@ -1526,9 +1544,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   }
 
   .open-air-section__copy > .open-air-section__passage {
-    bottom: 22px;
     gap: 12px;
-    font-size: 0.62rem;
   }
 
   .gatherings-section {
@@ -1549,7 +1565,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   }
 
   .gatherings-section__title {
-    max-width: 8.5ch;
+    max-width: 14ch;
     font-size: 2.35rem;
   }
 
@@ -1673,7 +1689,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   }
 
   .gatherings-section__title {
-    max-width: 9.5ch;
+    max-width: 14ch;
     font-size: clamp(2.85rem, 12vw, 4.05rem);
   }
 
@@ -1682,7 +1698,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   }
 
   .gatherings-section__occasions {
-    margin-top: clamp(26px, 4svh, 40px);
+    margin-top: clamp(24px, 3.2svh, 32px);
   }
 
   .place-section__image {
@@ -1846,14 +1862,16 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
     margin-top: clamp(18px, 2.8svh, 26px);
   }
 
-  .open-air-section__copy > .open-air-section__passage {
-    bottom: clamp(26px, 4svh, 40px);
-  }
-
   .open-air-section__image::after {
     background:
       linear-gradient(180deg, rgb(var(--rgb-paper) / 0.68) 0%, rgb(var(--rgb-paper) / 0.28) 11%, rgb(var(--rgb-paper) / 0) 30%),
       linear-gradient(0deg, rgb(var(--rgb-night) / 0.08), rgb(var(--rgb-night) / 0) 38%);
+  }
+}
+
+@media (max-width: 820px) and (min-height: 721px) and (orientation: portrait) {
+  .place-section__facts {
+    margin-bottom: clamp(40px, 14svh, 112px);
   }
 }
 
@@ -1912,8 +1930,7 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   }
 
   .open-air-section__copy > .open-air-section__passage {
-    min-height: 44px;
-    bottom: 14px;
+    margin-top: 10px;
   }
 
   .gatherings-section__occasions {
@@ -2111,9 +2128,8 @@ a.cabins-section__marker:focus-visible .cabins-section__marker-rule {
   }
 
   .open-air-section__copy > .open-air-section__passage {
-    bottom: 12px;
+    margin-top: 8px;
     gap: 10px;
-    font-size: var(--type-label-size);
   }
 
   .gatherings-section__occasions {

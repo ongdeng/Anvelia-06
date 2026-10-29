@@ -13,13 +13,94 @@ const chapterViewports = [
   { width: 1440, height: 900 }
 ];
 
+for (const viewport of [
+  { width: 320, height: 568 },
+  { width: 390, height: 844 },
+  { width: 430, height: 932 },
+  { width: 768, height: 1024 },
+  { width: 568, height: 320 },
+  { width: 844, height: 390 },
+  { width: 1440, height: 900 }
+]) {
+  test(`Experiences index stays readable and navigates by keyboard at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/activities/");
+    await page.evaluate(() => document.fonts.ready);
+    const index = page.getByRole("navigation", { name: "Experience chapters" });
+    await expect(index).toBeVisible();
+    const links = index.getByRole("link");
+    await expect(links).toHaveText(["Move", "Water", "Rituals"]);
+
+    const opening = await index.evaluate(element => {
+      const indexRect = element.getBoundingClientRect();
+      const titleElement = document.querySelector("#experience-title")!;
+      const chapterElement = document.querySelector("#movement-title")!;
+      const title = titleElement.getBoundingClientRect();
+      const chapter = chapterElement.getBoundingClientRect();
+      const firstLabel = document.createRange();
+      firstLabel.selectNodeContents(element.querySelector("a")!);
+      return {
+        indexTop: indexRect.top, indexBottom: indexRect.bottom,
+        firstLabelLeft: firstLabel.getBoundingClientRect().left,
+        titleTop: title.top, titleBottom: title.bottom,
+        titleLeft: title.left, chapterTop: chapter.top, chapterBottom: chapter.bottom,
+        titleSize: Number.parseFloat(getComputedStyle(titleElement).fontSize),
+        chapterSize: Number.parseFloat(getComputedStyle(chapterElement).fontSize),
+        photoTop: document.querySelector(".spatial-court img")!.getBoundingClientRect().top,
+        links: Array.from(element.querySelectorAll("a")).map(link => {
+          const rect = link.getBoundingClientRect();
+          return { width: rect.width, height: rect.height, right: rect.right };
+        }),
+        viewport: document.documentElement.clientWidth,
+        pageWidth: document.documentElement.scrollWidth
+      };
+    });
+    expect(opening.pageWidth).toBeLessThanOrEqual(opening.viewport);
+    expect(opening.titleSize).toBeGreaterThan(opening.chapterSize);
+    expect(opening.photoTop).toBeLessThan(viewport.height - 96);
+    for (const link of opening.links) {
+      expect(link.width).toBeGreaterThanOrEqual(44);
+      expect(link.height).toBeGreaterThanOrEqual(44);
+      expect(link.right).toBeLessThanOrEqual(opening.viewport);
+    }
+    const compactLandscape = viewport.width > viewport.height && viewport.height <= 500;
+    if (!compactLandscape) {
+      expect(opening.indexTop).toBeGreaterThanOrEqual(opening.titleBottom);
+      expect(Math.abs(opening.firstLabelLeft - opening.titleLeft)).toBeLessThanOrEqual(1);
+      const chapterPause = opening.chapterTop - opening.indexBottom;
+      const imageInterval = opening.photoTop - opening.chapterBottom;
+      expect(chapterPause).toBeGreaterThanOrEqual(imageInterval + 12);
+    } else {
+      expect(opening.indexTop).toBeLessThan(opening.titleBottom);
+      expect(opening.indexBottom).toBeGreaterThan(opening.titleTop);
+    }
+
+    for (const chapter of [
+      { label: "Water", id: "water-warmth" },
+      { label: "Rituals", id: "quiet-rituals" },
+      { label: "Move", id: "move-explore" }
+    ]) {
+      await index.getByRole("link", { name: chapter.label, exact: true }).focus();
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(new RegExp(`#${chapter.id}$`));
+      await expect(page.locator(`#${chapter.id}`)).toBeFocused();
+      const landing = await page.locator(`#${chapter.id}`).evaluate(element => ({
+        top: element.getBoundingClientRect().top,
+        headerBottom: document.querySelector(".site-header")!.getBoundingClientRect().bottom
+      }));
+      expect(landing.top).toBeGreaterThanOrEqual(landing.headerBottom);
+      expect(landing.top).toBeLessThanOrEqual(landing.headerBottom + 40);
+    }
+  });
+}
+
 test("Rhythm passage opens the complete Activities page and exposes focus", async ({
   page
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
 
-  const passage = page.getByRole("link", { name: "See activities" });
+  const passage = page.getByRole("link", { name: "Explore experiences" });
 
   await expect(passage).toHaveAttribute("href", "/activities/");
   await passage.focus();
@@ -65,11 +146,13 @@ test("Rhythm passage opens the complete Activities page and exposes focus", asyn
 });
 
 for (const viewport of [
-  { width: 1280, height: 800, minGap: 44, maxGap: 110 },
-  { width: 390, height: 844, minGap: 24, maxGap: 72 },
-  { width: 844, height: 390, minGap: 12, maxGap: 48 }
+  { width: 1280, height: 800, minGap: 16, maxGap: 32 },
+  { width: 390, height: 844, minGap: 12, maxGap: 24 },
+  { width: 320, height: 568, minGap: 12, maxGap: 24 },
+  { width: 844, height: 390, minGap: 8, maxGap: 18 },
+  { width: 568, height: 320, minGap: 8, maxGap: 18 }
 ]) {
-  test(`Rhythm passage holds the approved lower-margin relation at ${viewport.width}x${viewport.height}`, async ({
+  test(`Rhythm passage stays associated with its introduction at ${viewport.width}x${viewport.height}`, async ({
     page
   }) => {
     await page.setViewportSize(viewport);
@@ -91,8 +174,9 @@ for (const viewport of [
         : null;
 
       return {
-        bottomGap:
-          copyRect && passageRect ? copyRect.bottom - passageRect.bottom : null,
+        fitsCopy: !!(copyRect && passageRect && passageRect.bottom <= copyRect.bottom),
+        height: passageRect?.height ?? 0,
+        fontSize: passage ? Number.parseFloat(getComputedStyle(passage).fontSize) : 0,
         introGap:
           introRect && passageRect ? passageRect.top - introRect.bottom : null,
         beforeContent: before?.content,
@@ -101,9 +185,11 @@ for (const viewport of [
       };
     });
 
-    expect(Number(geometry.bottomGap)).toBeGreaterThanOrEqual(viewport.minGap);
-    expect(Number(geometry.bottomGap)).toBeLessThanOrEqual(viewport.maxGap);
-    expect(Number(geometry.introGap)).toBeGreaterThanOrEqual(8);
+    expect(geometry.fitsCopy).toBe(true);
+    expect(geometry.height).toBeGreaterThanOrEqual(44);
+    expect(geometry.fontSize).toBeGreaterThanOrEqual(14);
+    expect(Number(geometry.introGap)).toBeGreaterThanOrEqual(viewport.minGap);
+    expect(Number(geometry.introGap)).toBeLessThanOrEqual(viewport.maxGap);
     expect(geometry.beforeContent).toBe("none");
     expect(geometry.afterContent).toBe('\"\"');
     expect(geometry.afterWidth).toBeGreaterThanOrEqual(48);
@@ -139,8 +225,8 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
     "/#place"
   );
   await expect(
-    desktopNav.getByRole("link", { name: "Rhythm" })
-  ).toHaveAttribute("href", "/#open-air-living");
+    desktopNav.getByRole("link", { name: "Experiences", exact: true })
+  ).toHaveAttribute("href", "/activities/");
   const apertures = page.locator(".experiences-page__main figure");
   await expect(apertures).toHaveCount(10);
   const activityTitles = page.locator(".experiences-page__main h3");
@@ -174,6 +260,30 @@ test("Activities loads directly with rooted navigation and concept imagery", asy
     .toBe(0);
   await expect(page.locator("#place")).toBeFocused();
 });
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+  test(`Experiences is one navigation action away and returns to Rhythm at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    if (viewport.width <= 820) {
+      await page.getByRole("button", { name: "Open menu" }).click();
+    }
+    const nav = page.getByRole("navigation", {
+      name: viewport.width <= 820 ? "Mobile site sections" : "Site sections",
+      exact: true
+    });
+    const experiences = nav.getByRole("link", { name: "Experiences", exact: true });
+    await expect(experiences).toHaveAttribute("href", "/activities/");
+    await experiences.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/activities\/$/);
+    await expect(page.getByRole("navigation", { name: "Experience chapters" })).toBeVisible();
+    await page.getByRole("link", { name: "Return to Rhythm", exact: true }).click();
+    await expect(page).toHaveURL(/\/#open-air-living$/);
+    await expect(page.locator("#open-air-living")).toBeFocused();
+    await expect(page.getByRole("link", { name: "Explore experiences", exact: true })).toBeVisible();
+  });
+}
 
 test("Activities mobile navigation lands on and focuses the selected home chapter", async ({
   page

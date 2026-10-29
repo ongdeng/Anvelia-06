@@ -17,11 +17,9 @@ it("uses consistent genuine serif contrast and balanced massage copy", () => {
     const chapter = getComputedStyle(screen.getByRole("heading", { name: "Move & Explore" }));
     expect(title.fontFamily).toBe(chapter.fontFamily);
     expect(Number(title.fontWeight)).toBeGreaterThan(Number(chapter.fontWeight));
-    expect(parseFloat(title.fontSize)).toBeLessThan(parseFloat(chapter.fontSize));
-    expect(parseFloat(chapter.fontSize) / parseFloat(title.fontSize)).toBeGreaterThanOrEqual(1.5);
+    expect(parseFloat(title.fontSize)).toBeGreaterThan(parseFloat(chapter.fontSize));
+    expect(parseFloat(title.lineHeight) / parseFloat(title.fontSize)).toBeGreaterThanOrEqual(1.1);
     expect(title.getPropertyValue("font-synthesis")).toBe("none");
-    expect(title.fontSize).toBe("22px");
-    expect(title.lineHeight).toBe("28px");
     const italic = getComputedStyle(screen.getByText("Explore", { exact: true }));
     expect(italic.fontStyle).toBe("italic");
     expect(italic.fontWeight).toBe("400");

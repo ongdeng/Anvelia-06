@@ -1,5 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+test("GitHub Pages artifact excludes the local stays backbone", async ({ page }) => {
+  await page.goto("/Anvelia-06/?preview=stays");
+  await expect(page.getByRole("heading", { level: 1, name: "Anvelia Sanctuary", exact: true })).toBeVisible();
+  await expect(page.getByRole("main", { name: "Cabin stays", exact: true })).toHaveCount(0);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index,follow,max-image-preview:large");
+  await expect(page.locator('[aria-disabled="true"][aria-label="Cabin stays"]')).toHaveCount(1);
+  await expect(page.locator('a[href*="/stays"]')).toHaveCount(0);
+});
+
 test("GitHub Pages artifact activates Activities directly and keeps links in base", async ({
   page
 }) => {
@@ -29,8 +38,8 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
   await expect(
     page
       .getByRole("navigation", { name: "Site sections" })
-      .getByRole("link", { name: "Rhythm" })
-  ).toHaveAttribute("href", "/Anvelia-06/#open-air-living");
+      .getByRole("link", { name: "Experiences", exact: true })
+  ).toHaveAttribute("href", "/Anvelia-06/activities/");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
     "Explore movement, water and quiet rituals at Anvelia Sanctuary, from pickleball and forest trails to tea, yoga and moments of rest."
@@ -90,12 +99,19 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
 
   await page.goto("/Anvelia-06/");
 
-  const passage = page.getByRole("link", { name: "See activities" });
+  const passage = page.getByRole("link", { name: "Explore experiences" });
 
   await expect(passage).toHaveAttribute(
     "href",
     "/Anvelia-06/activities/"
   );
+  await page
+    .getByRole("navigation", { name: "Site sections" })
+    .getByRole("link", { name: "Experiences", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/Anvelia-06\/activities\/$/);
+  await page.getByRole("link", { name: "Return to Rhythm", exact: true }).click();
+  await expect(page).toHaveURL(/\/Anvelia-06\/#open-air-living$/);
   await passage.click();
   await expect(page).toHaveURL(/\/Anvelia-06\/activities\/$/);
   await expect(

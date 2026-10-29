@@ -148,13 +148,38 @@ test("WebKit navigates between Rhythm and the Activities route", async ({
   await page.goto("/");
   await waitForHome(page);
 
+  await page.getByRole("button", { name: "Open menu" }).click();
+  await page.getByRole("navigation", { name: "Mobile site sections", exact: true })
+    .getByRole("link", { name: "Experiences", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp("activities/$"));
+  await page.getByRole("link", { name: "Return to Rhythm", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp("#open-air-living$"));
+  await expect(page.locator("#open-air-living")).toBeFocused();
+
   await page.locator("#open-air-living").scrollIntoViewIfNeeded();
-  await page.getByRole("link", { name: "See activities" }).click();
+  await page.getByRole("link", { name: "Explore experiences" }).click();
   await expect(page).toHaveURL(/\/activities\/?$/);
   await waitForActivities(page);
   await expect(page.locator(".experiences-page__main figure")).toHaveCount(10);
   for (const aperture of await page.locator(".experiences-page__main figure").all()) {
     await expect(aperture).toHaveAttribute("data-concept-only", "true");
+  }
+
+  const index = page.getByRole("navigation", { name: "Experience chapters" });
+  for (const chapter of [
+    { label: "Water", id: "water-warmth" },
+    { label: "Rituals", id: "quiet-rituals" },
+    { label: "Move", id: "move-explore" }
+  ]) {
+    await index.getByRole("link", { name: chapter.label, exact: true }).focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`#${chapter.id}$`));
+    await expect(page.locator(`#${chapter.id}`)).toBeFocused();
+    const landing = await page.locator(`#${chapter.id}`).evaluate(element => ({
+      top: element.getBoundingClientRect().top,
+      headerBottom: document.querySelector(".site-header")!.getBoundingClientRect().bottom
+    }));
+    expect(landing.top).toBeGreaterThanOrEqual(landing.headerBottom);
   }
 
   await page.getByRole("button", { name: "Open menu" }).click();

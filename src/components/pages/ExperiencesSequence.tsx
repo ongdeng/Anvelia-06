@@ -31,19 +31,26 @@ export function ExperiencesSequence() {
   const etching = imagesByRole["activities-tea-etching"];
 
   return <main className="experiences-page__main" id={accessibility.mainContentId} tabIndex={-1} aria-labelledby="experience-title">
-    <section className="spatial-movement" id="move-explore" aria-labelledby="movement-title">
-      <header className="spatial-opening">
+    <div className="spatial-arrival">
+      <header className="experiences-intro">
         <h1 id="experience-title">{activities.title}</h1>
-        <h2 id="movement-title">{movement.title} <span className="spatial-heading__amp">&amp;</span> <em>{movement.emphasis}</em></h2>
+        <nav className="experiences-index" aria-label={activities.chapterIndex.label}>
+          {activities.chapterIndex.items.map(item => <a key={item.href} href={item.href}>{item.label}</a>)}
+        </nav>
       </header>
-      <ExperienceFigure item={court} className="spatial-court" eager />
-      <div className="spatial-outdoors">
-        <ExperienceFigure item={atv} className="spatial-atv" />
-        <ExperienceFigure item={trek} className="spatial-trek" />
-      </div>
-    </section>
+      <section className="spatial-movement" id="move-explore" tabIndex={-1} aria-labelledby="movement-title">
+        <header className="spatial-opening">
+          <h2 id="movement-title">{movement.title} <span className="spatial-heading__amp">&amp;</span> <em>{movement.emphasis}</em></h2>
+        </header>
+        <ExperienceFigure item={court} className="spatial-court" eager />
+        <div className="spatial-outdoors">
+          <ExperienceFigure item={atv} className="spatial-atv" />
+          <ExperienceFigure item={trek} className="spatial-trek" />
+        </div>
+      </section>
+    </div>
     <div className="spatial-rest">
-      <section className="spatial-water" id="water-warmth" aria-labelledby="water-title">
+      <section className="spatial-water" id="water-warmth" tabIndex={-1} aria-labelledby="water-title">
         <header className="spatial-water__heading"><h2 id="water-title">{water.title} <span className="spatial-heading__amp">&amp;</span> <br /><em>{water.emphasis}</em></h2></header>
         <ExperienceFigure item={pool} className="spatial-pool" />
         <div className="spatial-warmth">
@@ -56,7 +63,7 @@ export function ExperiencesSequence() {
           <span className="spatial-threshold__contour" />
           <img className="spatial-threshold__botanical" src={etching.src} width={etching.width} height={etching.height} loading="lazy" decoding="async" alt="" />
         </div>
-        <section className="ritual-composition" id="quiet-rituals" aria-labelledby="ritual-title">
+        <section className="ritual-composition" id="quiet-rituals" tabIndex={-1} aria-labelledby="ritual-title">
           <header className="ritual-composition__heading"><h2 id="ritual-title">{rituals.title} <em>{rituals.emphasis}</em></h2></header>
           <div className="ritual-composition__spreads">
             {rituals.items.map(item => <ExperienceFigure key={item.id} item={item} className={`ritual-composition__figure ritual-composition__${item.id}`} />)}

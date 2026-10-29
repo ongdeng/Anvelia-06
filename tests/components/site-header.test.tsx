@@ -41,6 +41,29 @@ describe("SiteHeader", () => {
     );
   });
 
+  it.each(["/", "/Anvelia-06/"])(
+    "offers a direct Experiences route from both homepage menus under %s",
+    (base) => {
+      vi.stubEnv("BASE_URL", base);
+      render(<SiteHeader />);
+      const desktopNav = screen.getByRole("navigation", {
+        name: siteContent.accessibility.siteSectionsLabel
+      });
+      expect(within(desktopNav).getByRole("link", { name: "Experiences", exact: true }))
+        .toHaveAttribute("href", `${base}activities/`);
+      expect(within(desktopNav).queryByRole("link", { name: "Rhythm", exact: true }))
+        .not.toBeInTheDocument();
+      expect(within(desktopNav).getByRole("link", { name: "Place", exact: true }))
+        .toHaveAttribute("href", "#place");
+      fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+      const mobileNav = screen.getByRole("navigation", {
+        name: siteContent.accessibility.mobileMenuLabel
+      });
+      const experiences = within(mobileNav).getByRole("link", { name: "Experiences", exact: true });
+      expect(experiences).toHaveAttribute("href", `${base}activities/`);
+    }
+  );
+
   it("home-roots desktop and mobile section anchors on a secondary page", () => {
     render(<SiteHeader homeRooted />);
 
@@ -55,7 +78,7 @@ describe("SiteHeader", () => {
     ).toEqual([
       "/#place",
       "/#cabins",
-      "/#open-air-living",
+      "/activities/",
       "/#gatherings",
       "/#visit"
     ]);
@@ -77,7 +100,7 @@ describe("SiteHeader", () => {
     ).toEqual([
       "/#place",
       "/#cabins",
-      "/#open-air-living",
+      "/activities/",
       "/#gatherings",
       "/#visit"
     ]);
@@ -102,7 +125,7 @@ describe("SiteHeader", () => {
     ).toEqual([
       "/Anvelia-06/#place",
       "/Anvelia-06/#cabins",
-      "/Anvelia-06/#open-air-living",
+      "/Anvelia-06/activities/",
       "/Anvelia-06/#gatherings",
       "/Anvelia-06/#visit"
     ]);
