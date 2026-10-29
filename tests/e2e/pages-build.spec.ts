@@ -140,3 +140,37 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
   expect(pageErrors).toEqual([]);
   expect(failedRequests).toEqual([]);
 });
+
+test("GitHub Pages publishes the sample Cabin stays folio as a noindex preview", async ({ page }) => {
+  const pageErrors: string[] = [];
+  const failedRequests: string[] = [];
+  page.on("pageerror", error => pageErrors.push(error.message));
+  page.on("requestfailed", request => failedRequests.push(request.url()));
+
+  await page.goto("outputs/stays-botanical-folio/");
+
+  await expect(page).toHaveURL(/\/Anvelia-06\/outputs\/stays-botanical-folio\/$/);
+  await expect(page).toHaveTitle("Cabin stays | Anvelia Sanctuary");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,nofollow");
+  await expect(page.getByRole("main", { name: "Cabin stays" })).toBeVisible();
+  await expect(page.getByText("One queen bed.", { exact: true })).toBeVisible();
+
+  const photos = page.locator(".stays-template__photo img");
+  await expect(photos).toHaveCount(2);
+  for (const photo of await photos.all()) {
+    await expect.poll(() => photo.evaluate(image =>
+      (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0
+    )).toBe(true);
+  }
+
+  await expect(page.getByRole("link", { name: "Explore experiences" })).toHaveAttribute(
+    "href",
+    "/Anvelia-06/activities/"
+  );
+  await expect(page.getByRole("link", { name: "Return to Cabins" })).toHaveAttribute(
+    "href",
+    "/Anvelia-06/#cabins"
+  );
+  expect(pageErrors).toEqual([]);
+  expect(failedRequests).toEqual([]);
+});

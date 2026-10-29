@@ -1,5 +1,6 @@
 import { imagesByRole } from "../../content/images";
 import { siteContent } from "../../content/siteContent";
+import { withBasePath } from "../../utils/basePath";
 
 export function CabinsSection() {
   const { cabins } = siteContent;
@@ -63,11 +64,13 @@ export function CabinsSection() {
           ))}
         </h2>
         <p className="cabins-section__intro">{cabins.intro}</p>
-        {cabins.markerEnabled ? (
+        {cabins.markerEnabled || import.meta.env.DEV ? (
           <a
             aria-label={cabins.markerAriaLabel}
             className="cabins-section__marker"
-            href={cabins.markerHref}
+            href={import.meta.env.DEV
+              ? withBasePath("/outputs/stays-botanical-folio")
+              : cabins.markerHref}
           >
             <span>{cabins.markerLabel}</span>
             <span className="cabins-section__marker-rule" />
@@ -75,11 +78,10 @@ export function CabinsSection() {
         ) : (
           <span
             aria-disabled="true"
-            aria-label={cabins.markerAriaLabel}
+            aria-label={cabins.markerLabel}
             className="cabins-section__marker"
           >
             <span>{cabins.markerLabel}</span>
-            <span className="cabins-section__marker-rule" />
           </span>
         )}
       </div>

@@ -1,0 +1,413 @@
+/* Private alternative only. No homepage, shared header or global token changes. */
+.stays-botanical-study .stays-template {
+  --folio-cover-height: clamp(340px, 42svh, 420px);
+  --stay-body-ink: #403d36;
+  --stay-label-ink: #5d6257;
+  padding-top: var(--stay-header-offset);
+}
+
+.stays-botanical-study .stays-template--folio::before {
+  opacity: 0.36;
+}
+
+.stays-botanical-study .stays-template__intro {
+  width: 100%;
+  max-width: none;
+  padding-bottom: 48px;
+}
+
+.stays-botanical-study .stays-template__arrival {
+  display: block;
+}
+
+.stays-botanical-study .stays-template__opening-copy {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: var(--folio-cover-height);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px var(--layout-page-pad) 56px;
+  text-align: center;
+}
+
+.stays-botanical-study .stays-template__opening-copy::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 -104px;
+  background: url("./images/botanical-folio-engraving.webp") center / cover no-repeat;
+  mask-image: linear-gradient(#000 55%, rgb(0 0 0 / 0.82) 72%, transparent 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+  pointer-events: none;
+  content: "";
+}
+
+.stays-botanical-study .stays-template__name {
+  max-width: 100%;
+  align-self: center;
+}
+
+.stays-botanical-study .stays-template__eyebrow {
+  margin-bottom: 18px;
+  color: var(--stay-label-ink);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+.stays-botanical-study .stays-template h1 {
+  max-width: none;
+  font-size: clamp(76px, 6.6vw, 96px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+.stays-botanical-study .stays-template__lead {
+  align-self: center;
+  max-width: 35ch;
+  margin: 22px 0 0;
+  color: var(--stay-body-ink);
+  font-size: 17px;
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+.stays-botanical-study .stays-template__photo--exterior {
+  position: relative;
+  width: calc(100% - 2 * var(--layout-page-pad));
+  max-width: 1120px;
+  margin: 24px auto 0;
+}
+
+/* Carry the opening's typographic care through the practical information. */
+.stays-botanical-study .stays-template h2 {
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.stays-botanical-study .stays-template__body {
+  color: var(--stay-body-ink);
+  line-height: 1.65;
+}
+
+.stays-botanical-study .stays-template__facts dd,
+.stays-botanical-study .stays-template__times dd {
+  line-height: 1.55;
+}
+
+.stays-botanical-study .stays-template__facts dt,
+.stays-botanical-study .stays-template__times dt,
+.stays-botanical-study .stays-template__label {
+  color: var(--stay-label-ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.stays-botanical-study .stays-template__amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding-left: 0;
+  list-style: none;
+  color: var(--stay-body-ink);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.stays-botanical-study .stays-template__link {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.stays-botanical-study .stays-template__section--experiences .stays-template__body > p {
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.stays-botanical-study .stays-template__section--essentials {
+  padding-top: 40px;
+}
+
+.stays-botanical-study .stays-template__section--experiences {
+  position: relative;
+  isolation: isolate;
+  padding-block: 56px 48px;
+}
+
+.stays-botanical-study .stays-template__section--experiences::before {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(24vw, 300px);
+  background: url("./images/botanical-folio-engraving.webp") right center / auto 360px no-repeat;
+  mask-image: radial-gradient(ellipse at right center, #000 12%, transparent 72%);
+  mix-blend-mode: multiply;
+  opacity: 0.2;
+  pointer-events: none;
+  content: "";
+}
+
+/* Preserve semantic boxes and reading order while sharing the desktop tracks. */
+@media (min-width: 1000px) and (min-height: 501px) {
+  .stays-botanical-study .stays-template {
+    display: grid;
+    grid-template-columns: minmax(var(--layout-page-pad), 1fr) repeat(12, minmax(0, 71.3333px)) minmax(var(--layout-page-pad), 1fr);
+    grid-template-rows: auto fit-content(0px) auto auto auto auto;
+    column-gap: 24px;
+  }
+
+  .stays-botanical-study .stays-template__intro {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / 4;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    padding-bottom: 0;
+    margin: 0;
+  }
+
+  .stays-botanical-study .stays-template__arrival {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    gap: 0 24px;
+  }
+
+  .stays-botanical-study .stays-template__opening-copy {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .stays-botanical-study .stays-template__opening-copy::before {
+    mask-image: linear-gradient(#000 55%, rgb(0 0 0 / 0.8) 65%, transparent 88%);
+  }
+
+  .stays-botanical-study .stays-template__photo--exterior {
+    grid-column: 2 / 10;
+    grid-row: 2 / 4;
+    width: 100%;
+    max-width: none;
+    margin: 40px 0 0;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 2 / 5;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    padding: 0;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials .stays-template__section-grid {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    gap: 0 24px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .stays-botanical-study .stays-template__essentials-copy {
+    display: block;
+    grid-column: 10 / 14;
+    grid-row: 1 / 3;
+    align-self: start;
+    max-width: 29ch;
+    margin: 56px 0 0 24px;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials h2 {
+    margin: 0;
+    font-size: 32px;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials .stays-template__body {
+    max-width: none;
+    margin: 28px 0 0;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials .stays-template__facts {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 24px;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials .stays-template__photo--interior {
+    grid-column: 3 / 7;
+    grid-row: 3;
+    align-self: start;
+    margin-top: 104px;
+  }
+
+  .stays-botanical-study .stays-template__section--practical {
+    grid-column: 8 / 14;
+    grid-row: 4;
+    padding: 104px 0 0;
+  }
+
+  .stays-botanical-study .stays-template__section--practical .stays-template__section-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .stays-botanical-study .stays-template__section--practical h2,
+  .stays-botanical-study .stays-template__section--practical .stays-template__body {
+    grid-column: 1;
+  }
+
+  .stays-botanical-study .stays-template__body--arrival-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.65fr);
+    gap: 28px 32px;
+  }
+
+  .stays-botanical-study .stays-template__section--experiences {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    padding-block: 88px 32px;
+  }
+
+  .stays-botanical-study .stays-template__section--experiences .stays-template__section-grid {
+    padding-top: 36px;
+    border-top: 1px solid rgb(var(--rgb-ink) / 0.12);
+  }
+
+  .stays-botanical-study .stays-template__closing {
+    grid-column: 2 / 14;
+    grid-row: 6;
+    width: 100%;
+    margin: 0;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 820px) {
+  .stays-botanical-study .stays-template__opening-copy {
+    min-height: 316px;
+    padding-block: 52px 48px;
+  }
+
+  /* Compose two edge excerpts rather than shrinking a landscape illustration. */
+  .stays-botanical-study .stays-template__opening-copy::before,
+  .stays-botanical-study .stays-template__opening-copy::after {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: -80px;
+    width: 30%;
+    background-image: url("./images/botanical-folio-engraving.webp");
+    background-size: auto 390px;
+    background-repeat: no-repeat;
+    mix-blend-mode: multiply;
+    opacity: 0.35;
+    pointer-events: none;
+    content: "";
+  }
+
+  .stays-botanical-study .stays-template__opening-copy::before {
+    right: auto;
+    left: 0;
+    background-position: left bottom;
+    mask-image: linear-gradient(#000 60%, transparent 100%), linear-gradient(to right, #000 20%, transparent);
+    mask-composite: intersect;
+  }
+
+  .stays-botanical-study .stays-template__opening-copy::after {
+    right: 0;
+    left: auto;
+    background-position: right top;
+    mask-image: linear-gradient(#000 60%, transparent 100%), linear-gradient(to left, #000 20%, transparent);
+    mask-composite: intersect;
+  }
+
+  .stays-botanical-study .stays-template h1 {
+    font-size: clamp(52px, 12.8vw, 76px);
+  }
+
+  .stays-botanical-study .stays-template__eyebrow {
+    margin-bottom: 18px;
+  }
+
+  .stays-botanical-study .stays-template__lead {
+    max-width: 29ch;
+    margin: 20px 0 0;
+    font-size: 16px;
+  }
+
+  .stays-botanical-study .stays-template__photo--exterior {
+    margin-top: 12px;
+  }
+
+  .stays-botanical-study .stays-template__intro {
+    padding-bottom: 24px;
+  }
+
+  .stays-botanical-study .stays-template__section--essentials {
+    padding-top: 32px;
+  }
+
+  .stays-botanical-study .stays-template h2 {
+    font-size: 32px;
+  }
+
+  .stays-botanical-study .stays-template__section-grid .stays-template__body {
+    margin-left: 12px;
+  }
+
+  .stays-botanical-study .stays-template__section--practical .stays-template__section-grid {
+    border-color: rgb(var(--rgb-ink) / 0.1);
+  }
+
+  .stays-botanical-study .stays-template__closing {
+    padding-left: 12px;
+  }
+
+  .stays-botanical-study .stays-template__section--experiences {
+    padding-block: 40px 24px;
+  }
+
+  .stays-botanical-study .stays-template__section--experiences::before {
+    width: 110px;
+    background-size: auto 280px;
+    opacity: 0.14;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .stays-botanical-study .stays-template__opening-copy {
+    min-height: 264px;
+    padding-block: 36px 32px;
+  }
+
+  .stays-botanical-study .stays-template h1 {
+    font-size: 64px;
+  }
+
+  .stays-botanical-study .stays-template__eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .stays-botanical-study .stays-template__lead {
+    max-width: 30ch;
+    margin-top: 18px;
+  }
+}

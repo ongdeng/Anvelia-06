@@ -31,7 +31,8 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       input: {
         main: htmlEntry("./index.html"),
-        activities: htmlEntry("./activities/index.html")
+        activities: htmlEntry("./activities/index.html"),
+        staysBotanicalFolio: htmlEntry("./outputs/stays-botanical-folio/index.html")
       }
     }
   },

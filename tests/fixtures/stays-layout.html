@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Stays layout test fixture</title>
+  </head>
+  <body>
+    <div id="root" class="stays-preview"></div>
+    <script type="module">
+      import React from "react";
+      import { createRoot } from "react-dom/client";
+      import "@fontsource/cormorant-garamond/latin-400.css";
+      import "@fontsource/cormorant-garamond/latin-500.css";
+      import "@fontsource/inter/latin-400.css";
+      import "@fontsource/inter/latin-500.css";
+      import "/src/styles/tokens.css";
+      import "/src/styles/typography.css";
+      import "/src/styles/base.css";
+      import { StaysTemplate } from "/src/components/pages/StaysPreview.tsx";
+      import { staysContent } from "/src/content/staysContent.ts";
+
+      const content = {
+        ...staysContent,
+        essentials: {
+          ...staysContent.essentials,
+          facts: [
+            { id: "fixture", label: "Layout test", value: "A deliberately long fixture value tests wrapping and layout resilience without asserting any actual accommodation details." },
+            { id: "unknown", label: "Unconfirmed", value: null }
+          ],
+          amenities: ["A fixture-only amenity description long enough to test multiple lines."]
+        },
+        arrival: {
+          ...staysContent.arrival,
+          facts: [
+            { id: "check-in", label: "Check-in", value: "Host-confirmed arrival window for this layout fixture" },
+            { id: "check-out", label: "Check-out", value: "Host-confirmed departure window for this layout fixture" },
+            { id: "fixture-arrival", label: "Arrival fixture", value: "A supplied test value" }
+          ],
+          notes: "These are fixture-only arrival notes. They test a longer passage of text and an unbroken reference: ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."
+        }
+      };
+
+      createRoot(document.getElementById("root")).render(
+        React.createElement(StaysTemplate, { content, showUnconfirmed: true })
+      );
+    </script>
+  </body>
+</html>

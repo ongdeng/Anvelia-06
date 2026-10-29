@@ -1,5 +1,105 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test("WebKit keeps the private botanical cabin folio readable", async ({ page }) => {
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.getByRole("link", { name: "Cabin stays details", exact: true }).click();
+    const main = page.getByRole("main", { name: "Cabin stays", exact: true });
+    await expect(main).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    await expect(main.locator("dd")).toHaveCount(7);
+    const layout = await main.evaluate(element => {
+      const photo = element.querySelector(".stays-template__photo--exterior")!.getBoundingClientRect();
+      const firstFact = element.querySelector("dt")!.getBoundingClientRect();
+      const text = [...element.querySelectorAll<HTMLElement>("h1, h2, p, address, a, dt, dd, li")];
+      return {
+        width: document.documentElement.clientWidth,
+        pageWidth: document.documentElement.scrollWidth,
+        firstFactTop: firstFact.top,
+        photoAndFactOverlap: Math.min(photo.right, firstFact.right) - Math.max(photo.left, firstFact.left) > 1 && Math.min(photo.bottom, firstFact.bottom) - Math.max(photo.top, firstFact.top) > 1,
+        overflow: text.filter(node => node.scrollWidth > node.clientWidth + 1).map(node => node.textContent)
+      };
+    });
+    expect(layout.pageWidth).toBeLessThanOrEqual(layout.width);
+    expect(layout.photoAndFactOverlap).toBe(false);
+    expect(layout.overflow).toEqual([]);
+    if (viewport.width >= 1000) expect(layout.firstFactTop).toBeLessThan(viewport.height);
+    for (const image of await main.getByRole("img").all()) {
+      await image.scrollIntoViewIfNeeded();
+      await expect.poll(() => image.evaluate(node => (node as HTMLImageElement).complete && (node as HTMLImageElement).naturalWidth > 0)).toBe(true);
+    }
+    await page.goto("/outputs/stays-botanical-folio/#stay-essentials");
+    await expect(page.locator("#stay-essentials")).toBeFocused();
+  }
+});
+
+test("WebKit keeps the private stays backbone readable and returns to Cabins", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?preview=stays");
+  const main = page.getByRole("main", { name: "Cabin stays", exact: true });
+  await expect(main).toBeVisible();
+  await expect(main.getByRole("heading", { level: 1 })).toHaveCSS("color", "rgb(32, 58, 43)");
+  await expect(main.getByRole("heading", { level: 1 })).toHaveCSS("text-shadow", "none");
+  await expect(main.getByRole("heading", { level: 1 })).toHaveCSS("font-weight", "500");
+  await expect(main.locator(".stays-template__eyebrow")).toHaveText("Bukit Tinggi, Pahang");
+  await expect(main.locator("img, picture, video, form")).toHaveCount(0);
+  await expect(main.getByText("Not yet confirmed", { exact: true })).toHaveCount(7);
+  await expect(main.getByRole("group", { name: "Cabin exterior photo space" })).toBeVisible();
+  await expect(main.getByRole("group", { name: "Cabin interior photo space" })).toBeVisible();
+  await expect(main.getByRole("navigation")).toHaveCount(0);
+  await expect(main.getByRole("link")).toHaveText(["Explore experiences", "Return to Cabins"]);
+  await page.goto("/?preview=stays#stay-cabins");
+  await expect(page.locator("#stay-cabins")).toBeFocused();
+  await page.getByRole("button", { name: "Open menu" }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
+  await main.getByRole("link", { name: "Return to Cabins", exact: true }).click();
+  await expect(page).toHaveURL(/\/#cabins$/);
+  await expect(page.locator("#cabins")).toBeFocused();
+  await expect(page.getByRole("link", { name: "Cabin stays details", exact: true }))
+    .toHaveAttribute("href", "/outputs/stays-botanical-folio/");
+  await expect(page.locator('a[href="/stays"], a[href="/stays/"]')).toHaveCount(0);
+});
+
+for (const viewport of [{ width: 320, height: 568 }, { width: 568, height: 320 }]) {
+  test(`WebKit expands populated private stays content at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/tests/fixtures/stays-layout.html");
+    const main = page.getByRole("main", { name: "Cabin stays", exact: true });
+    await expect(main.getByRole("heading", { level: 2 }))
+      .toHaveText(["The essentials", "Before you arrive", "Around Anvelia"]);
+    await page.evaluate(() => document.fonts.ready);
+    await main.evaluate(element => {
+      for (const node of element.querySelectorAll<HTMLElement>("h1, h2, p, figcaption, address, a, dt, dd, li")) {
+        node.style.fontSize = `${Number.parseFloat(getComputedStyle(node).fontSize) * 2}px`;
+        node.style.lineHeight = "1.5";
+        node.style.letterSpacing = "0.12em";
+        node.style.wordSpacing = "0.16em";
+        if (node.tagName === "P") node.style.marginBottom = "2em";
+      }
+    });
+    const layout = await main.evaluate(element => {
+      const nodes = Array.from(element.querySelectorAll<HTMLElement>("h1, h2, p, a, dt, dd, li"));
+      const sections = Array.from(element.children).map(node => node.getBoundingClientRect());
+      return {
+        pageWidth: document.documentElement.scrollWidth,
+        viewportWidth: document.documentElement.clientWidth,
+        overflow: nodes.filter(node => node.scrollWidth > node.clientWidth + 1 || node.scrollHeight > node.clientHeight + 1).map(node => node.textContent),
+        overlap: sections.some((rect, index) => index > 0 && rect.top < sections[index - 1].bottom - 1)
+      };
+    });
+    expect(layout.pageWidth).toBeLessThanOrEqual(layout.viewportWidth);
+    expect(layout.overflow).toEqual([]);
+    expect(layout.overlap).toBe(false);
+    await main.getByRole("link", { name: "Return to Cabins", exact: true }).focus();
+    await expect(main.getByRole("link", { name: "Return to Cabins", exact: true })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/#cabins$/);
+    await expect(page.locator("#cabins")).toBeFocused();
+  });
+}
+
 const homeViewports = [
   { width: 390, height: 844 },
   { width: 844, height: 390 },
@@ -151,9 +251,9 @@ test("WebKit navigates between Rhythm and the Activities route", async ({
   await page.getByRole("button", { name: "Open menu" }).click();
   await page.getByRole("navigation", { name: "Mobile site sections", exact: true })
     .getByRole("link", { name: "Experiences", exact: true }).click();
-  await expect(page).toHaveURL(new RegExp("activities/$"));
+  await expect(page).toHaveURL(/\/activities\/$/);
   await page.getByRole("link", { name: "Return to Rhythm", exact: true }).click();
-  await expect(page).toHaveURL(new RegExp("#open-air-living$"));
+  await expect(page).toHaveURL(/\/#open-air-living$/);
   await expect(page.locator("#open-air-living")).toBeFocused();
 
   await page.locator("#open-air-living").scrollIntoViewIfNeeded();

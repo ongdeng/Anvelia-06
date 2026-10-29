@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { PageShell } from "./components/layout/PageShell";
 import { ActivitiesPage } from "./components/pages/ActivitiesPage";
 import { CabinsSection } from "./components/sections/CabinsSection";
@@ -11,6 +11,9 @@ import { PrimitivePreview } from "./components/ui/PrimitivePreview";
 import { stripBasePath, withBasePath } from "./utils/basePath";
 
 const unavailablePhaseTwoPaths = new Set(["/stays"]);
+const StaysPreview = import.meta.env.DEV
+  ? lazy(() => import("./components/pages/StaysPreview"))
+  : null;
 
 const getNormalizedPath = () =>
   typeof window === "undefined"
@@ -85,6 +88,15 @@ function App() {
 
   if (normalizedPath === "/activities") {
     return <ActivitiesPage />;
+  }
+
+  if (
+    import.meta.env.DEV &&
+    StaysPreview &&
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("preview") === "stays"
+  ) {
+    return <Suspense fallback={null}><StaysPreview /></Suspense>;
   }
 
   return (
