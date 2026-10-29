@@ -126,7 +126,7 @@ export const siteContentByLocale = {
         "Warm timber, soft light and greenery beyond the door. The cabins offer a place to settle in and rest.",
       markerLabel: "Cabin stays",
       markerHref: "/stays",
-      markerEnabled: false,
+      markerEnabled: true,
       markerAriaLabel: "Cabin stays details"
     },
     openAirLiving: {

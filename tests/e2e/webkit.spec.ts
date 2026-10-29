@@ -58,8 +58,8 @@ test("WebKit keeps the private stays backbone readable and returns to Cabins", a
   await expect(page).toHaveURL(/\/#cabins$/);
   await expect(page.locator("#cabins")).toBeFocused();
   await expect(page.getByRole("link", { name: "Cabin stays details", exact: true }))
-    .toHaveAttribute("href", "/outputs/stays-botanical-folio/");
-  await expect(page.locator('a[href="/stays"], a[href="/stays/"]')).toHaveCount(0);
+    .toHaveAttribute("href", "/stays/");
+  await expect(page.locator('a[href="/stays/"]')).toHaveCount(1);
 });
 
 for (const viewport of [{ width: 320, height: 568 }, { width: 568, height: 320 }]) {

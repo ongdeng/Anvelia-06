@@ -912,10 +912,7 @@ test("Task 8 Cabins and Open-Air sections load with distinct Option 2 rhythms", 
   );
   expect(Number(sectionState.cabinIntroWeight)).toBe(400);
   expect(sectionState.cabinMarkerText).toBe("Cabin stays");
-  expect([
-    null,
-    "/outputs/stays-botanical-folio/"
-  ]).toContain(sectionState.cabinMarkerHref);
+  expect(sectionState.cabinMarkerHref).toBe("/stays/");
   expect(sectionState.cabinImageFrames).toBe(1);
   expect(sectionState.cabinLineworkImages).toBe(0);
   expect(sectionState.cabinDetailRows).toBe(0);
@@ -2348,7 +2345,7 @@ test("Task 5 primitive preview remains a dev-only QA surface", async ({
   ).toBeVisible();
 });
 
-test("Task 8.5 publishes metadata and keeps the unfinished stays route inaccessible", async ({
+test("Cabins links to the published sample stays folio while keeping it out of search", async ({
   page
 }) => {
   await page.goto("/");
@@ -2374,13 +2371,18 @@ test("Task 8.5 publishes metadata and keeps the unfinished stays route inaccessi
     "content",
     "en_MY"
   );
-  await expect(page.locator('a[href="/stays"]')).toHaveCount(0);
+  const cabinLink = page.getByRole("link", { name: "Cabin stays details", exact: true });
+  await expect(cabinLink).toHaveAttribute("href", "/stays/");
+  await expect(cabinLink.locator(".cabins-section__marker-rule")).toBeVisible();
 
-  await page.goto("/stays");
-  await expect(page).toHaveURL(/\/$/);
-  await expect(
-    page.getByRole("heading", { level: 1, name: "Anvelia Sanctuary" })
-  ).toBeVisible();
+  await page.goto("/stays/");
+  await expect(page).toHaveURL(/\/stays\/$/);
+  await expect(page).toHaveTitle("Cabin stays | Anvelia Sanctuary");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,nofollow");
+  const stays = page.getByRole("main", { name: "Cabin stays", exact: true });
+  await expect(stays).toBeVisible();
+  await expect(stays.getByText("One queen bed.", { exact: true })).toBeVisible();
+  await expect(stays.getByRole("img")).toHaveCount(2);
 });
 
 test("Task 8.5 loads cleanly with responsive below-fold images", async ({

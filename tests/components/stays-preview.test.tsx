@@ -154,14 +154,14 @@ describe("private stays backbone", () => {
       .toHaveAttribute("href", "/Anvelia-06/#cabins");
   });
 
-  it("does not activate the preview or public stay link in a production build", () => {
+  it("keeps the sample preview out of the home shell while linking to /stays", () => {
     vi.stubEnv("DEV", false);
     render(<App />);
     expect(screen.queryByRole("main", { name: "Cabin stays" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Anvelia Sanctuary");
-    expect(document.querySelector('a[href*="/stays"]')).toBeNull();
+    expect(document.querySelector('a[href="/stays/"]')).toBeInTheDocument();
     expect(document.querySelector('[aria-disabled="true"][aria-label="Cabin stays"]'))
-      .toBeInTheDocument();
+      .not.toBeInTheDocument();
   });
 
   it("places supplied essentials and arrival information before the single Experiences invitation", () => {

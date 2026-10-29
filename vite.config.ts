@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: htmlEntry("./index.html"),
         activities: htmlEntry("./activities/index.html"),
+        stays: htmlEntry("./stays/index.html"),
         staysBotanicalFolio: htmlEntry("./outputs/stays-botanical-folio/index.html")
       }
     }

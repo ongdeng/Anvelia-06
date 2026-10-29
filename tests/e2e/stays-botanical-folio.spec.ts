@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("mobile cabin preview gives the expanded navigation its intended backdrop", async ({ page }) => {
+test("mobile Cabin stays gives the expanded navigation its intended backdrop", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/outputs/stays-botanical-folio/");
 
@@ -16,14 +16,14 @@ test("mobile cabin preview gives the expanded navigation its intended backdrop",
 });
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
-  test(`main-page Cabin stays opens the private cabin preview and returns at ${viewport.width}px`, async ({ page }) => {
+  test(`main-page Cabin stays opens /stays and returns at ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto("/");
     if (viewport.width <= 820) await page.getByRole("button", { name: "Open menu", exact: true }).click();
     await page.getByRole("navigation", { name: viewport.width <= 820 ? "Mobile site sections" : "Site sections", exact: true })
       .getByRole("link", { name: "Cabins", exact: true }).click();
     await page.getByRole("link", { name: "Cabin stays details", exact: true }).click();
-    await expect(page).toHaveURL(/\/outputs\/stays-botanical-folio\/$/);
+    await expect(page).toHaveURL(/\/stays\/$/);
     await expect(page.getByRole("main", { name: "Cabin stays", exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Beyond the cabin", exact: true })).toBeVisible();
     await page.getByRole("link", { name: "Return to Cabins", exact: true }).click();

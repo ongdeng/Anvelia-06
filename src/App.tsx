@@ -8,9 +8,8 @@ import { OpenAirLivingSection } from "./components/sections/OpenAirLivingSection
 import { PlaceSection } from "./components/sections/PlaceSection";
 import { VisitSection } from "./components/sections/VisitSection";
 import { PrimitivePreview } from "./components/ui/PrimitivePreview";
-import { stripBasePath, withBasePath } from "./utils/basePath";
+import { stripBasePath } from "./utils/basePath";
 
-const unavailablePhaseTwoPaths = new Set(["/stays"]);
 const StaysPreview = import.meta.env.DEV
   ? lazy(() => import("./components/pages/StaysPreview"))
   : null;
@@ -19,16 +18,6 @@ const getNormalizedPath = () =>
   typeof window === "undefined"
     ? "/"
     : stripBasePath(window.location.pathname);
-
-if (typeof window !== "undefined") {
-  if (unavailablePhaseTwoPaths.has(getNormalizedPath())) {
-    window.history.replaceState(
-      null,
-      "",
-      `${withBasePath("/")}${window.location.search}${window.location.hash}`
-    );
-  }
-}
 
 function App() {
   const normalizedPath = getNormalizedPath();

@@ -143,8 +143,8 @@ for (const viewport of [
     await expect(page).toHaveURL(/\/#cabins$/);
     await expect(page.locator("#cabins")).toBeFocused();
     await expect(page.getByRole("link", { name: "Cabin stays details", exact: true }))
-      .toHaveAttribute("href", "/outputs/stays-botanical-folio/");
-    await expect(page.locator('a[href="/stays"], a[href="/stays/"]')).toHaveCount(0);
+      .toHaveAttribute("href", "/stays/");
+    await expect(page.locator('a[href="/stays/"]')).toHaveCount(1);
   });
 }
 

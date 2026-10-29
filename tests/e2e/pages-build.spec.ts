@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-test("GitHub Pages artifact excludes the local stays backbone", async ({ page }) => {
-  await page.goto("/Anvelia-06/?preview=stays");
+test("GitHub Pages links Cabins to the stays folio and keeps the sample page noindexed", async ({ page }) => {
+  await page.goto("/Anvelia-06/");
   await expect(page.getByRole("heading", { level: 1, name: "Anvelia Sanctuary", exact: true })).toBeVisible();
-  await expect(page.getByRole("main", { name: "Cabin stays", exact: true })).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index,follow,max-image-preview:large");
-  await expect(page.locator(".cabins-section__marker[aria-disabled='true']")).toHaveText("Cabin stays");
-  await expect(page.locator('a[href*="/stays"]')).toHaveCount(0);
+  const cabinLink = page.getByRole("link", { name: "Cabin stays details", exact: true });
+  await expect(cabinLink).toHaveAttribute("href", "/Anvelia-06/stays/");
+  await expect(cabinLink.locator(".cabins-section__marker-rule")).toBeVisible();
 });
 
 test("GitHub Pages artifact activates Activities directly and keeps links in base", async ({
@@ -141,15 +141,15 @@ test("GitHub Pages artifact activates Activities directly and keeps links in bas
   expect(failedRequests).toEqual([]);
 });
 
-test("GitHub Pages publishes the sample Cabin stays folio as a noindex preview", async ({ page }) => {
+test("GitHub Pages serves the Cabin stays folio directly at /stays/", async ({ page }) => {
   const pageErrors: string[] = [];
   const failedRequests: string[] = [];
   page.on("pageerror", error => pageErrors.push(error.message));
   page.on("requestfailed", request => failedRequests.push(request.url()));
 
-  await page.goto("outputs/stays-botanical-folio/");
+  await page.goto("stays/");
 
-  await expect(page).toHaveURL(/\/Anvelia-06\/outputs\/stays-botanical-folio\/$/);
+  await expect(page).toHaveURL(/\/Anvelia-06\/stays\/$/);
   await expect(page).toHaveTitle("Cabin stays | Anvelia Sanctuary");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex,nofollow");
   await expect(page.getByRole("main", { name: "Cabin stays" })).toBeVisible();

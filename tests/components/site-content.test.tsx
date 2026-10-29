@@ -121,7 +121,7 @@ describe("siteContent registry", () => {
     expect(siteContent.cabins.intro).toMatch(/cabins/i);
     expect(siteContent.cabins.markerLabel).toBe("Cabin stays");
     expect(siteContent.cabins.markerHref).toBe("/stays");
-    expect(siteContent.cabins.markerEnabled).toBe(false);
+    expect(siteContent.cabins.markerEnabled).toBe(true);
 
     const cabinText = collectStrings([
       cabinSection,
@@ -540,21 +540,17 @@ describe("App registry wiring", () => {
     );
   });
 
-  it("keeps the public stays route gated and scopes any development preview to its base", () => {
+  it("links the Cabin stays folio through the configured Pages base", () => {
     try {
       for (const base of ["/", "/Anvelia-06/"]) {
         vi.stubEnv("BASE_URL", base);
         const { container, unmount } = render(<App />);
         const marker = container.querySelector(".cabins-section__marker");
         expect(marker).toHaveTextContent("Cabin stays");
-        if (marker?.tagName === "A") {
-          expect(marker).not.toHaveAttribute("aria-disabled");
-          expect(marker).toHaveAttribute("href", `${base}outputs/stays-botanical-folio/`);
-        } else {
-          expect(marker).toHaveAttribute("aria-disabled", "true");
-          expect(marker).not.toHaveAttribute("href");
-        }
-        expect(container.querySelector('a[href="/stays"]')).toBeNull();
+        expect(marker?.tagName).toBe("A");
+        expect(marker).not.toHaveAttribute("aria-disabled");
+        expect(marker).toHaveAttribute("href", `${base}stays/`);
+        expect(container.querySelector('a[href*="outputs/stays-botanical-folio"]')).toBeNull();
         unmount();
       }
     } finally {

@@ -64,13 +64,11 @@ export function CabinsSection() {
           ))}
         </h2>
         <p className="cabins-section__intro">{cabins.intro}</p>
-        {cabins.markerEnabled || import.meta.env.DEV ? (
+        {cabins.markerEnabled ? (
           <a
             aria-label={cabins.markerAriaLabel}
             className="cabins-section__marker"
-            href={import.meta.env.DEV
-              ? withBasePath("/outputs/stays-botanical-folio")
-              : cabins.markerHref}
+            href={withBasePath(cabins.markerHref)}
           >
             <span>{cabins.markerLabel}</span>
             <span className="cabins-section__marker-rule" />
