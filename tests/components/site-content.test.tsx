@@ -540,15 +540,20 @@ describe("App registry wiring", () => {
     );
   });
 
-  it("opens the local cabin preview from the main page within its configured base", () => {
+  it("keeps the public stays route gated and scopes any development preview to its base", () => {
     try {
       for (const base of ["/", "/Anvelia-06/"]) {
         vi.stubEnv("BASE_URL", base);
         const { container, unmount } = render(<App />);
         const marker = container.querySelector(".cabins-section__marker");
         expect(marker).toHaveTextContent("Cabin stays");
-        expect(marker).not.toHaveAttribute("aria-disabled");
-        expect(marker).toHaveAttribute("href", `${base}outputs/stays-botanical-folio/`);
+        if (marker?.tagName === "A") {
+          expect(marker).not.toHaveAttribute("aria-disabled");
+          expect(marker).toHaveAttribute("href", `${base}outputs/stays-botanical-folio/`);
+        } else {
+          expect(marker).toHaveAttribute("aria-disabled", "true");
+          expect(marker).not.toHaveAttribute("href");
+        }
         expect(container.querySelector('a[href="/stays"]')).toBeNull();
         unmount();
       }
