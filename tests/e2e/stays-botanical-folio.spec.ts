@@ -102,9 +102,15 @@ for (const viewport of [
 
     await page.goto("/outputs/stays-botanical-folio/#stay-essentials");
     await expect(page.locator("#stay-essentials")).toBeFocused();
-    const heading = await main.getByRole("heading", { name: "The essentials", exact: true }).boundingBox();
-    const header = await page.locator(".site-header").boundingBox();
-    expect(heading!.y).toBeGreaterThanOrEqual(header!.y + header!.height);
+    const heading = main.getByRole("heading", { name: "The essentials", exact: true });
+    const header = page.locator(".site-header");
+    await expect.poll(async () => {
+      const headingBox = await heading.boundingBox();
+      const headerBox = await header.boundingBox();
+      return headingBox && headerBox
+        ? headingBox.y - (headerBox.y + headerBox.height)
+        : Number.NEGATIVE_INFINITY;
+    }).toBeGreaterThanOrEqual(0);
   });
 }
 
