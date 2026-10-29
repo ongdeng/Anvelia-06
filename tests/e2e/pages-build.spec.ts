@@ -5,7 +5,7 @@ test("GitHub Pages artifact excludes the local stays backbone", async ({ page })
   await expect(page.getByRole("heading", { level: 1, name: "Anvelia Sanctuary", exact: true })).toBeVisible();
   await expect(page.getByRole("main", { name: "Cabin stays", exact: true })).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index,follow,max-image-preview:large");
-  await expect(page.locator('[aria-disabled="true"][aria-label="Cabin stays"]')).toHaveCount(1);
+  await expect(page.locator(".cabins-section__marker[aria-disabled='true']")).toHaveText("Cabin stays");
   await expect(page.locator('a[href*="/stays"]')).toHaveCount(0);
 });
 
